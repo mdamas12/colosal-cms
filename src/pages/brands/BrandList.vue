@@ -7,7 +7,7 @@
             <h5 class="text-primary text-weight-bolder q-ma-none">
               Marcas
             </h5>
-            <small class="text-subtitle2 text-grey-6 q-mb-none" >Tienes 5 marcas</small>
+            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} marcas almacenadas</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
@@ -15,61 +15,108 @@
           </div>
         </div>
 
-        <q-card bordered class="my-card" >
-          <q-input dark dense standout v-model="text" input-class="text-left" @input="searchContact($event)">
-            <template v-slot:prepend>
-              <q-icon color="primary" v-if="text === ''" name="search" />
-              <q-icon color="primary" v-else name="clear" class="cursor-pointer" @click="text = ''" v-on:click="clear"/>
-            </template>
-          </q-input>
-        </q-card>
+        <div class="q-pa-md">
+            <q-table
+              title="Marcas"
+              :loading="loading"
+              :data="this.rows"
+              :columns="columns"
+              row-key="name"
+              :pagination.sync="pagination"
+              hide-pagination
+              @row-click="onRowClick"
+            />
 
-        <q-card class="shadow-6" style="margin-top:20px">
-          <q-card-section>
-            <div class="q-pa-md">
-              <q-list>
-                <q-item clickable v-ripple @click="$router.push({ name : 'BrandDetail'/* , params : {contact : contact }  */})">
-                  <q-item-section>List item</q-item-section>
-                </q-item>
-                <q-separator />
-              </q-list>
-             </div>
-          </q-card-section>
-
-          <div class="q-pa-lg flex flex-center">
+          <div class="row justify-center q-mt-md">
             <q-pagination
-              v-model="current"
-              :max="5"
-              :direction-links="true"
-              :boundary-links="true"
-              icon-first="skip_previous"
-              icon-last="skip_next"
-              icon-prev="fast_rewind"
-              icon-next="fast_forward"
-            >
-            </q-pagination>
+              v-model="pagination.page"
+              color="grey-8"
+              :max="this.numberOfPages"
+              size="sm"
+              @click="onRequest()"
+            />
           </div>
-        </q-card>
+        </div>       
       </div>
-      <!--<q-card-section class="flex flex-center">
-        <empty-view v-if="loaded && documents.length == 0" icon="mdi-folder-outline" message="Todavía no tienes liquidaciones disponibles" />
-      </q-card-section>-->
     </div>
   </q-page>
 </template>
 
-<script lang="ts">
+<script>
+import { Loading } from 'quasar'
 import Vue from 'vue'
+import Brand from '../../models/brands/Brand'
+import BrandsPagination from '../../models/brands/BrandsPagination'
+import BrandsService from '../../services/brands/brands.service'
 
 export default Vue.extend({
   meta: {
     title: 'Categories - List'
   },
-  data () {
+  data(){    
     return {
-      text: '',
-      current: 3
+      loading: false,
+      pagination: {
+        // sortBy: 'desc',
+        // descending: false,
+        page: 1,
+        rowsPerPage: 25,
+        rowsNumber: 0
+      },
+      table: [0], 
+      limit: 25,
+      offset: 0,
+      count: 0,
+      currentPage: 1,
+      numberOfPages: 0,
+      columns: [
+        {
+          name: 'desc',
+          required: true,
+          label: "id",
+          align: 'left',
+          field: row => row.id,
+          format: val => `${val}`,
+          sortable: false
+        },
+        { name: 'nombre', align: 'center', label: 'Nombre', field: 'name', sortable: false },
+        { name: 'proveedor', align: 'center', label: 'Proveedor', field: 'supplier', sortable: false },
+      ],
+      rows: []
     }
-  }
+  },
+  mounted () {
+    const vm = this;
+    vm.onRequest();
+    vm.pagination.rowsNumber = vm.count;
+  },
+  methods: {
+    onRequest(){
+      this.loading = true;
+      console.log("pagination.page == "+ this.pagination.page);
+      this.pagination.currentPage = this.pagination.page;
+      this.offset = this.limit * (this.pagination.page - 1);
+      this.table.splice(0,1);
+      console.log(this.table);
+      this.table.splice(0,0,1);
+      console.log(`BrandsService.getBrands(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
+      let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
+        next: data => {
+          console.log(data)
+          this.rows.splice(0, this.rows.length, ...data.results);
+          console.log(this.rows)
+          this.count = data.count
+          this.numberOfPages = Math.ceil(this.count / this.limit);
+          this.loading = false;
+        },
+        complete: () => console.log('[complete]'),
+      })
+      
+    },   
+    onRowClick (evt, row){
+      //console.log(`/brands/detail/${row.id}`);
+      this.$router.push({path: `/brands/detail/${row.id}`})
+    },
+  },
 })
 </script>

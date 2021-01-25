@@ -32,7 +32,7 @@ const routes: RouteConfig[] = [
         component: () => import('pages/Brand.vue'),
         children: [
           { name: 'BrandList', path: '', component: () => import('pages/brands/BrandList.vue') },
-          { name: 'BrandDetail', path: 'detail', component: () => import('pages/brands/BrandDetail.vue') },
+          { name: 'BrandDetail', path: 'detail/:id', component: () => import('pages/brands/BrandDetail.vue') },
           { name: 'BrandCreate', path: 'create', component: () => import('pages/brands/BrandCreate.vue') }
         ]
       }

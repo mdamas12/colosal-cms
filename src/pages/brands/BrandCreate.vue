@@ -12,9 +12,18 @@
                 </h5>
             </div>
 
-            <q-input class="q-pa-sm" v-model="text" label="Marca" />
+            <div class="form-section" style="padding: 20px">
+              <q-form ref="myForm">
+                <q-input  
+                  outlined
+                  v-model="brand.name"
+                  label="Nombre"
+                  lazy-rules
+                />
+              </q-form>
+            </div>  
 
-            <q-btn color="primary" label="Crear Marca" class="q-pa-xs q-mt-md q-mr-md float-right" />
+            <q-btn color="primary" label="Crear Marca" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createBrand()"/>
 
         </div>
 
@@ -24,12 +33,28 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import BrandsService from '../../services/brands/brands.service'
 
 export default Vue.extend({
   data () {
     return {
-      text: ''
+      brand : {
+        name: ''
+      }
     }
+  },
+  methods: {
+    createBrand(){
+      let subscription = BrandsService.createBrand(this.brand).subscribe( {
+        next: () => {
+          setTimeout(() => this.backToBrands(), 500);
+        },
+        complete: () => console.log('[complete]'),
+      })
+    },
+    backToBrands(){
+      this.$router.back();
+    },
   }
 })
 </script>

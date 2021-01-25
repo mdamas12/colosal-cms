@@ -62,8 +62,9 @@ v-model="leftDrawerOpen"
           v-bind="link"
           v-ripple
           clickable
-          :replace="{ name: link.to }"
+          
         >
+        <!-- colocar lo siguiente en la linea 65":replace="{ name: link.to }"" -->
         <q-item-section avatar>
           <q-icon :name="link.icon" />
         </q-item-section>
