@@ -48,7 +48,7 @@ class BrandsService {
 
   updateBrand(newBrand){
     return Observable.create((observer) => {
-      axios.put(API_URL + `brands/${newBrand.id}/`,newBrand)
+      axios.put(API_URL + `brands/${newBrand.id}/`,{name: newBrand.name})
         .then((response) => {
           console.log();
           observer.complete()
