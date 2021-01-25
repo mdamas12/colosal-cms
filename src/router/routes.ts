@@ -21,9 +21,9 @@ const routes: RouteConfig[] = [
         path: 'categories',
         component: () => import('pages/Categories.vue'),
         children: [
-          { name: 'CategoriesList', path: '', component: () => import('pages/categories/CategoriesList.vue') },
-          { name: 'CategoriesDetail', path: 'detail', component: () => import('pages/categories/CategoriesDetail.vue'), props: true },
-          { name: 'CategoriesCreate', path: 'create', component: () => import('pages/categories/CategoriesCreate.vue') }
+          { name: 'CategoryList', path: '', component: () => import('pages/categories/CategoryList.vue') },
+          { name: 'CategoryDetail', path: 'detail/:id', component: () => import('pages/categories/CategoryDetail.vue') },
+          { name: 'CategoryCreate', path: 'create', component: () => import('pages/categories/CategoryCreate.vue') }
         ]
       },
       {
@@ -32,8 +32,18 @@ const routes: RouteConfig[] = [
         component: () => import('pages/Brand.vue'),
         children: [
           { name: 'BrandList', path: '', component: () => import('pages/brands/BrandList.vue') },
-          { name: 'BrandDetail', path: 'detail', component: () => import('pages/brands/BrandDetail.vue') },
+          { name: 'BrandDetail', path: 'detail/:id', component: () => import('pages/brands/BrandDetail.vue') },
           { name: 'BrandCreate', path: 'create', component: () => import('pages/brands/BrandCreate.vue') }
+        ]
+      },
+      {
+        name: 'Features',
+        path: 'features',
+        component: () => import('pages/Features.vue'),
+        children: [
+          { name: 'FeatureList', path: '', component: () => import('pages/features/FeatureList.vue') },
+          { name: 'FeatureDetail', path: 'detail/:id', component: () => import('pages/features/FeatureDetail.vue') },
+          { name: 'FeatureCreate', path: 'create', component: () => import('pages/features/FeatureCreate.vue') }
         ]
       }
     ]

@@ -3,16 +3,16 @@
     <div class="row q-pa-sm q-pl-lg q-pr-lg">
       <div class="col-md-12 col-xs-12 q-pa-sm">
         <div class="row">  
-          <div >
+          <div>
             <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
           </div>
-          <div v-if="brand.name != null">
+          <div v-if="category.name != null">
             <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                #{{this.$router.currentRoute.params.id}}: {{brand.name}}
+                #{{this.$router.currentRoute.params.id}}: {{category.name}}
             </h5>
           </div>
-          <br />
         </div>
+        <br />
             <!-- <q-form >
               <q-item>
                 <q-item-section side>
@@ -54,11 +54,14 @@
               <q-separator spaced inset v-if="user.celular"/>
             </q-form> -->
 
+            <h5 class="text-primary text-weight-bolder q-ma-none">
+              #{{this.$router.currentRoute.params.id}}
+            </h5>
             <div class="form-section" style="padding: 20px">
               <q-form ref="myForm">
                 <q-input  
                   outlined
-                  v-model="brand.name"
+                  v-model="category.name"
                   label="Nombre"
                   lazy-rules
                 />
@@ -70,7 +73,7 @@
                 label="Eliminar"
                 class="q-mt-md"
                 color="red"
-                @click="deleteBrand()"
+                @click="deleteCategory()"
                 style="margin=10px"
               >
                 <template v-slot:loading>
@@ -83,7 +86,7 @@
                 label="Guardar"
                 class="q-mt-md"
                 color="primary"
-                @click="updateBrand()"
+                @click="updateCategory()"
                 style="margin=10px"
               >
                 <template v-slot:loading>
@@ -100,13 +103,13 @@
 
 <script lang="js">
 import Vue from 'vue'
-import BrandsService from '../../services/brands/brands.service'
+import CategoriesService from '../../services/categories/categories.service'
 
 export default Vue.extend({
   data () {
     return {
       text: '',
-      brand: {
+      category: {
         id: this.$router.currentRoute.params.id,
         name: null
       }
@@ -117,35 +120,35 @@ export default Vue.extend({
   },
   methods: {
     onInit(id){
-      let subscription = BrandsService.getBrand(id).subscribe( {
+      let subscription = CategoriesService.getCategory(id).subscribe( {
         next: data => {
-          this.brand = data
+          this.category = data
         },
         complete: () => console.log('[complete]'),
       })
     },
-    updateBrand(){
-      let subscription = BrandsService.updateBrand(this.brand).subscribe( {
+    updateCategory(){
+      let subscription = CategoriesService.updateCategory(this.category).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          setTimeout(() => this.backToCategories(), 500);
         },
         complete: () => console.log('[complete]'),
       })
     },
-    deleteBrand(){
-      let subscription = BrandsService.deleteBrand(this.brand.id).subscribe( {
+    deleteCategory(){
+      let subscription = CategoriesService.deleteCategory(this.category.id).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          setTimeout(() => this.backToCategories(), 500);
         },
         complete: () => console.log('[complete]'),
       })
     },
-    backToBrands(){
+    backToCategories(){
       this.$router.back();
     }
   },
   // watch: {
-  //   this.brand => console.log(this.brand.name);
+  //   this.category => console.log(this.category.name);
   // }
 })
 </script>

@@ -5,19 +5,19 @@
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
             <h5 class="text-primary text-weight-bolder q-ma-none">
-              Marcas
+              Características
             </h5>
-            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} marcas almacenadas</small>
+            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} características almacenadas</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="primary" label="Crear marca" class="float-right" @click="$router.push({ name : 'BrandCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="primary" label="Crear característica" class="float-right" @click="$router.push({ name : 'FeatureCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
         <div class="q-pa-md">
             <q-table
-              title="Marcas"
+              title="Características"
               :loading="loading"
               :data="this.rows"
               :columns="columns"
@@ -45,9 +45,9 @@
 <script>
 import { Loading } from 'quasar'
 import Vue from 'vue'
-import Brand from '../../models/brands/Brand'
-import BrandsPagination from '../../models/brands/BrandsPagination'
-import BrandsService from '../../services/brands/brands.service'
+import Feature from '../../models/features/Feature'
+import FeaturesPagination from '../../models/features/FeaturesPagination'
+import FeaturesService from '../../services/features/features.service'
 
 export default Vue.extend({
   meta: {
@@ -80,7 +80,6 @@ export default Vue.extend({
           sortable: false
         },
         { name: 'nombre', align: 'center', label: 'Nombre', field: 'name', sortable: false },
-        { name: 'proveedor', align: 'center', label: 'Proveedor', field: 'supplier', sortable: false },
       ],
       rows: []
     }
@@ -99,8 +98,8 @@ export default Vue.extend({
       this.table.splice(0,1);
       console.log(this.table);
       this.table.splice(0,0,1);
-      console.log(`BrandsService.getBrands(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
-      let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
+      console.log(`FeaturesService.getFeatures(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
+      let subscription = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
         next: data => {
           console.log(data)
           this.rows.splice(0, this.rows.length, ...data.results);
@@ -114,8 +113,8 @@ export default Vue.extend({
       
     },   
     onRowClick (evt, row){
-      //console.log(`/brands/detail/${row.id}`);
-      this.$router.push({path: `/brands/detail/${row.id}`})
+      //console.log(`/features/detail/${row.id}`);
+      this.$router.push({path: `/features/detail/${row.id}`})
     },
   },
 })

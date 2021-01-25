@@ -6,13 +6,14 @@
           <div >
             <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
           </div>
-          <div v-if="brand.name != null">
+          <div v-if="feature.name != null">
             <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                #{{this.$router.currentRoute.params.id}}: {{brand.name}}
+                #{{this.$router.currentRoute.params.id}}: {{feature.name}}
             </h5>
           </div>
           <br />
         </div>
+        <br />
             <!-- <q-form >
               <q-item>
                 <q-item-section side>
@@ -54,11 +55,14 @@
               <q-separator spaced inset v-if="user.celular"/>
             </q-form> -->
 
+            <h5 class="text-primary text-weight-bolder q-ma-none">
+              #{{this.$router.currentRoute.params.id}}
+            </h5>
             <div class="form-section" style="padding: 20px">
               <q-form ref="myForm">
                 <q-input  
                   outlined
-                  v-model="brand.name"
+                  v-model="feature.name"
                   label="Nombre"
                   lazy-rules
                 />
@@ -70,7 +74,7 @@
                 label="Eliminar"
                 class="q-mt-md"
                 color="red"
-                @click="deleteBrand()"
+                @click="deleteFeature()"
                 style="margin=10px"
               >
                 <template v-slot:loading>
@@ -83,7 +87,7 @@
                 label="Guardar"
                 class="q-mt-md"
                 color="primary"
-                @click="updateBrand()"
+                @click="updateFeature()"
                 style="margin=10px"
               >
                 <template v-slot:loading>
@@ -100,13 +104,13 @@
 
 <script lang="js">
 import Vue from 'vue'
-import BrandsService from '../../services/brands/brands.service'
+import FeaturesService from '../../services/features/features.service'
 
 export default Vue.extend({
   data () {
     return {
       text: '',
-      brand: {
+      feature: {
         id: this.$router.currentRoute.params.id,
         name: null
       }
@@ -117,35 +121,35 @@ export default Vue.extend({
   },
   methods: {
     onInit(id){
-      let subscription = BrandsService.getBrand(id).subscribe( {
+      let subscription = FeaturesService.getFeature(id).subscribe( {
         next: data => {
-          this.brand = data
+          this.feature = data
         },
         complete: () => console.log('[complete]'),
       })
     },
-    updateBrand(){
-      let subscription = BrandsService.updateBrand(this.brand).subscribe( {
+    updateFeature(){
+      let subscription = FeaturesService.updateFeature(this.feature).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          setTimeout(() => this.backToFeatures(), 500);
         },
         complete: () => console.log('[complete]'),
       })
     },
-    deleteBrand(){
-      let subscription = BrandsService.deleteBrand(this.brand.id).subscribe( {
+    deleteFeature(){
+      let subscription = FeaturesService.deleteFeature(this.feature.id).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          setTimeout(() => this.backToFeatures(), 500);
         },
         complete: () => console.log('[complete]'),
       })
     },
-    backToBrands(){
+    backToFeatures(){
       this.$router.back();
     }
   },
   // watch: {
-  //   this.brand => console.log(this.brand.name);
+  //   this.feature => console.log(this.feature.name);
   // }
 })
 </script>

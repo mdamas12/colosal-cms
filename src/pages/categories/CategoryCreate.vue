@@ -8,7 +8,7 @@
                     <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
                 </div>
                 <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    Crear Marca
+                    Crear Categoría
                 </h5>
             </div>
 
@@ -16,14 +16,14 @@
               <q-form ref="myForm">
                 <q-input  
                   outlined
-                  v-model="brand.name"
+                  v-model="category.name"
                   label="Nombre"
                   lazy-rules
                 />
               </q-form>
             </div>  
 
-            <q-btn color="primary" label="Crear Marca" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createBrand()"/>
+            <q-btn color="primary" label="Crear Categoría" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createCategory()"/>
 
         </div>
 
@@ -33,26 +33,26 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import BrandsService from '../../services/brands/brands.service'
+import CategoriesService from '../../services/categories/categories.service'
 
 export default Vue.extend({
   data () {
     return {
-      brand : {
+      category : {
         name: ''
       }
     }
   },
   methods: {
-    createBrand(){
-      let subscription = BrandsService.createBrand(this.brand).subscribe( {
+    createCategory(){
+      let subscription = CategoriesService.createCategory(this.category).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          setTimeout(() => this.backToCategories(), 500);
         },
         complete: () => console.log('[complete]'),
       })
     },
-    backToBrands(){
+    backToCategories(){
       this.$router.back();
     },
   }
