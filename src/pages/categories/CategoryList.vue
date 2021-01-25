@@ -5,19 +5,19 @@
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
             <h5 class="text-primary text-weight-bolder q-ma-none">
-              Características
+              Categorías
             </h5>
-            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} características almacenadas</small>
+            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} categorías almacenadas</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="primary" label="Crear característica" class="float-right" @click="$router.push({ name : 'FeatureCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="primary" label="Crear categoría" class="float-right" @click="$router.push({ name : 'CategoryCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
         <div class="q-pa-md">
             <q-table
-              title="Características"
+              title="Categorías"
               :loading="loading"
               :data="this.rows"
               :columns="columns"
@@ -45,9 +45,7 @@
 <script>
 import { Loading } from 'quasar'
 import Vue from 'vue'
-import Feature from '../../models/features/Feature'
-import FeaturesPagination from '../../models/features/FeaturesPagination'
-import FeaturesService from '../../services/features/features.service'
+import CategoriesService from '../../services/categories/categories.service'
 
 export default Vue.extend({
   meta: {
@@ -98,8 +96,8 @@ export default Vue.extend({
       this.table.splice(0,1);
       console.log(this.table);
       this.table.splice(0,0,1);
-      console.log(`FeaturesService.getFeatures(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
-      let subscription = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
+      console.log(`CategoriesService.getCategories(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
+      let subscription = CategoriesService.getCategories(this.limit, this.offset).subscribe({
         next: data => {
           console.log(data)
           this.rows.splice(0, this.rows.length, ...data.results);
@@ -113,8 +111,8 @@ export default Vue.extend({
       
     },   
     onRowClick (evt, row){
-      //console.log(`/features/detail/${row.id}`);
-      this.$router.push({path: `/features/detail/${row.id}`})
+      //console.log(`/categories/detail/${row.id}`);
+      this.$router.push({path: `/categories/detail/${row.id}`})
     },
   },
 })

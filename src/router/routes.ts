@@ -21,9 +21,9 @@ const routes: RouteConfig[] = [
         path: 'categories',
         component: () => import('pages/Categories.vue'),
         children: [
-          { name: 'CategoriesList', path: '', component: () => import('pages/categories/CategoriesList.vue') },
-          { name: 'CategoriesDetail', path: 'detail', component: () => import('pages/categories/CategoriesDetail.vue'), props: true },
-          { name: 'CategoriesCreate', path: 'create', component: () => import('pages/categories/CategoriesCreate.vue') }
+          { name: 'CategoryList', path: '', component: () => import('pages/categories/CategoryList.vue') },
+          { name: 'CategoryDetail', path: 'detail/:id', component: () => import('pages/categories/CategoryDetail.vue') },
+          { name: 'CategoryCreate', path: 'create', component: () => import('pages/categories/CategoryCreate.vue') }
         ]
       },
       {

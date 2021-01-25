@@ -2,8 +2,16 @@
   <q-page>
     <div class="row q-pa-sm q-pl-lg q-pr-lg">
       <div class="col-md-12 col-xs-12 q-pa-sm">
-        <div >
-          <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
+        <div class="row">  
+          <div >
+            <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
+          </div>
+          <div v-if="feature.name != null">
+            <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+                #{{this.$router.currentRoute.params.id}}: {{feature.name}}
+            </h5>
+          </div>
+          <br />
         </div>
         <br />
             <!-- <q-form >
