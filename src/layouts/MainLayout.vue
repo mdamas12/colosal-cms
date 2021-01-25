@@ -115,7 +115,8 @@ export default Vue.extend({
         { title: 'Usuarios', caption: 'quasar.dev', icon: 'school', to: 'Users' },
         { title: 'Productos', caption: 'quasar.dev', icon: 'school', to: 'Products' },
         { title: 'Marcas', caption: 'quasar.dev', icon: 'school', to: 'Brands' },
-        { title: 'Categorias', caption: 'quasar.dev', icon: 'school', to: 'Categories' }
+        { title: 'Categorias', caption: 'quasar.dev', icon: 'school', to: 'Categories' },
+        { title: 'Características', caption: 'quasar.dev', icon: 'school', to: 'Features' }
       ],
       profile: {
         nombre: 'Hola',

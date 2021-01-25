@@ -35,6 +35,16 @@ const routes: RouteConfig[] = [
           { name: 'BrandDetail', path: 'detail/:id', component: () => import('pages/brands/BrandDetail.vue') },
           { name: 'BrandCreate', path: 'create', component: () => import('pages/brands/BrandCreate.vue') }
         ]
+      },
+      {
+        name: 'Features',
+        path: 'features',
+        component: () => import('pages/Features.vue'),
+        children: [
+          { name: 'FeatureList', path: '', component: () => import('pages/features/FeatureList.vue') },
+          { name: 'FeatureDetail', path: 'detail/:id', component: () => import('pages/features/FeatureDetail.vue') },
+          { name: 'FeatureCreate', path: 'create', component: () => import('pages/features/FeatureCreate.vue') }
+        ]
       }
     ]
   },
