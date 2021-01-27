@@ -1,6 +1,7 @@
 <template>
   <q-page>
-      <!-- <div class="col-md-12 col-xs-12 q-pa-sm">
+      <div class="col-md-12 col-xs-12 q-pa-sm">
+
         <div class="q-pa-sm">
             <div class="row">
                 <div class="col2">
@@ -10,169 +11,241 @@
                     Crear Producto
                 </h5>
             </div>
-            <div class="row">
-              <div class="col-6">
-                  <q-input class="q-pa-sm" v-model="nombre" label="Nombre" />
-                  <q-btn color="primary" label="Crear producto" @click="saveProduct(index)" class="q-pa-xs q-mt-md q-mr-md float-right" />
-              </div>
-            </div>
-            <br><br>
-            <div class="row">
-              <div class="col">
-                <q-card class="row"
-                flat-bordered v-for="(item, index) in products" :key="index">  
-                  <q-card-section class="col" 
-                  v-html="item.texto">
-                  </q-card-section>
-                  <q-btn flat color="red" @click="deletedProduct(index)">Eliminar</q-btn>
-                </q-card>
-                <div class="flex flex-center" v-if="products.length == 0">
-                    <h6>Sin productos</h6>  
+            <div class="form-section" style="padding: 20px">
+              <q-form ref="myForm">
+                <q-input  
+                  v-model= "product.nameProducto"
+                  label="Nombre"
+                  lazy-rules
+                />
+                <br>
+                <div class="row">
+                  <div class="col">
+                    <div class="row">
+                      <div class="col-md-5 col-xs-12">
+                        <q-badge color="secondary" multi-line>
+                          Model: "{{ category.id }}"
+                        </q-badge>
+                          <q-select
+                          v-model= "category.id"
+                          :options= "optionsCategories"
+                          label="Categoria"
+                          option-value="id"
+                          option-label="name"
+                          map-options 
+                          >
+                          </q-select>
+                      </div>
+                        <div class="col">
+                        <q-btn round dense flat icon="add" @click="showAddCategory = true" />
+                        </div>
+                         <div class="col-md-5 col-xs-12">
+                          <q-select
+                          v-model= "product.valueBrands"
+                          :options= "optionsBrands"
+                          label="Marca"
+                          option-value="id"
+                          option-label="name" 
+                          >
+                          </q-select>
+                      </div>
+                        <div class="col">
+                        <q-btn round dense flat icon="add"  @click="showAddBrand = true" />
+                        </div>
+                    </div>
+                  </div>      
                 </div>
-              </div>
-            </div>
-        </div>  
-      </div> -->
-      <br>
-      <div class="row q-pa-md">
-        <div class="col">
-          <h6>Prueba API</h6>
-          <q-btn color="blue-4" @click="fetch()">Consultar</q-btn>
+                <br>
+                   <q-input
+                   v-model= "product.description" label="Descripción"
+                   />
+                   <br>
+                       <q-file v-model= "product.image" label="Imagen de Portada">
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                      </q-file>
+                      <br>
+                     <div class="row">
+                       <div class="col">
+                         <div class="row">
+                            <div class="col-md-3 col-xs-12">
+                              <q-input
+                              v-model= "product.precio"
+                                label="Precio"
+                                type="decimal" 
+                              />
+                            </div>
+                            <div class="col"></div>
+                            <div class="col-md-3 col-xs-12">
+                          <q-select
+                            v-model= "product.moneda"
+                            :options= "optionsMoneda"
+                              label="Moneda" 
+                          />
+                       </div>
+                       <div class="col"></div>
+                        <div class="col-md-3 col-xs-12">
+                          <q-input
+                            v-model.number= "product.modelCantidad"
+                            type="number"
+                            label="Cantidad"
+                          />
+                       </div>
+                         </div>
+                       </div>
+                     </div> 
+              </q-form>
+              <q-dialog
+              persistent
+               v-model="showAddCategory" >
+               <q-card style="max-width:100%; width:350px">
+                 <q-toolbar class="bg-primary text-white">
+                   <q-toolbar-title>
+                     Categoria
+                   </q-toolbar-title>
+                   <q-btn 
+                   flat
+                   icon="close"
+                   round
+                   v-close-popup
+                   />
+                 </q-toolbar>
+                 <q-card-section>
+                   <q-input
+                   label="Ingrese nueva categoria"
+                   v-model= "category.name"/>
+                 </q-card-section>
+                 <q-card-actions align="right">
+                   <q-btn flat color="primary" @click="addCategorie()">Agregar</q-btn>
+                 </q-card-actions>
+               </q-card>
+              </q-dialog>
+              <q-dialog
+              persistent
+               v-model="showAddBrand" >
+               <q-card style="max-width:100%; width:350px">
+                 <q-toolbar class="bg-primary text-white">
+                   <q-toolbar-title>
+                     Marca
+                   </q-toolbar-title>
+                   <q-btn 
+                   flat
+                   icon="close"
+                   round
+                   v-close-popup
+                   />
+                 </q-toolbar>
+                 <q-card-section>
+                   <q-input
+                   label="Ingrese nueva marca"
+                   v-model= "brand.name"/>
+                 </q-card-section>
+                 <q-card-actions align="right">
+                   <q-btn flat color="primary" @click="addBrand()">Agregar</q-btn>
+                 </q-card-actions>
+               </q-card>
+              </q-dialog>
+            </div>  
+            <q-btn color="primary" label="Crear Producto" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createPrueba()"/>
         </div>
       </div>
-      <br><br>
-      <div class="row q-pa-md">
-        <div class="col">
-          <q-input class="q-pa-sm" v-model="name" label="Nombre" />
-                  <q-btn color="primary" label="Crear producto" @click="saveMarca()" class="q-pa-xs q-mt-md q-mr-md float-right" />
-        </div>
-      </div>
-        <br>
-        <div class="q-pa-md" style="max-width: 350px">
-          <!-- <div v-for="brand of brands" v-bind:key="brand.id">
-            {{ brand }}
-          </div> -->
-
-    <q-list bordered separator>
-      <q-item clickable v-ripple v-for="brand in brands" :key="brand.id">
-        <q-item-section>{{ brand.name }}</q-item-section>
-        <q-btn flat color="info" label="Edit"/>
-        <q-btn flat color="red" label="Delete"/>
-      </q-item>
-    </q-list>
-  </div>
-      
   </q-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import axios from 'axios'
-import Brand from '../../models/Brand'
-
-const API = 'http://localhost:8000/'; 
+import ProductsService from '../../services/products/products.service'
+import BrandsService from '../../services/brands/brands.service'
+import CategoriesService from '../../services/categories/categories.service'
 
 export default Vue.extend({
   data () {
-    
     return {
+      product: {
+
+      },
+      category: {
+        name: ''
+      },
+      brand: {
+        name: ''
+      },
+      // model:
+      selected: '', 
+      optionsBrands: [],
+      optionsCategories: [],
+      valueBrands: '',
+      valueCategories: '',
+      limit: 25,
+      offset: 0,
       name: '',
-      brands: [],
-      products: [
-        {texto: 'Iphone', estado:false},
+      model: null,
+      optionsMoneda: [
+        'USD', 'BsS'
       ],
-      options: [],
-      value: '',
-      columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: (row:any) => row.name,
-          format: (val:any) => `${val}`,
-          sortable: true
-        },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-      ],
-      data:[
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
-        }
-      ]
+      text: '',
+      dense: false,
+      denseOpts: false,
+      precio: 0,
+      description: '',
+      showAddCategory: false,
+      showAddBrand: false,
+      modelCantidad: '',
+      nameProducto: '', 
+      moneda: '',
+      image: ''
     }
   },
-  mounted: function(){
-
+  mounted (){
+    const vm = this;
+    vm.onRequest();
   },
   methods: {
-  saveProduct () {
-    this.products.push({
-      texto:this.name,
-      estado: false
-    })
-    this.name = ''
-    this.$q.notify({
-      message: 'Producto creado con exito',
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done'
-    })
-  },
-  deletedProduct(index: any){
-   
-    this.$q.dialog({
-        title: 'Cuidado',
-        message: 'Realmente quieres eliminar el producto?',
-        cancel: true,
-        persistent: true
-      }).onOk(() => {
-         this.products.splice(index, 1)
-         this.$q.notify({
-           message: 'Producto eliminado',
-           color: 'red-4'
-         })
+    onRequest(){
+      let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
+        next: (data: any) => {
+          // console.log(data)
+          this.optionsBrands = data.results
+        },
       })
-  },
-  fetch () {
-    {
-      axios.get('http://localhost:8000/panel/brands/')
-        .then((response) => {
-          this.brands = response.data.results
-          console.log(response.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-  }
-},
-saveMarca: function(){
-  {
-    axios.post('http://localhost:8000/panel/brands/',{
-      name: this.name,
-    })
-    .then((response) => {
-          console.log(response.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        }) 
-  }
-  this.name = ''
-  this.$q.notify({
-      message: 'Marca creada con exito',
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done'
-    })
-}
+       let subscription2 = CategoriesService.getCategories(this.limit, this.offset).subscribe({
+        next: (data: any) => {
+          // console.log(data)
+          this.optionsCategories = data.results
+        },
+      })
+    },
+    addBrand(){
+      let subscription = BrandsService.createBrand(this.brand).subscribe({
+        next: () => {
+          setTimeout(() => this.backToProducts(), 500);
+        },
+        complete: () => console.log('completado'),
+      })
+    },
+    addCategorie(){
+      let subscription = CategoriesService.createCategory(this.category).subscribe({
+        next: () => {
+          setTimeout(() => this.backToProducts(), 500);
+        },
+        complete: () => console.log('completado'),
+      })
+    },
+    createPrueba(){
+      console.log(this.product)
+    },
+    createProduct(){
+      let subscription = ProductsService.createProduct(this.product).subscribe( {
+        next: () => {
+          setTimeout(() => this.backToProducts(), 500);
+        },
+        complete: () => console.log('[complete]'),
+      })
+    },
+    backToProducts(){
+      this.$router.back();
+    }
   }
 })
 </script>
