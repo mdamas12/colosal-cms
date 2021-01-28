@@ -14,7 +14,7 @@
             <div class="form-section" style="padding: 20px">
               <q-form ref="myForm">
                 <q-input  
-                  v-model= "product.nameProducto"
+                  v-model= "productName"
                   label="Nombre"
                   lazy-rules
                 />
@@ -24,10 +24,10 @@
                     <div class="row">
                       <div class="col-md-5 col-xs-12">
                         <q-badge color="secondary" multi-line>
-                          Model: "{{ category.id }}"
+                          
                         </q-badge>
                           <q-select
-                          v-model= "category.id"
+                          v-model= "productCategory"
                           :options= "optionsCategories"
                           label="Categoria"
                           option-value="id"
@@ -41,7 +41,7 @@
                         </div>
                          <div class="col-md-5 col-xs-12">
                           <q-select
-                          v-model= "product.valueBrands"
+                          v-model= "productBrand"
                           :options= "optionsBrands"
                           label="Marca"
                           option-value="id"
@@ -57,10 +57,10 @@
                 </div>
                 <br>
                    <q-input
-                   v-model= "product.description" label="Descripción"
+                   v-model= "productDescription" label="Descripción"
                    />
                    <br>
-                       <q-file v-model= "product.image" label="Imagen de Portada">
+                       <q-file v-model= "productImage" label="Imagen de Portada">
                         <template v-slot:prepend>
                           <q-icon name="attach_file" />
                         </template>
@@ -71,7 +71,7 @@
                          <div class="row">
                             <div class="col-md-3 col-xs-12">
                               <q-input
-                              v-model= "product.precio"
+                              v-model= "productPrice"
                                 label="Precio"
                                 type="decimal" 
                               />
@@ -79,7 +79,7 @@
                             <div class="col"></div>
                             <div class="col-md-3 col-xs-12">
                           <q-select
-                            v-model= "product.moneda"
+                            v-model= "productCoin"
                             :options= "optionsMoneda"
                               label="Moneda" 
                           />
@@ -87,7 +87,7 @@
                        <div class="col"></div>
                         <div class="col-md-3 col-xs-12">
                           <q-input
-                            v-model.number= "product.modelCantidad"
+                            v-model.number= "productQuantity"
                             type="number"
                             label="Cantidad"
                           />
@@ -96,31 +96,33 @@
                        </div>
                      </div> 
               </q-form>
+
               <q-dialog
-              persistent
-               v-model="showAddCategory" >
-               <q-card style="max-width:100%; width:350px">
-                 <q-toolbar class="bg-primary text-white">
-                   <q-toolbar-title>
-                     Categoria
-                   </q-toolbar-title>
-                   <q-btn 
-                   flat
-                   icon="close"
-                   round
-                   v-close-popup
-                   />
-                 </q-toolbar>
-                 <q-card-section>
-                   <q-input
-                   label="Ingrese nueva categoria"
-                   v-model= "category.name"/>
-                 </q-card-section>
-                 <q-card-actions align="right">
-                   <q-btn flat color="primary" @click="addCategorie()">Agregar</q-btn>
-                 </q-card-actions>
-               </q-card>
+                persistent
+                v-model="showAddCategory" >
+                <q-card style="max-width:100%; width:350px">
+                  <q-toolbar class="bg-primary text-white">
+                    <q-toolbar-title>
+                      Categoria
+                    </q-toolbar-title>
+                    <q-btn 
+                    flat
+                    icon="close"
+                    round
+                    v-close-popup
+                    />
+                  </q-toolbar>
+                  <q-card-section>
+                    <q-input
+                    label="Ingrese nueva categoria"
+                    v-model= "newCategoryName"/>
+                  </q-card-section>
+                  <q-card-actions align="right">
+                    <q-btn flat color="primary" @click="addCategorie()">Agregar</q-btn>
+                  </q-card-actions>
+                </q-card>
               </q-dialog>
+
               <q-dialog
               persistent
                v-model="showAddBrand" >
@@ -139,7 +141,7 @@
                  <q-card-section>
                    <q-input
                    label="Ingrese nueva marca"
-                   v-model= "brand.name"/>
+                   v-model= "newBrandName"/>
                  </q-card-section>
                  <q-card-actions align="right">
                    <q-btn flat color="primary" @click="addBrand()">Agregar</q-btn>
@@ -158,19 +160,24 @@ import Vue from 'vue'
 import ProductsService from '../../services/products/products.service'
 import BrandsService from '../../services/brands/brands.service'
 import CategoriesService from '../../services/categories/categories.service'
+import Category from 'src/models/categories/Category'
+import Product from 'src/models/products/Product'
 
 export default Vue.extend({
   data () {
+    var productCategory : any = null
+    var productBrand : any = null
     return {
-      product: {
-
-      },
-      category: {
-        name: ''
-      },
-      brand: {
-        name: ''
-      },
+      productName: '',
+      productBrand,
+      productCategory,
+      productDescription: '',
+      productImage: null,
+      productPrice:null,
+      productCoin:null,
+      productQuantity:null,
+      newCategoryName: '',
+      newBrandName: '',
       // model:
       selected: '', 
       optionsBrands: [],
@@ -217,7 +224,7 @@ export default Vue.extend({
       })
     },
     addBrand(){
-      let subscription = BrandsService.createBrand(this.brand).subscribe({
+      let subscription = BrandsService.createBrand(this.newBrandName).subscribe({
         next: () => {
           setTimeout(() => this.backToProducts(), 500);
         },
@@ -225,7 +232,7 @@ export default Vue.extend({
       })
     },
     addCategorie(){
-      let subscription = CategoriesService.createCategory(this.category).subscribe({
+      let subscription = CategoriesService.createCategory(this.newCategoryName).subscribe({
         next: () => {
           setTimeout(() => this.backToProducts(), 500);
         },
@@ -233,15 +240,27 @@ export default Vue.extend({
       })
     },
     createPrueba(){
-      console.log(this.product)
+
+      var product = {
+        name: this.productName,
+        description:this.productDescription,
+        image: this.productImage,
+        price:this.productPrice,
+        coin:this.productCoin,
+        brand:this.productBrand.id,
+        category:this.productCategory.id,
+        quantity:this.productQuantity,
+      }
+
+      console.log(product)
     },
     createProduct(){
-      let subscription = ProductsService.createProduct(this.product).subscribe( {
+      /*let subscription = ProductsService.createProduct(this.product).subscribe( {
         next: () => {
           setTimeout(() => this.backToProducts(), 500);
         },
         complete: () => console.log('[complete]'),
-      })
+      })*/
     },
     backToProducts(){
       this.$router.back();
