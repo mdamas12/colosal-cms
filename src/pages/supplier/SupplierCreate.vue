@@ -18,28 +18,30 @@
                   outlined
                   v-model="supplier.name"
                   label="Nombre"
-                  lazy-rules
                 />
                 <br/>
                 <q-input  
                   outlined
                   v-model="supplier.address"
                   label="Dirección"
-                  lazy-rules
                 />
                 <br/>
                 <q-input  
                   outlined
                   v-model="supplier.email"
                   label="Correo"
-                  lazy-rules
                 />
                 <br/>
                 <q-input  
                   outlined
                   v-model="supplier.number"
                   label="Número de Teléfono"
-                  lazy-rules
+                />
+                <br/>
+                <q-input  
+                  outlined
+                  v-model="supplier.agent"
+                  label="Representante"
                 />
                 
               </q-form>
@@ -65,6 +67,7 @@ export default Vue.extend({
         address: '',
         email: '',
         number:'',
+        agent:''
       }
     }
   },

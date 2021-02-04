@@ -74,6 +74,7 @@ export default Vue.extend({
         { name: 'dirección', align: 'center', label: 'Dirección', field: 'address', sortable: false },
         { name: 'correo', align: 'center', label: 'Correo', field: 'email', sortable: false },
         { name: 'teléfono', align: 'center', label: 'Teléfono', field: 'number', sortable: false },
+        { name: 'agente', align: 'center', label: 'Representante', field: 'agent', sortable: false }
       ],
       rows: []
     }

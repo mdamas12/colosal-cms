@@ -27,6 +27,7 @@
                   v-model="order.purchase.invoice"
                   label="Referencia"
                   style="width: 250px"
+                  lazy-rules
                 />
                 <br/>
                 <q-input  
@@ -35,6 +36,7 @@
                   type="date"
                   hint="Fecha de Compra"
                   style="width: 250px"
+                  lazy-rules
                 >
                 <q-tooltip content-class="bg-grey-8" anchor="top left" self="bottom left" :offset="[0, 8]">Fecha de compra</q-tooltip>
                 </q-input>
@@ -45,6 +47,7 @@
                   autogrow
                   label="Descripción"
                   style="max-width: 300px"
+                  lazy-rules
                 />
                 <br/>
                 <q-select
@@ -58,6 +61,7 @@
                   :options="options"
                   @filter="filterFn"
                   style="width: 250px"
+                  lazy-rules
                 >
                   <template v-slot:no-option>
                     <q-item>
@@ -81,6 +85,7 @@
                   hint="Mask: #.##"
                   input-class="text-right"
                   style="width: 250px"
+                  lazy-rules
                 />
               </q-form>
               <br/>
@@ -101,6 +106,7 @@
                     :options="options2"
                     @filter="filterFn2"
                     style="width: 250px"
+                    lazy-rules
                   >
                     <template v-slot:no-option>
                       <q-item>
@@ -120,6 +126,7 @@
                     input-class="text-right"
                     outlined
                     style="max-width: 200px"
+                    lazy-rules
                   />
                   <br/>
                   <q-input
@@ -128,6 +135,7 @@
                     label="Cantidad"
                     outlined
                     style="max-width: 200px"
+                    lazy-rules
                   />
                   <br/>
                   <q-input
@@ -136,9 +144,10 @@
                     label="Unidades Recibidas"
                     outlined
                     style="max-width: 200px"
+                    lazy-rules
                   />
                   <br/>
-                  <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus" style="width: 250px"/>
+                  <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus" style="width: 250px", lazy-rules/>
                   <br/>
                   <q-btn flat round color="primary" icon="delete" @click="removeProduct(index)"/>
                   <q-separator />

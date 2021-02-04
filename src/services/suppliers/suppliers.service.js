@@ -21,7 +21,7 @@ class SuppliersService {
 
   createSupplier(newSupplier){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'providers/',{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, phone: newSupplier.phone})
+      axios.post(API_URL + 'providers/',{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, phone: newSupplier.phone, agent: newSupplier.agent})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -48,7 +48,7 @@ class SuppliersService {
 
   updateSupplier(newSupplier){
     return Observable.create((observer) => {
-      axios.put(API_URL + `providers/${newSupplier.id}/`,{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, phone: newSupplier.phone})
+      axios.put(API_URL + `providers/${newSupplier.id}/`,{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, phone: newSupplier.phone, agent: newSupplier.agent})
         .then((response) => {
           console.log();
           observer.complete()

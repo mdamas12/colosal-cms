@@ -84,6 +84,13 @@
                   lazy-rules
                 />
                 <br/>
+                <q-input  
+                  outlined
+                  v-model="supplier.agent"
+                  label="Representante"
+                  lazy-rules
+                />
+                <br/>
               </q-form>
             </div>       
             <div class="row justify-end">
@@ -134,6 +141,7 @@ export default Vue.extend({
         address: null,
         email: null,
         number: null,
+        agent: null,
       }
     }
   },
