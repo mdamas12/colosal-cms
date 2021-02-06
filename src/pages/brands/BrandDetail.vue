@@ -7,7 +7,7 @@
             <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
           </div>
           <div v-if="brand.name != null">
-            <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+            <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
                 #{{this.$router.currentRoute.params.id}}: {{brand.name}}
             </h5>
           </div>
@@ -61,6 +61,7 @@
                   v-model="brand.name"
                   label="Nombre"
                   lazy-rules
+                  color="red-10"
                 />
               </q-form>
             </div>       
@@ -69,7 +70,7 @@
                 type="submit"
                 label="Eliminar"
                 class="q-mt-md"
-                color="red"
+                color="indigo-10"
                 @click="deleteBrand()"
                 style="margin=10px"
               >
@@ -82,7 +83,7 @@
                 type="submit"
                 label="Guardar"
                 class="q-mt-md"
-                color="primary"
+                color="red-10"
                 @click="updateBrand()"
                 style="margin=10px"
               >
@@ -94,7 +95,6 @@
           
         </div>
       </div>
-    </div>
   </q-page>
 </template>
 

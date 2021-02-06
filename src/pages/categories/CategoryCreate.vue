@@ -7,7 +7,7 @@
                 <div class="col2">
                     <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
                 </div>
-                <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+                <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
                     Crear Categoría
                 </h5>
             </div>
@@ -19,11 +19,12 @@
                   v-model="category.name"
                   label="Nombre"
                   lazy-rules
+                  color="dark"
                 />
               </q-form>
             </div>  
 
-            <q-btn color="primary" label="Crear Categoría" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createCategory()"/>
+            <q-btn color="red-10" label="Crear Categoría" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createCategory()"/>
 
         </div>
 
