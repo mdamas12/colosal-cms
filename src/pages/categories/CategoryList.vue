@@ -15,9 +15,8 @@
           </div>
         </div>
 
-        <div class="q-pa-md">
+        <div class="col-md-12 col-xs-12 q-pt-lg">
             <q-table
-              title="Categorías"
               :loading="loading"
               :data="this.rows"
               :columns="columns"
@@ -25,10 +24,9 @@
               :pagination.sync="pagination"
               hide-pagination
               @row-click="onRowClick"
-              card-class="bg-indigo-10 text-white"
             />
 
-          <div class="row justify-center q-mt-md">
+          <div class="row justify-center q-mt-md" v-if="numberOfPages > 1">
             <q-pagination
               v-model="pagination.page"
               color="indigo-10"
@@ -72,16 +70,13 @@ export default Vue.extend({
         {
           name: 'desc',
           required: true,
-          label: "id",
+          label: "ID",
           align: 'left',
           field: row => row.id,
           format: val => `${val}`,
           sortable: false,
-          headerClasses: 'bg-red-10 text-white',
-          classes: 'bg-red-1 text-dark ellipsis',
         },
-        { name: 'nombre', align: 'center', label: 'Nombre', field: 'name', sortable: false, headerClasses: 'bg-red-10 text-white',
-          classes: 'bg-red-1 text-dark ellipsis', },
+        { name: 'nombre', align: 'left', label: 'Nombre', field: 'name', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis', */},
       ],
       rows: []
     }

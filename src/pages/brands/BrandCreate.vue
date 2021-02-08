@@ -35,6 +35,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import BrandsService from '../../services/brands/brands.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -46,15 +47,14 @@ export default Vue.extend({
   },
   methods: {
     createBrand(){
+      Loading.show()
       let subscription = BrandsService.createBrand(this.brand).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
-    },
-    backToBrands(){
-      this.$router.back();
     },
   }
 })

@@ -24,6 +24,7 @@ class BrandsService {
       axios.post(API_URL + 'brands/',{name: newBrand.name})
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {

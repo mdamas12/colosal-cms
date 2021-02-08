@@ -35,6 +35,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import FeaturesService from '../../services/features/features.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -46,15 +47,14 @@ export default Vue.extend({
   },
   methods: {
     createFeature(){
+      Loading.show()
       let subscription = FeaturesService.createFeature(this.feature).subscribe( {
         next: () => {
-          setTimeout(() => this.backToFeatures(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
-    },
-    backToFeatures(){
-      this.$router.back();
     },
   }
 })

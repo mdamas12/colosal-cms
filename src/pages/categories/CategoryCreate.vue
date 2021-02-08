@@ -35,6 +35,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import CategoriesService from '../../services/categories/categories.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -46,15 +47,14 @@ export default Vue.extend({
   },
   methods: {
     createCategory(){
+      Loading.show()
       let subscription = CategoriesService.createCategory(this.category).subscribe( {
         next: () => {
-          setTimeout(() => this.backToCategories(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
-    },
-    backToCategories(){
-      this.$router.back();
     },
   }
 })

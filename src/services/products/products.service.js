@@ -34,11 +34,10 @@ class ProductsService{
 
     createProduct(newProduct){
         return Observable.create((observer) => {
-          axios.post(API_URL + 'products/',
-            newProduct,
-            Headers = { 'Content-Type': 'multipart/form-data' } )
+          axios.post(API_URL + 'products/',newProduct)
             .then((response) => {
               console.log(response.data);
+              observer.next(response.data)
               observer.complete()
             })
             .catch((error) => {
