@@ -49,14 +49,14 @@ v-model="leftDrawerOpen"
     <q-drawer
       show-if-above
       bordered
-      content-class="bg-grey-1">
+      content-class="bg-grey-4">
       <q-list>
         <q-item-label header class="q-mt-lg q-mb-lg">
-          <q-img src="~assets/quasar-logo-full.svg" style="width: 150px" />
+          <q-img src="~assets/logo_colosal.png" style="width: 180px" />
         </q-item-label>
         <q-item
           class="menu_link"
-          active-class="bg-primary text-white"
+          active-class="bg-indigo-10 text-white"
           v-for="link in menu"
           :key="link.title"
           v-bind="link"
@@ -112,13 +112,13 @@ export default Vue.extend({
     return {
       showProfile: false,
       menu: [
-        { title: 'Usuarios', caption: 'quasar.dev', icon: 'school', to: 'Customers' },
-        { title: 'Productos', caption: 'quasar.dev', icon: 'school', to: 'Products' },
-        { title: 'Marcas', caption: 'quasar.dev', icon: 'school', to: 'Brands' },
-        { title: 'Categorias', caption: 'quasar.dev', icon: 'school', to: 'Categories' },
-        { title: 'Características', caption: 'quasar.dev', icon: 'school', to: 'Features' },
-        { title: 'Proveedores', caption: 'quasar.dev', icon: 'school', to: 'Suppliers' },
-        { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'school', to: 'SupplyOrders' }
+        { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Customers' },
+        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
+        { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
+        { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
+        { title: 'Características', caption: 'quasar.dev', icon: 'storage', to: 'Features' },
+        { title: 'Proveedores', caption: 'quasar.dev', icon: 'contacts', to: 'Suppliers' },
+        { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'shop_two', to: 'SupplyOrders' }
       ],
       profile: {
         nombre: 'Hola',

@@ -7,7 +7,7 @@
                 <div class="col2">
                     <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
                 </div>
-                <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+                <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
                     Crear Característica
                 </h5>
             </div>
@@ -19,11 +19,12 @@
                   v-model="feature.name"
                   label="Nombre"
                   lazy-rules
+                  color="dark"
                 />
               </q-form>
             </div>  
 
-            <q-btn color="primary" label="Crear Característica" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createFeature()"/>
+            <q-btn color="red-10" label="Crear Característica" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createFeature()"/>
 
         </div>
 
@@ -34,6 +35,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import FeaturesService from '../../services/features/features.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -45,15 +47,14 @@ export default Vue.extend({
   },
   methods: {
     createFeature(){
+      Loading.show()
       let subscription = FeaturesService.createFeature(this.feature).subscribe( {
         next: () => {
-          setTimeout(() => this.backToFeatures(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
-    },
-    backToFeatures(){
-      this.$router.back();
     },
   }
 })

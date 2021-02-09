@@ -23,6 +23,7 @@ class FeaturesService {
       axios.post(API_URL + 'features/',{name: newFeature.name})
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -50,6 +51,7 @@ class FeaturesService {
       axios.put(API_URL + `features/${newFeature.id}/`,{name: newFeature.name})
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -63,6 +65,7 @@ class FeaturesService {
       axios.delete(API_URL + `features/${id}/`)
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
