@@ -7,7 +7,7 @@
             <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
           </div>
           <div v-if="category.name != null">
-            <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+            <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
                 #{{this.$router.currentRoute.params.id}}: {{category.name}}
             </h5>
           </div>
@@ -54,9 +54,9 @@
               <q-separator spaced inset v-if="user.celular"/>
             </q-form> -->
 
-            <h5 class="text-primary text-weight-bolder q-ma-none">
+            <!-- <h5 class="text-primary text-weight-bolder q-ma-none">
               #{{this.$router.currentRoute.params.id}}
-            </h5>
+            </h5> -->
             <div class="form-section" style="padding: 20px">
               <q-form ref="myForm">
                 <q-input  
@@ -64,6 +64,7 @@
                   v-model="category.name"
                   label="Nombre"
                   lazy-rules
+                  color="red-10"
                 />
               </q-form>
             </div>       
@@ -72,7 +73,7 @@
                 type="submit"
                 label="Eliminar"
                 class="q-mt-md"
-                color="red"
+                color="indigo-10"
                 @click="deleteCategory()"
                 style="margin=10px"
               >
@@ -85,7 +86,7 @@
                 type="submit"
                 label="Guardar"
                 class="q-mt-md"
-                color="primary"
+                color="red-10"
                 @click="updateCategory()"
                 style="margin=10px"
               >
@@ -97,7 +98,7 @@
           
         </div>
       </div>
-    </div>
+    <!-- </div> -->
   </q-page>
 </template>
 

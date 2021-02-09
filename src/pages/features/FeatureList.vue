@@ -4,20 +4,19 @@
       <div class="col-md-12 col-xs-12 q-pt-lg">
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
-            <h5 class="text-primary text-weight-bolder q-ma-none">
+            <h5 class="text-indigo-10 text-weight-bolder q-ma-none">
               Características
             </h5>
-            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} características almacenadas</small>
+            <small class="text-subtitle2 text-grey-7 q-mb-none" >Existen {{this.count}} características almacenadas</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="primary" label="Crear característica" class="float-right" @click="$router.push({ name : 'FeatureCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="red-10" label="Crear característica" class="float-right" @click="$router.push({ name : 'FeatureCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
-        <div class="q-pa-md">
+        <div class="col-md-12 col-xs-12 q-pt-lg">
             <q-table
-              title="Características"
               :loading="loading"
               :data="this.rows"
               :columns="columns"
@@ -27,10 +26,10 @@
               @row-click="onRowClick"
             />
 
-          <div class="row justify-center q-mt-md">
+          <div class="row justify-center q-mt-md"  v-if="numberOfPages > 1">
             <q-pagination
               v-model="pagination.page"
-              color="grey-8"
+              color="indigo-10"
               :max="this.numberOfPages"
               size="sm"
               @click="onRequest()"
@@ -77,9 +76,9 @@ export default Vue.extend({
           align: 'left',
           field: row => row.id,
           format: val => `${val}`,
-          sortable: false
+          sortable: false,
         },
-        { name: 'nombre', align: 'center', label: 'Nombre', field: 'name', sortable: false },
+        { name: 'nombre', align: 'left', label: 'Nombre', field: 'name', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis',*/ },
       ],
       rows: []
     }

@@ -23,6 +23,7 @@ class CategoriesService {
       axios.post(API_URL + 'categories/',{name: newCategory.name})
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -50,6 +51,7 @@ class CategoriesService {
       axios.put(API_URL + `categories/${newCategory.id}/`,{name: newCategory.name})
         .then((response) => {
           console.log();
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -63,6 +65,7 @@ class CategoriesService {
       axios.delete(API_URL + `categories/${id}/`)
         .then((response) => {
           console.log();
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {

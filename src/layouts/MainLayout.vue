@@ -49,14 +49,14 @@ v-model="leftDrawerOpen"
     <q-drawer
       show-if-above
       bordered
-      content-class="bg-grey-1">
+      content-class="bg-grey-4">
       <q-list>
         <q-item-label header class="q-mt-lg q-mb-lg">
-          <q-img src="~assets/quasar-logo-full.svg" style="width: 150px" />
+          <q-img src="~assets/logo_colosal.png" style="width: 180px" />
         </q-item-label>
         <q-item
           class="menu_link"
-          active-class="bg-primary text-white"
+          active-class="bg-indigo-10 text-white"
           v-for="link in menu"
           :key="link.title"
           v-bind="link"
