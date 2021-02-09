@@ -1,5 +1,4 @@
 import SupplyOrder from "./SupplyOrder";
-import Supplier from "./SupplyOrder";
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 export default class SupplyOrdersPagination {

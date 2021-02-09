@@ -167,7 +167,6 @@
 import Vue from 'vue'
 import SupplyOrdersService from '../../services/supplyOrders/supply-orders.service'
 import SuppliersService from '../../services/suppliers/suppliers.service'
-import ProductsService from '../../services/products/products.service'
 import axios from 'axios'
 
 export default Vue.extend({

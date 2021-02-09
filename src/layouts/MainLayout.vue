@@ -112,7 +112,7 @@ export default Vue.extend({
     return {
       showProfile: false,
       menu: [
-        { title: 'Usuarios', caption: 'quasar.dev', icon: 'school', to: 'Users' },
+        { title: 'Usuarios', caption: 'quasar.dev', icon: 'school', to: 'Customers' },
         { title: 'Productos', caption: 'quasar.dev', icon: 'school', to: 'Products' },
         { title: 'Marcas', caption: 'quasar.dev', icon: 'school', to: 'Brands' },
         { title: 'Categorias', caption: 'quasar.dev', icon: 'school', to: 'Categories' },

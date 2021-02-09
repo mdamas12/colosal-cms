@@ -1,11 +1,11 @@
-import Supplier from "./Supplier";
+import Customer from "./Customer";
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-export default class SupplierPagination {
+export default class CustomersPagination {
 	count: number;
 	next: number;
 	previous: number;
-	results: Supplier[];
+	results: Customer[];
 
 	constructor (map:any) {
 		this.count = map.count as number;

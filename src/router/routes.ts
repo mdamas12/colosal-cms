@@ -65,7 +65,17 @@ const routes: RouteConfig[] = [
           { name: 'SupplyOrderDetail', path: 'detail/:id', component: () => import('pages/supplyOrders/SupplyOrderDetail.vue') },
           { name: 'SupplyOrderCreate', path: 'create', component: () => import('pages/supplyOrders/SupplyOrderCreate.vue') }
         ]
-      }
+      },
+      {
+        name: 'Customers',
+        path: 'customers',
+        component: () => import('pages/Customers.vue'),
+        children: [
+          { name: 'CustomerList', path: '', component: () => import('pages/customers/CustomerList.vue') },
+          { name: 'CustomerDetail', path: 'detail/:id', component: () => import('pages/customers/CustomerDetail.vue') },
+          { name: 'CustomerCreate', path: 'create', component: () => import('pages/customers/CustomerCreate.vue') }
+        ]
+      },
     ]
   },
 
