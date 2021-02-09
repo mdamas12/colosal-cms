@@ -147,15 +147,15 @@
                     lazy-rules
                   />
                   <br/>
-                  <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus" style="width: 250px", lazy-rules/>
-                  <br/>
+                    <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus" style="width: 250px"/>
+                    <br/>
                   <q-btn flat round color="primary" icon="delete" @click="removeProduct(index)"/>
                   <q-separator />
                 </div>
               </div>
               <br/>
               <q-btn flat round color="primary" icon="add" @click="addProduct()"/>
-            </div>  
+            </div>
         </div>
 
       </div>
@@ -213,28 +213,24 @@ export default Vue.extend({
       })
       let subscription2 = axios.get("http://localhost:8000/panel/products/?limit=25&offset=0")
         .then((response) => {
-          console.log(response.data.results);
           for (let i = 0; i < response.data.results.length; i++) {
             this.productOptions.push(response.data.results[i].name);
             this.productIndex.push(response.data.results[i].id);
           }
-          // for (let i = 0; i < data.results.length; i++) {
-          //   this.productOptions.push(data.results[i].name);
-          //   this.productIndex.push(data.results[i].id);
-          // }
         })
         .catch((error) => {
           console.log(error);
         })
       let subscription3 = SupplyOrdersService.getSupplyOrder(this.supplyOrderId).subscribe({
         next: data =>{
+          console.log(data)
           this.order.purchase.date = data.date;
           this.order.purchase.description = data.description;
           this.order.purchase.invoice = data.invoice;
           this.order.purchase.coin = data.coin;
           this.order.purchase.amount = data.amount;
           this.order.purchase.provider = data.provider.id;
-            this.supplierNameModel = data.provider.name;
+          this.supplierNameModel = data.provider.name;
           for (let i = 0; i < data.PurchaseDetail.length; i++) {
             this.order.detail.push({
               product: data.PurchaseDetail[i].product.id,
