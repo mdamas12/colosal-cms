@@ -49,9 +49,10 @@ class ProductsService{
       getProduct (id){
         return Observable.create((observer) => {
           console.log("id: "+id);
-          axios.get(API_URL + `products/${id}/`)
+          axios.get(API_URL + `products/search/${id}/`)
             .then((response) => {
               observer.next(response.data)
+              // debugger
               observer.complete()
             })
             .catch((error) => {
@@ -62,11 +63,10 @@ class ProductsService{
 
       updateProduct(newProduct, id){
         return Observable.create((observer) => {
-          axios.put(API_URL + `products/${id}/`,
-          newProduct,
-           Headers = {'Content-Type': 'multipart/form-data'})
+          axios.put(API_URL + `products/search/${id}/`,newProduct)
             .then((response) => {
               console.log();
+              observer.next(response.data)
               observer.complete()
             })
             .catch((error) => {
@@ -88,9 +88,22 @@ class ProductsService{
         })
       }
 
-      createDetailProduct(){
+      getDetailProduct(id){
         return Observable.create((observer) =>{
-          axios.post(API_URL + `products/detail/`)
+          axios.get(API_URL + `products/product-detail/${id}/`)
+          .then((response) =>{
+            console.log();
+            observer.complete()
+          })
+          .catch((error)=>{
+            observer.error(error)
+          })
+        })
+      }
+      
+      deleteDetailProduct(id){
+        return Observable.create((observer) =>{
+          axios.delete(API_URL + `products/product-detail/${id}/`)
           .then((response) =>{
             console.log();
             observer.complete()

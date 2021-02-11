@@ -2,20 +2,22 @@
   <q-page>
       <div class="col-md-12 col-xs-12 q-pa-sm">
         <div class="q-pa-sm">
-            <div class="row">
-                <div class="col2">
-                    <q-btn flat class="text-indigo-10" round icon="keyboard_backspace" @click="$router.back()" />
-                </div>
-                <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    Crear Producto
-                </h5>
-            </div>
-            <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md  q-mx-lg">
+            <div class="row">  
+          <div>
+            <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
+          </div>
+          <div v-if="product.name != null">
+            <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
+                #{{this.$router.currentRoute.params.id}}: {{product.name}}
+            </h5>
+          </div>
+        </div>
+        <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md  q-mx-lg">
               <div class="form-section">
                 <q-form ref="myForm">
-                  <q-input  
-                    ref="productName"
-                    v-model= "productName"
+                  <q-input
+                    ref="product.name"  
+                    v-model= "product.name"
                     label="Nombre"
                     color="red-10"
                     outlined
@@ -28,8 +30,8 @@
                       <div class="row">
                         <div class="col">
                             <q-select
-                              ref="productCategory"
-                              v-model= "productCategory"
+                              ref= "product.category"
+                              v-model= "product.category"
                               :options= "optionsCategories"
                               outlined
                               color="red-10"
@@ -40,7 +42,8 @@
                               lazy-rules
                               :rules="[
                                 val => val !== null && val !== '' || 'Debe seleccionar una categoria'
-                              ]"> 
+                              ]"
+                             > 
                               <template v-slot:append>
                                 <q-btn round dense flat icon="add" @click.stop="showAddCategory = true" />
                               </template>
@@ -48,8 +51,8 @@
                         </div>
                         <div class="col q-ml-md">
                             <q-select
-                              ref="productBrand"
-                              v-model= "productBrand"
+                              ref="product.brand"
+                              v-model= "product.brand"
                               :options= "optionsBrands"
                               label="Marca"
                               outlined
@@ -57,10 +60,10 @@
                               option-value="id"
                               option-label="name"
                               map-options
-                              lazy-rules
                               :rules="[
                                 val => val !== null && val !== '' || 'Debe seleccionar una marca'
-                              ]">
+                              ]"
+                              >
                               <template v-slot:append>
                                 <q-btn round dense flat icon="add" @click.stop="showAddBrand = true" />
                               </template>
@@ -71,65 +74,55 @@
                   </div>
                   <br>
                     <q-input
-                      ref="productDescription"
-                      v-model= "productDescription"
+                      ref="product.description"
+                      v-model= "product.description"
                       label="Descripción"
                       outlined
                       color="red-10"
                       lazy-rules
                       :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']"
-                      />
-                    <br>
-                        <q-file
-                          ref="productImage"
-                          v-model= "productImage"
-                          label="Imagen de Portada"
-                          color="indigo-10"
-                          outlined
-                          lazy-rules
-                          :rules="[
-                            val => val !== null && val !== '' || 'Debe seleccionar una imagen'
-                          ]"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="attach_file" />
-                          </template>
-                        </q-file>
+                    />
+                  <br>
+
+                  <!--REVISAR TEMA DE IMAGEN, ACA LA BINDEO PARA PODER RECIBIRLA EN LA VISTA, SIN EMBARGO RECURSO 404
+                      AGREGAR EL Q-FLE CUANDO SE SOLUCIONE EL PROBLEMA ------------------------------------------------->
+                        <q-img v-bind:src="product.image"></q-img>
+                  <!-- ------------------------------------------------------------------------------------------------->
                         <br>
                       <div class="row">
                         <div class="col">
                           <div class="row">
                               <q-input
+                                ref="produc.price"
                                 class="col"
-                                ref="productPrice"
-                                v-model= "productPrice"
+                                v-model= "product.price"
                                 label="Precio"
                                 mask="#.##"
                                 fill-mask="0"
                                 reverse-fill-mask
                                 input-class="text-right"
                                 outlined
-                                color="red-10" 
+                                color="red-10"
                                 lazy-rules
-                                :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']"
+                                :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']" 
                               />
 
                               <q-select
-                                  ref="productCoin"
                                   class="col q-mx-md"
-                                  v-model= "productCoin"
+                                  ref="product.coin"
+                                  v-model= "product.coin"
                                   :options= "optionsMoneda"
                                   label="Moneda"
                                   outlined
-                                  color="red-10" 
+                                  color="red-10"
                                   lazy-rules
-                                  :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']"
+                                  :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']" 
                                 />
 
                               <q-input
                                 class="col"
-                                ref="productQuantity"
-                                v-model= "productQuantity"
+                                ref="product.quantity"
+                                v-model= "product.quantity"
                                 type="number"
                                 label="Cantidad"
                                 outlined
@@ -160,7 +153,7 @@
                     <q-card-section>
                       <q-input
                       label="Ingrese nueva categoría"
-                      v-model= "newCategoryName.name"
+                      v-model= "newCategoryName"
                       color="grey-10"/>
                     </q-card-section>
                     <q-card-actions align="right">
@@ -187,7 +180,7 @@
                   <q-card-section>
                     <q-input
                     label="Ingrese nueva marca"
-                    v-model= "newBrandName.name"
+                    v-model= "newBrandName"
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
@@ -213,7 +206,7 @@
                   <q-card-section>
                     <q-input
                     label= "Ingrese nueva característica"
-                    v-model= "newFeatureName.name"
+                    v-model= "newFeatureName"
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
@@ -221,8 +214,35 @@
                   </q-card-actions>
                 </q-card>
                 </q-dialog>
+                <div class="row q-mt-md" v-for="detailp in product.detail_product" :key="detailp.id">
+                    <div class="col">
+                        <q-select
+                            class="col q-mx-md"
+                                v-model= "detailp.characteristic['id']"
+                                :options= "optionsFeatures"
+                                label="Caracteristica"
+                                outlined
+                                color="red-10"
+                                option-value="id"
+                                option-label="name"
+                                map-options 
+                                >
+                                <template v-slot:append>
+                                    <q-btn round dense flat icon="add" @click.stop="showAddFeature = true" />
+                                </template>
+                        </q-select>
+                    </div>
+                    <div class="col q-ml-md">
+                        <q-input
+                            v-model="detailp.description"
+                            color="red-10"
+                            outlined
+                            label="valor">
+                        </q-input>
+                    </div>
+                </div>
                 <br>
-
+                
                 <div class="row q-mt-md" v-for="(item,index) in items" :key="item.id">
                   <div class="col">
                     <q-select
@@ -266,40 +286,43 @@
                   </div>
                 </div>
               </div>
-              <q-btn color="indigo-10" type="submit" label="Crear Producto" class="q-pa-xs q-mt-md q-mr-md float-right"/>
+              <q-btn color="red-10" label="Guardar Cambios" class="q-pa-xs q-mt-md q-mr-md float-right" @click="updateProduct()"/>
               <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushDetail()"/>
               <!--<q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushImagenes()"/>-->
             </form>
         </div>
+        <br><br>
       </div>
   </q-page>
 </template>
 
+
 <script lang="ts">
 import Vue from 'vue'
 import ProductsService from '../../services/products/products.service'
-import FeaturesService from '../../services/features/features.service'
 import BrandsService from '../../services/brands/brands.service'
 import CategoriesService from '../../services/categories/categories.service'
+import FeaturesService from '../../services/features/features.service'
 import axios from 'axios'
-import Characteristic from 'src/models/features/Feature'
 import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
-    var productCategory : any = null
-    var productBrand : any = null
     var productFeature : any = null
+    var productBrand : any = null
+    var productCategory : any = null
     return {
       product : {
-      name: '',
-      description: '',
-      image: '',
-      price: null,
-      coin: '',
-      category: null,
-      brand: null,
-      count: null
+        id: this.$router.currentRoute.params.id,
+        name: null,
+        description: null,
+        image: null,
+        price: null,
+        coin: null,
+        quantity: null,
+        category: null,
+        brand: null,
+        detail_product: new Array()
       },
       productName: '',
       productBrand,
@@ -311,179 +334,97 @@ export default Vue.extend({
       productPrice:null,
       productCoin:null,
       productQuantity:null,
-      newCategoryName:{
-        name: '',
-      },
-      newBrandName:{
-        name: '',
-      },
-      newFeatureName:{
-        name: ''
-      },
-      selected: '', 
       optionsBrands: [],
       optionsCategories: [],
-      optionsFeatures: [],
-      valueBrands: '',
-      valueCategories: '',
-      valueFeatures: '',
-      limit: 25,
-      offset: 0,
-      name: '',
-      model: null,
-      optionsMoneda: [
+       optionsMoneda: [
         'USD', 'BsS'
       ],
-      text: '',
-      dense: false,
-      denseOpts: false,
-      precio: 0,
-      description: '',
-      showAddCategory: false,
-      showAddBrand: false,
-      showAddFeature: false,
-      modelCantidad: '',
-      nameProducto: '', 
-      moneda: '',
-      image: '',
-      selectedFile: null,
-      showInput: false,
-     items:new Array(),
-     item:{
+      items:new Array(),
+      item:{
       //  characteristic: null,
       //  description: ''
       },
-    images: new Array(),
-    itemI:{},
+      images: new Array(),
+      selectedFile: null,
+      newCategoryName: '',
+      newBrandName: '',
+      detailProduct: new Array(),
+      productDetail: '',
+      newFeatureName: '',
+      optionsFeatures: [],
+      valueFeatures: '',
+      limit: 25,
+      offset: 0,
+      showAddFeature: false,
+      showAddCategory: false,
+      showAddBrand: false,
+      detailPrueba: {
+        producto: null,
+        characteristic: null,
+        description: ''
+      },
+      
+ 
+
     }
   },
-  mounted (){
-    const vm = this;
-    vm.onRequest();
+  beforeMount(){
+    this.onInit(this.$router.currentRoute.params.id);
+    this.onRequest()
   },
+
   methods: {
+    onInit(id: any){
+        let subscription = ProductsService.getProduct(id).subscribe( {
+            next: (data:any) => {
+              console.log(data)
+            this.product = data
+            },
+            complete: () => console.log('[complete]'),
+        })
+    }, 
     onRequest(){
-      let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
+       let subscription = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
         next: (data: any) => {
-          // console.log(data)
-          this.optionsBrands = data.results
-        },
-      })
-       let subscription2 = CategoriesService.getCategories(this.limit, this.offset).subscribe({
-        next: (data: any) => {
-          // console.log(data)
-          this.optionsCategories = data.results
-        },
-      })
-      let subscription3 = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
-        next: (data: any) => {
-          // console.log(data)
           this.optionsFeatures = data.results
         },
       })
-    },
-    addBrand(){
-      let subscription = BrandsService.createBrand(this.newBrandName).subscribe({
-        next: () => {
-          setTimeout(() => this.backToProducts(), 500);
+      let subscription2 = CategoriesService.getCategories(this.limit, this.offset).subscribe({
+        next: (data: any) => {
+          this.optionsCategories = data.results
         },
-        complete: () => console.log('completado'),
       })
-    },
-    addCategorie(){
-      let subscription = CategoriesService.createCategory(this.newCategoryName).subscribe({
-        next: () => {
-          setTimeout(() => this.backToProducts(), 500);
+      let subscription3 = BrandsService.getBrands(this.limit, this.offset).subscribe({
+        next: (data: any) => {
+          this.optionsBrands = data.results
         },
-        complete: () => console.log('completado'),
       })
     },
     addFeature(){
-      let subscription = FeaturesService.createFeature(this.newFeatureName).subscribe({
+      let subscription2 = FeaturesService.createFeature(this.newFeatureName).subscribe({
         next: () => {
-          
           setTimeout(() => this.backToProducts(), 500);
         },
-        complete: () => console.log('[complete]'),
+        complete: () => console.log('completado'),
       })
     },
-    onSubmit () {
-      this.$refs.productName.validate()
-      this.$refs.productCategory.validate()
-      this.$refs.productBrand.validate()
-      this.$refs.productDescription.validate()
-      this.$refs.productImage.validate()
-      this.$refs.productPrice.validate()
-      this.$refs.productCoin.validate()
-      this.$refs.productQuantity.validate()
 
-      if (this.$refs.productName.hasError || 
-          this.$refs.productCategory.hasError ||
-          this.$refs.productBrand.hasError ||
-          this.$refs.productDescription.hasError ||
-          this.$refs.productImage.hasError ||
-          this.$refs.productPrice.hasError ||
-          this.$refs.productCoin.hasError ||
-          this.$refs.productQuantity.hasError) {
-        this.formHasError = true
-      }else {
-        this.createProduct()
+    prueba(){
+      var prueba = {
+        product: this.$router.currentRoute.params.id,
+        characteristic: this.productFeature.id,
+        description: this.productDetail
       }
+      this.detailProduct.push(prueba)
+       console.log(this.detailProduct)
+
+      this.productFeature = "",
+      this.productDetail = ""
     },
-    createProduct(){
-      let vm = this
-
-      var reader = new FileReader()
-      reader.readAsDataURL(vm.productImage)
-      reader.onload = () => {
-        //console.log('file to base64 result:' + reader.result)
-        let iconBase64 = reader.result
-        let product = {
-          name: vm.productName,
-          description : vm.productDescription,
-          image : iconBase64,
-          price : vm.productPrice,
-          coin : vm.productCoin,
-          brand : vm.productBrand.id,
-          category : vm.productCategory.id,
-          quantity : vm.productQuantity,
-          detail : vm.items
-        }
-
-        var features = []
-
-        for(let item of vm.items){
-          features.push({
-            "feature" : item.characteristic.id,
-            "description" : item.description
-          })
-        }
-
-        let dataPost = {
-          "product" : product,
-          "features" : features
-        }
-
-        Loading.show()
-        
-        var subscription = ProductsService.createProduct(dataPost).subscribe({
-        next: () => {
-          Loading.hide()
-          setTimeout(() => this.backToProducts(), 500);
-        },
-          complete: () => {},
-        })
-      }
-      reader.onerror = function (error) {
-        this.$q.notify({
-          color: 'negative',
-          message: error
-        })
-      }
-    },
+   
     productos(){
       {
-        axios.get('http://localhost:8000/panel/features/')
+        axios.get('http://localhost:8000/panel/products/product-detail/1/')
         .then((response: { data: any })=>{
           console.log(response.data)
         })
@@ -492,8 +433,87 @@ export default Vue.extend({
         })
       }
     },
-    showHide(){
-      this.showInput = !this.showInput
+    onSubmit () {
+      this.$refs.product.name.validate()
+      this.$refs.product.category.validate()
+      this.$refs.product.brand.validate()
+      this.$refs.product.description.validate()
+      this.$refs.product.image.validate()
+      this.$refs.product.price.validate()
+      this.$refs.product.coin.validate()
+      this.$refs.product.quantity.validate()
+
+      if (this.$refs.product.name.hasError || 
+          this.$refs.product.category.hasError ||
+          this.$refs.product.brand.hasError ||
+          this.$refs.product.description.hasError ||
+          this.$refs.product.image.hasError ||
+          this.$refs.product.price.hasError ||
+          this.$refs.product.coin.hasError ||
+          this.$refs.product.quantity.hasError) {
+        this.formHasError = true
+      }else {
+        this.updateProduct()
+      }
+    },
+    updateProduct(){
+     let vm = this
+    //   var reader = new FileReader()
+    //   reader.readAsDataURL(vm.productImage)
+    //   reader.onload = () => {
+    //     let iconBase64 = reader.result
+        let product = {
+          id: vm.product.id,
+          name: vm.product.name,
+          description : vm.product.description,
+        //   image : iconBase64,
+          price : vm.product.price,
+          coin : vm.product.coin,
+          brand : vm.product.brand,
+          category : vm.product.category,
+          quantity : vm.product.quantity,
+          detail : vm.product.detail_product,
+        }
+                var features = []
+                var new_features = []
+
+        for(let item of vm.product.detail_product){
+          features.push({
+            "id" : item.id,  
+            "feature" : (item.characteristic['id'].id !=null)?item.characteristic['id'].id:item.characteristic['id'],
+            "description" : item.description
+          })
+        }
+
+        for(let item of vm.items){
+          new_features.push({
+            "feature" : item.characteristic.id,
+            "description" : item.description
+          })
+        }
+
+        let dataPost = {
+          "product" : product,
+          "features" : features,
+          "new_features" : new_features
+        }
+
+        Loading.show()
+        console.log(dataPost)
+        var subscription = ProductsService.updateProduct(dataPost, this.product.id).subscribe({
+        next: () => {
+          Loading.hide()
+          setTimeout(() => this.backToProducts(), 500);
+        },
+          complete: () => {},
+        })
+    //   }
+    //    reader.onerror = function (error) {
+    //     this.$q.notify({
+    //       color: 'negative',
+    //       message: error
+    //     })
+    //   }
     },
     pushDetail() {
       this.item = {
@@ -504,21 +524,11 @@ export default Vue.extend({
       this.items.push(this.item);
      
     },
-
-    pushImagenes(){
-      this.itemI = {
-        images: this.productImages,
-      };
-
-      this.images.push(this.itemI);
-    },
-
-    backToProducts(){
-      this.$router.back();
-    },
-
     removeCharacteristic(position){
         this.items.splice(position,1)
+    },
+    backToProducts(){
+      this.$router.back();
     }
   }
 })
