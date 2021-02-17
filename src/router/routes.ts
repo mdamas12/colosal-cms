@@ -79,6 +79,16 @@ const routes: RouteConfig[] = [
           { name: 'CustomerCreate', path: 'create', component: () => import('pages/customers/CustomerCreate.vue') }
         ]
       },
+      {
+        name: 'Promotions',
+        path: 'promotions',
+        component: () => import('pages/Promotions.vue'),
+        children: [
+          { name: 'PromotionList', path: '', component: () => import('pages/promotions/PromotionList.vue') },
+          { name: 'PromotionDetail', path: 'detail/:id', component: () => import('pages/promotions/PromotionDetail.vue') },
+          { name: 'PromotionCreate', path: 'create', component: () => import('pages/promotions/PromotionCreate.vue') }
+        ]
+      }
     ]
   },
 
