@@ -48,7 +48,37 @@ const routes: RouteConfig[] = [
           { name: 'FeatureDetail', path: 'detail/:id', component: () => import('pages/features/FeatureDetail.vue') },
           { name: 'FeatureCreate', path: 'create', component: () => import('pages/features/FeatureCreate.vue') }
         ]
-      }
+      },
+      {
+        name: 'Suppliers',
+        path: 'suppliers',
+        component: () => import('pages/Suppliers.vue'),
+        children: [
+          { name: 'SupplierList', path: '', component: () => import('pages/supplier/SupplierList.vue') },
+          { name: 'SupplierDetail', path: 'detail/:id', component: () => import('pages/supplier/SupplierDetail.vue') },
+          { name: 'SupplierCreate', path: 'create', component: () => import('pages/supplier/SupplierCreate.vue') }
+        ]
+      },
+      {
+        name: 'SupplyOrders',
+        path: 'supplyOrders',
+        component: () => import('pages/SupplyOrders.vue'),
+        children: [
+          { name: 'SupplyOrderList', path: '', component: () => import('pages/supplyOrders/SupplyOrderList.vue') },
+          { name: 'SupplyOrderDetail', path: 'detail/:id', component: () => import('pages/supplyOrders/SupplyOrderDetail.vue') },
+          { name: 'SupplyOrderCreate', path: 'create', component: () => import('pages/supplyOrders/SupplyOrderCreate.vue') }
+        ]
+      },
+      {
+        name: 'Customers',
+        path: 'customers',
+        component: () => import('pages/Customers.vue'),
+        children: [
+          { name: 'CustomerList', path: '', component: () => import('pages/customers/CustomerList.vue') },
+          { name: 'CustomerDetail', path: 'detail/:id', component: () => import('pages/customers/CustomerDetail.vue') },
+          { name: 'CustomerCreate', path: 'create', component: () => import('pages/customers/CustomerCreate.vue') }
+        ]
+      },
     ]
   },
 

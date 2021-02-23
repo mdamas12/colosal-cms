@@ -1,0 +1,125 @@
+<template>
+  <q-page>
+    <div class="row q-pa-sm q-pl-lg q-pr-lg">
+      <div class="col-md-12 col-xs-12 q-pt-lg">
+        <div class="row col-xs-12 q-pb-xl">
+          <div class="col">
+            <h5 class="text-primary text-weight-bolder q-ma-none">
+              Compras a Proveedores
+            </h5>
+            <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} compras a proveedores almacenadas</small>
+            <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
+          </div>
+          <div class="col">
+              <q-btn color="primary" label="Crear compra a proveedor" class="q-pa-xs float-right" @click="$router.push({ name : 'SupplyOrderCreate'/* , params : {contact : contact }  */})"/>
+          </div>
+        </div>
+
+        <div class="q-pa-md">
+            <q-table
+              title="Compras a Proveedores"
+              :loading="loading"
+              :data="this.rows"
+              :columns="columns"
+              row-key="provider"
+              :pagination.sync="pagination"
+              hide-pagination
+              @row-click="onRowClick"
+            />
+
+          <div class="row justify-center q-mt-md">
+            <q-pagination
+              v-model="pagination.page"
+              color="grey-8"
+              :max="this.numberOfPages"
+              size="sm"
+              @click="onRequest()"
+            />
+          </div>
+        </div>       
+      </div>
+    </div>
+  </q-page>
+</template>
+
+<script>
+import { Loading } from 'quasar'
+import Vue from 'vue'
+import SupplyOrder from '../../models/supplyOrders/SupplyOrder'
+import SupplyOrdersPagination from '../../models/supplyOrders/SupplyOrdersPagination'
+ import SupplyOrdersService from '../../services/supplyOrders/supply-orders.service'
+
+export default Vue.extend({
+  meta: {
+    title: 'Categories - List'
+  },
+  data(){    
+    return {
+      loading: false,
+      pagination: {
+        // sortBy: 'desc',
+        // descending: false,
+        page: 1,
+        rowsPerPage: 25,
+        rowsNumber: 0
+      },
+      table: [0], 
+      limit: 25,
+      offset: 0,
+      count: 0,
+      currentPage: 1,
+      numberOfPages: 0,
+      columns: [
+        {
+          name: 'desc',
+          required: true,
+          label: "No.",
+          align: 'left',
+          field: row => row.id,
+          format: val => `${val}`,
+          sortable: false
+        },
+        { name: 'proveedor', align: 'center', label: 'Proveedor', field: 'provider', sortable: false, format: val => `${val.name}`},
+        { name: 'fecha', align: 'center', label: 'Fecha', field: 'date', sortable: false },
+        { name: 'referencia', align: 'center', label: 'Referencia', field: 'invoice', sortable: false },
+        { name: 'moneda', align: 'center', label: 'Moneda', field: 'coin', sortable: false },
+        { name: 'total', align: 'center', label: 'Total', field: 'amount', sortable: false, format: val => val.length <= 8 ? `$${val}`:`Bs.${val}`}, // acomodar esta lógica
+      ],
+      rows: []
+    }
+  },
+  mounted () {
+    const vm = this;
+    vm.onRequest();
+    vm.pagination.rowsNumber = vm.count;
+  },
+  methods: {
+    onRequest(){
+      this.loading = true;
+      console.log("pagination.page == "+ this.pagination.page);
+      this.pagination.currentPage = this.pagination.page;
+      this.offset = this.limit * (this.pagination.page - 1);
+      this.table.splice(0,1);
+      console.log(this.table);
+      this.table.splice(0,0,1);
+      console.log(`SupplyOrdersService.getSupplyOrders(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
+      let subscription = SupplyOrdersService.getSupplyOrders(this.limit, this.offset).subscribe({
+        next: data => {
+          console.log(data)
+          this.rows.splice(0, this.rows.length, ...data.results);
+          console.log(this.rows)
+          this.count = data.count
+          this.numberOfPages = Math.ceil(this.count / this.limit);
+          this.loading = false;
+        },
+        complete: () => console.log('[complete]'),
+      })
+      
+    },   
+    onRowClick (evt, row){
+      //console.log(`/supplyOrders/detail/${row.id}`);
+      this.$router.push({path: `/supplyOrders/detail/${row.id}`})
+    },
+  },
+})
+</script>
