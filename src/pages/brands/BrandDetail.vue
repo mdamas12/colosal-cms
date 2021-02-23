@@ -119,6 +119,7 @@ export default Vue.extend({
     onInit(id){
       let subscription = BrandsService.getBrand(id).subscribe( {
         next: data => {
+          console.log(data)
           this.brand = data
         },
         complete: () => console.log('[complete]'),

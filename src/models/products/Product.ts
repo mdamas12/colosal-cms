@@ -6,11 +6,9 @@ export default class Product {
     image: File;
     price:number;
     coin: string;
-    quantity: number ;
     category: number;
     brand: number ;
-    detail: []
-    
+    quantity: number ;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor (map:any) {
@@ -23,7 +21,5 @@ export default class Product {
       this.quantity = map.quantity as number
       this.category = map.category as number
       this.brand = map.brand as number
-      this.detail = map.brand as any
-     
     }
 }
