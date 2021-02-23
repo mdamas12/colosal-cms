@@ -101,6 +101,7 @@
 <script lang="js">
 import Vue from 'vue'
 import BrandsService from '../../services/brands/brands.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -117,26 +118,31 @@ export default Vue.extend({
   },
   methods: {
     onInit(id){
+      Loading.show()
       let subscription = BrandsService.getBrand(id).subscribe( {
         next: data => {
-          console.log(data)
+          Loading.hide()
           this.brand = data
         },
         complete: () => console.log('[complete]'),
       })
     },
     updateBrand(){
+      Loading.show()
       let subscription = BrandsService.updateBrand(this.brand).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
     },
     deleteBrand(){
+      Loading.show()
       let subscription = BrandsService.deleteBrand(this.brand.id).subscribe( {
         next: () => {
-          setTimeout(() => this.backToBrands(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })

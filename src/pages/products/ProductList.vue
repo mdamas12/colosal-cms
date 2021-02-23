@@ -11,7 +11,7 @@
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="indigo-10" label="Editar producto" class="float-right" @click="$router.push({ name : 'ProductsEdit'/* , params : {contact : contact }  */})"/>
+              <!--<q-btn color="indigo-10" label="Editar producto" class="float-right" @click="$router.push({ name : 'ProductsEdit'/* , params : {contact : contact }  */})"/>-->
               <q-btn color="red-10" label="Crear producto" class="float-right" @click="$router.push({ name : 'ProductsCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
@@ -224,7 +224,7 @@ export default Vue.extend({
     },   
     onRowClick (evt, row){
       //console.log(`/categories/detail/${row.id}`);
-      this.$router.push({path: `/products/detail/${row.id}`})
+      this.$router.push({path: `/products/edit/${row.id}`})
     },
     
     detailProduct(id){

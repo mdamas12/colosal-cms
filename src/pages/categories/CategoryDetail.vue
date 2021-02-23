@@ -105,6 +105,7 @@
 <script lang="js">
 import Vue from 'vue'
 import CategoriesService from '../../services/categories/categories.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -121,25 +122,31 @@ export default Vue.extend({
   },
   methods: {
     onInit(id){
+      Loading.show()
       let subscription = CategoriesService.getCategory(id).subscribe( {
         next: data => {
+          Loading.hide()
           this.category = data
         },
         complete: () => console.log('[complete]'),
       })
     },
     updateCategory(){
+      Loading.show()
       let subscription = CategoriesService.updateCategory(this.category).subscribe( {
         next: () => {
-          setTimeout(() => this.backToCategories(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
     },
     deleteCategory(){
+      Loading.show()
       let subscription = CategoriesService.deleteCategory(this.category.id).subscribe( {
         next: () => {
-          setTimeout(() => this.backToCategories(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })

@@ -62,7 +62,7 @@ v-model="leftDrawerOpen"
           v-bind="link"
           v-ripple
           clickable
-          
+          @click="goTo(link.namePath)"
         >
         <!-- colocar lo siguiente en la linea 65":replace="{ name: link.to }"" -->
         <q-item-section avatar>
@@ -112,14 +112,14 @@ export default Vue.extend({
     return {
       showProfile: false,
       menu: [
-        { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Customers' },
-        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
-        { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
-        { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
-        { title: 'Características', caption: 'quasar.dev', icon: 'storage', to: 'Features' },
-        { title: 'Proveedores', caption: 'quasar.dev', icon: 'contacts', to: 'Suppliers' },
-        { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'shop_two', to: 'SupplyOrders' },
-        { title: 'Promociones', caption: 'quasar.dev', icon: 'emoji_events', to: 'Promotions' }
+        { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', namePath: 'Customers' },
+        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', namePath: 'Products' },
+        { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', namePath: 'Brands' },
+        { title: 'Categorias', caption: 'quasar.dev', icon: 'category', namePath: 'Categories' },
+        { title: 'Características', caption: 'quasar.dev', icon: 'storage', namePath: 'Features' },
+        { title: 'Proveedores', caption: 'quasar.dev', icon: 'contacts', namePath: 'Suppliers' },
+        { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'shop_two', namePath: 'SupplyOrders' },
+        { title: 'Promociones', caption: 'quasar.dev', icon: 'emoji_events', namePath: 'Promotions' }
       ],
       profile: {
         nombre: 'Hola',
@@ -135,6 +135,9 @@ export default Vue.extend({
     logOut () {
       // this.$store.dispatch("auth/logout");
       // this.$router.push("/login");
+    },
+    goTo(namePath : string){
+      this.$router.push({name : namePath})
     }
   }
 })

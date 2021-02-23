@@ -111,7 +111,8 @@ export default Vue.extend({
     },   
     onRowClick (evt, row){
       //console.log(`/categories/detail/${row.id}`);
-      this.$router.push({path: `/categories/detail/${row.id}`})
+      this.$router.push({name : 'CategoryDetail', params : {id : row.id}})
+      //this.$router.push({path: `/categories/detail/${row.id}`})
     },
   },
 })
