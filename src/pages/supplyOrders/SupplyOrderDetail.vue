@@ -261,8 +261,8 @@ export default Vue.extend({
     },
     removeProduct(index){
       if (this.order.detail.length > 1){
-        this.order.detail = this.order.detail.splice(index,1);
-        this.productNameModel = this.productNameModel.splice(index,1)
+        this.order.detail.splice(index,1);
+        this.productNameModel.splice(index,1)
       }
     },
     updateSupplyOrder(){

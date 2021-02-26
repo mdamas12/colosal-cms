@@ -12,7 +12,7 @@ const routes: RouteConfig[] = [
         component: () => import('pages/Products.vue'),
         children: [
           { name: 'ProductsList', path: '', component: () => import('pages/products/ProductList.vue') },
-          { name: 'ProductsCreate', path: 'create', component: () => import('pages/products/ProductCreate.vue') },
+          // { name: 'ProductsCreate', path: 'create', component: () => import('pages/products/ProductCreate.vue') },
           { name: 'ProductsEdit', path: ':id', component: () => import('pages/products/ProductEdit.vue') },
           { name: 'ProductsDetail', path: 'detail/:id', component: () => import('pages/products/ProductDetail.vue') },
           { name: 'ProductsGallery', path: ':id', component: () => import('pages/products/ProductEdit.vue') },
@@ -87,6 +87,16 @@ const routes: RouteConfig[] = [
           { name: 'PromotionList', path: '', component: () => import('pages/promotions/PromotionList.vue') },
           { name: 'PromotionDetail', path: 'detail/:id', component: () => import('pages/promotions/PromotionDetail.vue') },
           { name: 'PromotionCreate', path: 'create', component: () => import('pages/promotions/PromotionCreate.vue') }
+        ]
+      },
+      {
+        name: 'Sales',
+        path: 'sales',
+        component: () => import('pages/Sales.vue'),
+        children: [
+          { name: 'SalesList', path: '', component: () => import('pages/sales/SalesList.vue') },
+          // { name: 'SalesDetail', path: 'detail/:id', component: () => import('pages/sales/SalesDetail.vue') },
+          { name: 'SalesCreate', path: 'create', component: () => import('pages/sales/SalesCreate.vue') }
         ]
       }
     ]

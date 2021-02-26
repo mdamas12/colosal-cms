@@ -160,7 +160,7 @@
                     <q-card-section>
                       <q-input
                       label="Ingrese nueva categoría"
-                      v-model= "newCategoryName"
+                      v-model= "newCategoryName.name"
                       color="grey-10"/>
                     </q-card-section>
                     <q-card-actions align="right">
@@ -187,7 +187,7 @@
                   <q-card-section>
                     <q-input
                     label="Ingrese nueva marca"
-                    v-model= "newBrandName"
+                    v-model= "newBrandName.name"
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
@@ -213,7 +213,7 @@
                   <q-card-section>
                     <q-input
                     label= "Ingrese nueva característica"
-                    v-model= "newFeatureName"
+                    v-model= "newFeatureName.name"
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
@@ -311,9 +311,15 @@ export default Vue.extend({
       productPrice:null,
       productCoin:null,
       productQuantity:null,
-      newCategoryName: '',
-      newBrandName: '',
-      newFeatureName: '',
+      newCategoryName:{
+        name: '',
+      },
+      newBrandName:{
+        name: '',
+      },
+      newFeatureName:{
+        name: ''
+      },
       selected: '', 
       optionsBrands: [],
       optionsCategories: [],
@@ -395,6 +401,7 @@ export default Vue.extend({
     addFeature(){
       let subscription = FeaturesService.createFeature(this.newFeatureName).subscribe({
         next: () => {
+          
           setTimeout(() => this.backToProducts(), 500);
         },
         complete: () => console.log('[complete]'),
@@ -406,6 +413,7 @@ export default Vue.extend({
       this.$refs.productBrand.validate()
       this.$refs.productDescription.validate()
       this.$refs.productImage.validate()
+      this.$refs.productPrice.validate()
       this.$refs.productCoin.validate()
       this.$refs.productQuantity.validate()
 
@@ -414,6 +422,7 @@ export default Vue.extend({
           this.$refs.productBrand.hasError ||
           this.$refs.productDescription.hasError ||
           this.$refs.productImage.hasError ||
+          this.$refs.productPrice.hasError ||
           this.$refs.productCoin.hasError ||
           this.$refs.productQuantity.hasError) {
         this.formHasError = true

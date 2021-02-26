@@ -1,14 +1,14 @@
 import { Observable } from 'rxjs'
 import axios from 'axios'
-import CustomersPagination from '../../models/customers/CustomersPagination'
+// import SalesPagination from '../../models/sales/SalesPagination'
 
 const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-class CustomersService {
-  getCustomers (){
+class SalesService {
+  getSales (){
     return Observable.create((observer) => {
-      axios.get(API_URL + `customers/`)
+      axios.get(API_URL + `sales/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -19,9 +19,9 @@ class CustomersService {
     })
   }
 
-  createCustomer(newCustomer){
+  createSale(newSale){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'customers/',{fullname: newCustomer.fullname, email: newCustomer.email, phone: newCustomer.phone, password: newCustomer.password})
+      axios.post(API_URL + 'sales/sale-panel/',{sale: newSale.sale, sale_detail: newSale.sale_detail})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -32,10 +32,10 @@ class CustomersService {
     })
   }
 
-  getCustomer (id){
+  getSale (id){
     return Observable.create((observer) => {
       console.log("id: "+id);
-      axios.get(API_URL + `providers/${id}/`)
+      axios.get(API_URL + `sales/detail/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -46,9 +46,9 @@ class CustomersService {
     })
   }
 
-  updateCustomer(newCustomer){
+  updateSale(newSale){
     return Observable.create((observer) => {
-      axios.put(API_URL + `providers/${newCustomer.id}/`,{fullname: newCustomer.fullname, email: newCustomer.email, phone: newCustomer.phone, password: newCustomer.password})
+      axios.put(API_URL + `sales/detail/${newSale.id}/`,{sale: newSale.sale, sale_detail: newSale.sale_detail})
         .then((response) => {
           console.log();
           observer.complete()
@@ -59,11 +59,24 @@ class CustomersService {
     })
   }
 
-  deleteCustomer (id){
+  updateSaleStatus(id, value){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `providers/${id}/`)
+      axios.put(API_URL + `sales/detail/${id}/`,{sale: {status: value}})
         .then((response) => {
-          console.log(response);
+          console.log();
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
+  deleteSale (id){
+    return Observable.create((observer) => {
+      axios.delete(API_URL + `sales/detail/${id}/`)
+        .then((response) => {
+          console.log();
           observer.complete()
         })
         .catch((error) => {
@@ -73,4 +86,4 @@ class CustomersService {
   }
 }
 
-export default new CustomersService()
+export default new SalesService()
