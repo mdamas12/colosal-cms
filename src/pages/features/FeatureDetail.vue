@@ -106,6 +106,7 @@
 <script lang="js">
 import Vue from 'vue'
 import FeaturesService from '../../services/features/features.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -122,25 +123,31 @@ export default Vue.extend({
   },
   methods: {
     onInit(id){
+      Loading.show()
       let subscription = FeaturesService.getFeature(id).subscribe( {
         next: data => {
+          Loading.hide()
           this.feature = data
         },
         complete: () => console.log('[complete]'),
       })
     },
     updateFeature(){
+      Loading.show()
       let subscription = FeaturesService.updateFeature(this.feature).subscribe( {
         next: () => {
-          setTimeout(() => this.backToFeatures(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
     },
     deleteFeature(){
+      Loading.show()
       let subscription = FeaturesService.deleteFeature(this.feature.id).subscribe( {
         next: () => {
-          setTimeout(() => this.backToFeatures(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })

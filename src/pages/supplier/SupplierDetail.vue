@@ -130,6 +130,7 @@
 <script lang="js">
 import Vue from 'vue'
 import SuppliersService from '../../services/suppliers/suppliers.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -150,25 +151,31 @@ export default Vue.extend({
   },
   methods: {
     onInit(id){
+      Loading.show()
       let subscription = SuppliersService.getSupplier(id).subscribe( {
         next: data => {
+          Loading.hide()
           this.supplier = data
         },
         complete: () => console.log('[complete]'),
       })
     },
     updateSupplier(){
+      Loading.show()
       let subscription = SuppliersService.updateSupplier(this.supplier).subscribe( {
         next: () => {
-          setTimeout(() => this.backToSuppliers(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
     },
     deleteSupplier(){
+      Loading.show()
       let subscription = SuppliersService.deleteSupplier(this.supplier.id).subscribe( {
         next: () => {
-          setTimeout(() => this.backToSuppliers(), 500);
+          Loading.hide()
+          this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })

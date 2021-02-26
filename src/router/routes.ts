@@ -9,19 +9,25 @@ const routes: RouteConfig[] = [
       {
         name: 'Products',
         path: 'products',
+        redirect: {
+          name: 'ProductsList'
+        },
         component: () => import('pages/Products.vue'),
         children: [
           { name: 'ProductsList', path: '', component: () => import('pages/products/ProductList.vue') },
-          // { name: 'ProductsCreate', path: 'create', component: () => import('pages/products/ProductCreate.vue') },
-          { name: 'ProductsEdit', path: ':id', component: () => import('pages/products/ProductEdit.vue') },
+          { name: 'ProductsCreate', path: 'create', component: () => import('pages/products/ProductCreate.vue') },
+          { name: 'ProductsEdit', path: 'edit', component: () => import('pages/products/ProductEdit.vue') },
+          { name: 'ProductsSingleEdit', path: 'edit/:id', component: () => import('pages/products/ProductSingleEdit.vue') },
           { name: 'ProductsDetail', path: 'detail/:id', component: () => import('pages/products/ProductDetail.vue') },
-          { name: 'ProductsGallery', path: ':id', component: () => import('pages/products/ProductEdit.vue') },
 
         ]
       },
       {
         name: 'Categories',
         path: 'categories',
+        redirect: {
+          name: 'CategoryList'
+        },
         component: () => import('pages/Categories.vue'),
         children: [
           { name: 'CategoryList', path: '', component: () => import('pages/categories/CategoryList.vue') },
@@ -33,6 +39,9 @@ const routes: RouteConfig[] = [
         name: 'Brands',
         path: 'brands',
         component: () => import('pages/Brand.vue'),
+        redirect: {
+          name: 'BrandList'
+        },
         children: [
           { name: 'BrandList', path: '', component: () => import('pages/brands/BrandList.vue') },
           { name: 'BrandDetail', path: 'detail/:id', component: () => import('pages/brands/BrandDetail.vue') },
@@ -43,6 +52,9 @@ const routes: RouteConfig[] = [
         name: 'Features',
         path: 'features',
         component: () => import('pages/Features.vue'),
+        redirect: {
+          name: 'FeatureList'
+        },
         children: [
           { name: 'FeatureList', path: '', component: () => import('pages/features/FeatureList.vue') },
           { name: 'FeatureDetail', path: 'detail/:id', component: () => import('pages/features/FeatureDetail.vue') },
@@ -53,6 +65,9 @@ const routes: RouteConfig[] = [
         name: 'Suppliers',
         path: 'suppliers',
         component: () => import('pages/Suppliers.vue'),
+        redirect: {
+          name: 'SupplierList'
+        },
         children: [
           { name: 'SupplierList', path: '', component: () => import('pages/supplier/SupplierList.vue') },
           { name: 'SupplierDetail', path: 'detail/:id', component: () => import('pages/supplier/SupplierDetail.vue') },
@@ -63,6 +78,9 @@ const routes: RouteConfig[] = [
         name: 'SupplyOrders',
         path: 'supplyOrders',
         component: () => import('pages/SupplyOrders.vue'),
+        redirect: {
+          name: 'SupplyOrderList'
+        },
         children: [
           { name: 'SupplyOrderList', path: '', component: () => import('pages/supplyOrders/SupplyOrderList.vue') },
           { name: 'SupplyOrderDetail', path: 'detail/:id', component: () => import('pages/supplyOrders/SupplyOrderDetail.vue') },
@@ -73,6 +91,9 @@ const routes: RouteConfig[] = [
         name: 'Customers',
         path: 'customers',
         component: () => import('pages/Customers.vue'),
+        redirect: {
+          name: 'CustomerList'
+        },
         children: [
           { name: 'CustomerList', path: '', component: () => import('pages/customers/CustomerList.vue') },
           { name: 'CustomerDetail', path: 'detail/:id', component: () => import('pages/customers/CustomerDetail.vue') },
@@ -83,6 +104,9 @@ const routes: RouteConfig[] = [
         name: 'Promotions',
         path: 'promotions',
         component: () => import('pages/Promotions.vue'),
+        redirect: {
+          name: 'PromotionList'
+        },
         children: [
           { name: 'PromotionList', path: '', component: () => import('pages/promotions/PromotionList.vue') },
           { name: 'PromotionDetail', path: 'detail/:id', component: () => import('pages/promotions/PromotionDetail.vue') },

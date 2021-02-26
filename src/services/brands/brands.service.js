@@ -51,7 +51,7 @@ class BrandsService {
     return Observable.create((observer) => {
       axios.put(API_URL + `brands/${newBrand.id}/`,{name: newBrand.name})
         .then((response) => {
-          console.log();
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {

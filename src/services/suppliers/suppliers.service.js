@@ -24,6 +24,7 @@ class SuppliersService {
       axios.post(API_URL + 'providers/',{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, phone: newSupplier.phone, agent: newSupplier.agent})
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -51,6 +52,7 @@ class SuppliersService {
       axios.put(API_URL + `providers/${newSupplier.id}/`,{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, phone: newSupplier.phone, agent: newSupplier.agent})
         .then((response) => {
           console.log();
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -64,6 +66,7 @@ class SuppliersService {
       axios.delete(API_URL + `providers/${id}/`)
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {

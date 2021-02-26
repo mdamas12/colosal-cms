@@ -62,7 +62,7 @@ v-model="leftDrawerOpen"
           v-bind="link"
           v-ripple
           clickable
-          
+          @click="goTo(link.namePath)"
         >
         <!-- colocar lo siguiente en la linea 65":replace="{ name: link.to }"" -->
         <q-item-section avatar>
@@ -136,6 +136,9 @@ export default Vue.extend({
     logOut () {
       // this.$store.dispatch("auth/logout");
       // this.$router.push("/login");
+    },
+    goTo(namePath : string){
+      this.$router.push({name : namePath})
     }
   }
 })

@@ -11,9 +11,9 @@
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
+              <!--<q-btn color="indigo-10" label="Editar producto" class="float-right" @click="$router.push({ name : 'ProductsEdit'/* , params : {contact : contact }  */})"/>-->
               <q-btn color="red-10" label="Crear producto" class="float-right" @click="$router.push({ name : 'ProductsCreate'/* , params : {contact : contact }  */})"/>
           </div>
-          
         </div>
 
         <div class="col-md-12 col-xs-12 q-pt-lg">
@@ -182,8 +182,8 @@ export default Vue.extend({
         { name: 'price', align: 'center', label: 'Precio', field: 'price', sortable: false, /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
         { name: 'coin', align: 'center', label: 'Moneda', field: 'coin', sortable: false, /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
         { name: 'quantity', align: 'center', label: 'Cantidad', field: 'quantity', sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'category', align: 'center', label: 'Categoria', field: row => row.name, sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'brand', align: 'center', label: 'Marca', sortable: false, field: row => row.name /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
+        { name: 'category', align: 'center', label: 'Categoria', field: row => row.category.name, sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
+        { name: 'brand', align: 'center', label: 'Marca', sortable: false, field: row => row.brand.name /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
       ],
       rows: []
     }
@@ -224,7 +224,7 @@ export default Vue.extend({
     },   
     onRowClick (evt, row){
       //console.log(`/categories/detail/${row.id}`);
-      this.$router.push({path: `/products/${row.id}`})
+      this.$router.push({path: `/products/edit/${row.id}`})
     },
     
     detailProduct(id){
