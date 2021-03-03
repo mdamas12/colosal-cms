@@ -88,16 +88,16 @@ const routes: RouteConfig[] = [
         ]
       },
       {
-        name: 'Customers',
-        path: 'customers',
-        component: () => import('pages/Customers.vue'),
+        name: 'Users',
+        path: 'users',
+        component: () => import('pages/Users.vue'),
         redirect: {
-          name: 'CustomerList'
+          name: 'UserList'
         },
         children: [
-          { name: 'CustomerList', path: '', component: () => import('pages/customers/CustomerList.vue') },
-          { name: 'CustomerDetail', path: 'detail/:id', component: () => import('pages/customers/CustomerDetail.vue') },
-          { name: 'CustomerCreate', path: 'create', component: () => import('pages/customers/CustomerCreate.vue') }
+          { name: 'UserList', path: '', component: () => import('pages/users/UserList.vue') },
+          { name: 'UserDetail', path: 'detail/:id', component: () => import('pages/users/UserDetail.vue') },
+          { name: 'UserCreate', path: 'create', component: () => import('pages/users/UserCreate.vue') }
         ]
       },
       {

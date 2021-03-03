@@ -112,7 +112,7 @@ export default Vue.extend({
     return {
       showProfile: false,
       menu: [
-        { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Customers' },
+        { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Users' },
         { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
         { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
         { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
@@ -120,7 +120,7 @@ export default Vue.extend({
         { title: 'Proveedores', caption: 'quasar.dev', icon: 'contacts', to: 'Suppliers' },
         { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'shop_two', to: 'SupplyOrders' },
         { title: 'Promociones', caption: 'quasar.dev', icon: 'emoji_events', to: 'Promotions' },
-        { title: 'Ventas', caption: 'quasar.dev', icon: 'sell', to: 'Sales' }
+        { title: 'Ventas', caption: 'quasar.dev', icon: 'local_offer', to: 'Sales' }
       ],
       profile: {
         nombre: 'Hola',

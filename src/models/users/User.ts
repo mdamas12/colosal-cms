@@ -1,4 +1,4 @@
-export default class Customer {
+export default class User {
 	id: number;           // id del proveedor
 	fullname: string;  // nombre de la empresa, ej: Galuapps
 	username: string;      // nombre de algún contacto de la empresa, ej: Daniella Cova

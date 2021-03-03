@@ -13,7 +13,7 @@ import Vue from 'vue'
 
 export default Vue.extend({
   meta: {
-    title: 'Customers'
+    title: 'Users'
   },
   data () {
     return {

@@ -1,14 +1,13 @@
 import { Observable } from 'rxjs'
 import axios from 'axios'
-import CustomersPagination from '../../models/customers/CustomersPagination'
+import UsersPagination from '../../models/users/UsersPagination'
 
-const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
-// const API_URL_SIGN = process.env.API_SASS+'/dsign/';
+const API_URL = 'http://localhost:8000/'
 
-class CustomersService {
-  getCustomers (){
+class UsersService {
+  getUsers (limit, offset){
     return Observable.create((observer) => {
-      axios.get(API_URL + `customers/`)
+      axios.get(API_URL + `users/?limit=${limit}&offset=${offset}`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -19,9 +18,9 @@ class CustomersService {
     })
   }
 
-  createCustomer(newCustomer){
+  createUser(newUser){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'customers/',{fullname: newCustomer.fullname, email: newCustomer.email, phone: newCustomer.phone, password: newCustomer.password})
+      axios.post(API_URL + 'users/',{is_superuser: newUser.is_superuser, username: newUser.username, first_name: newUser.first_name, last_name: newUser.last_name, email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -32,10 +31,10 @@ class CustomersService {
     })
   }
 
-  getCustomer (id){
+  getUser (id){
     return Observable.create((observer) => {
       console.log("id: "+id);
-      axios.get(API_URL + `providers/${id}/`)
+      axios.get(API_URL + `users/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -46,9 +45,9 @@ class CustomersService {
     })
   }
 
-  updateCustomer(newCustomer){
+  updateUser(newUser){
     return Observable.create((observer) => {
-      axios.put(API_URL + `providers/${newCustomer.id}/`,{fullname: newCustomer.fullname, email: newCustomer.email, phone: newCustomer.phone, password: newCustomer.password})
+      axios.put(API_URL + `users/${newUser.id}/`,{username: newUser.username, first_name: newUser.first_name, last_name: newUser.last_name})
         .then((response) => {
           console.log();
           observer.complete()
@@ -59,9 +58,9 @@ class CustomersService {
     })
   }
 
-  deleteCustomer (id){
+  deleteUser (id){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `providers/${id}/`)
+      axios.delete(API_URL + `users/${id}/`)
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -73,4 +72,4 @@ class CustomersService {
   }
 }
 
-export default new CustomersService()
+export default new UsersService()

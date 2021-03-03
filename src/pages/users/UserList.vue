@@ -4,20 +4,19 @@
       <div class="col-md-12 col-xs-12 q-pt-lg">
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
-            <h5 class="text-primary text-weight-bolder q-ma-none">
+            <h5 class="text-indigo-10 text-weight-bolder q-ma-none">
               Usuarios
             </h5>
             <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} usuarios almacenados</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="primary" label="Crear usuario" class="float-right" @click="$router.push({ name : 'CustomerCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="red-10" label="Crear usuario" class="float-right q-pa-xs" @click="$router.push({ name : 'UserCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
         <div class="q-pa-md">
             <q-table
-              title="Usuario"
               :loading="loading"
               :data="this.rows"
               :columns="columns"
@@ -45,9 +44,9 @@
 <script>
 import { Loading } from 'quasar'
 import Vue from 'vue'
-import Customer from '../../models/customers/Customer'
-import CustomersPagination from '../../models/customers/CustomersPagination'
-import CustomersService from '../../services/customers/customers.service'
+import User from '../../models/users/User'
+import UsersPagination from '../../models/users/UsersPagination'
+import UsersService from '../../services/users/users.service'
 
 export default Vue.extend({
   meta: {
@@ -70,11 +69,23 @@ export default Vue.extend({
       currentPage: 1,
       numberOfPages: 0,
       columns: [
-        { name: 'fullname', align: 'center', label: 'Nombre', field: 'fullname', sortable: false },
-        { name: 'username', align: 'center', label: 'Usuario', field: 'username', sortable: false },
-        { name: 'email', align: 'center', label: 'Correo', field: 'email', sortable: false }
+        { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: false },
+        { name: 'username', align: 'left', label: 'Usuario', field: 'username', sortable: false },
+        { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false },
+        { name: 'date', align: 'left', label: 'Fecha creada', field: 'date', sortable: false },
+        { name: 'is_superuser', align: 'left', label: 'Super Usuario', field: 'is_superuser', format: val => val? 'Sí': 'No', sortable: false }
       ],
-      rows: []
+      rows: [{
+        // last_login: "string",
+        id: 0,
+        is_superuser: false,
+        username: "",
+        name: "",
+        email: "",
+        // is_staff: true,
+        // is_active: true,
+        date_joined: "string",
+      }]
     }
   },
   mounted () {
@@ -84,18 +95,27 @@ export default Vue.extend({
   },
   methods: {
     onRequest(){
-      this.loading = true;
       console.log("pagination.page == "+ this.pagination.page);
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
       this.table.splice(0,1);
       console.log(this.table);
-      this.table.splice(0,0,1);
-      console.log(`CustomersService.getCustomers(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
-      let subscription = CustomersService.getCustomers(this.limit, this.offset).subscribe({
+      console.log(`UsersService.getUsers(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
+      this.loading = true;
+      let subscription = UsersService.getUsers(this.limit, this.offset).subscribe({
         next: data => {
-          console.log(data)
-          this.rows.splice(0, this.rows.length, ...data.results);
+          for (let i = 0; i < data.results.length; i++) {
+            this.rows.push({
+              id: data.results[i].id,
+              is_superuser: data.results[i].is_superuser,
+              username: data.results[i].username,
+              name: String(data.results[i].first_name +' '+data.results[i].last_name),
+              email: data.results[i].email,
+              // is_staff: true,
+              // is_active: true,
+              date: data.results[i].date_joined.substring(0,10)
+            })
+          }
           console.log(this.rows)
           this.count = data.count
           this.numberOfPages = Math.ceil(this.count / this.limit);
@@ -106,8 +126,8 @@ export default Vue.extend({
       
     },   
     onRowClick (evt, row){
-      //console.log(`/customers/detail/${row.id}`);
-      this.$router.push({path: `/customers/detail/${row.id}`})
+      //console.log(`/users/detail/${row.id}`);
+      this.$router.push({path: `/users/detail/${row.id}`})
     },
   },
 })

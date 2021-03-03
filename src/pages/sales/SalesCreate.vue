@@ -180,7 +180,7 @@
 <script>
 import Vue from 'vue'
 import SalesService from '../../services/sales/sales.service'
-import ClientsService from '../../services/customers/customers.service'
+import UsersService from '../../services/users/users.service'
 import ProductsService from '../../services/products/products.service'
 import PaymentsService from '../../services/payments/payments.service'
 import { Loading } from 'quasar';
@@ -193,7 +193,7 @@ export default Vue.extend({
       loading: false,
       sale: {
         description: "",
-        customer: 0,
+        user: 0,
         bank: 0,
         payment_type: "",
         coin : "",
@@ -242,7 +242,7 @@ export default Vue.extend({
   methods: {
     onRequest(){
       // Loading.show();
-      let subscription = ClientsService.getCustomers().subscribe({
+      let subscription = UsersService.getUsers().subscribe({
         next: data => {
           this.clientOptions.pop();
           for (let i = 0; i < data.results.length; i++) {
@@ -324,7 +324,7 @@ export default Vue.extend({
         this.showNotif("Proveer nombre de banco", 'red-10');
         return;
       };
-      this.sale.customer = this.clientOptions.indexOf(this.clientNameModel) >= -1? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
+      this.sale.user = this.clientOptions.indexOf(this.clientNameModel) >= -1? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
       this.sale.bank = this.bankOptions.indexOf(this.bankNameModel) >= -1? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
 
       for (let i = 0; i < this.sale_detail.length; i++) {
