@@ -8,17 +8,92 @@
                     <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
                 </div>
                 <div class="col2">
-                  <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+                  <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
                       Crear Compra a Proveedor
                   </h5>
                 </div>
                 <div class="col">
-                  <q-btn color="primary" label="Crear Orden" class="q-pa-xs float-right" @click="createSupplyOrder()"/>
+                  <q-btn color="red-10" label="Crear Orden" class="q-pa-xs float-right" @click="createSupplyOrder()"/>
                 </div>
             </div>
 
-            <div class="q-gutter-md" style="padding: 20px">
-              <q-form ref="myForm">
+            <div class="q-pa-lg">
+              <div class="row q-mb-md">
+                <div class="col q-mr-md">
+                  <q-input  
+                    outlined
+                    v-model="order.purchase.invoice"
+                    label="Referencia"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar el No. de referencia']"
+                  />
+                </div>
+                <div class="col">
+                  <q-input  
+                    outlined
+                    v-model="order.purchase.date"
+                    type="date"
+                    hint="Fecha de Compra"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar la fecha de compra']"
+                  >
+                    <q-tooltip content-class="bg-grey-8" anchor="top left" self="bottom left" :offset="[0, 8]">Fecha de compra</q-tooltip>
+                  </q-input>
+                </div>
+              </div>
+              <div class="row q-mb-lg">
+                <div class="col q-mr-md">
+                  <q-input  
+                    outlined
+                    v-model="order.purchase.description"
+                    autogrow
+                    label="Descripción"
+                  />
+                </div>
+                <div class="col">
+                  <q-select
+                    outlined
+                    v-model="supplierNameModel"
+                    use-input
+                    hide-selected
+                    fill-input
+                    input-debounce="0"
+                    label="Proveedor"
+                    :options="options"
+                    @filter="filterFn"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar algún proveedor']"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col q-mr-md">
+                    <q-select outlined v-model="order.purchase.coin" :options="currencyOptions" label="Moneda" :rules="[val => !!val || 'Debe seleccionar alguna moneda']"/>
+                </div>
+                <div class="col"> 
+                  <q-input
+                  outlined
+                  v-model="order.purchase.amount"
+                  label="Costo total"
+                  mask="#.##"
+                  fill-mask="0"
+                  :prefix="order.purchase.coin"
+                  reverse-fill-mask
+                  hint="Mask: #.##"
+                  input-class="text-right"
+                />
+                </div>
+              </div>
+              
+              <!-- <q-form ref="myForm">
                 <q-input  
                   outlined
                   v-model="order.purchase.invoice"
@@ -79,15 +154,83 @@
                   input-class="text-right"
                   style="width: 250px"
                 />
-              </q-form>
+              </q-form> -->
               <br/>
               <q-separator inset/>
-              <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+              <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm q-mt-md" style="margin-top:-3px">
                   Detalle de Productos
               </h5>
               <div class="q-gutter-md">
                 <div v-for="(item, index) in this.order.detail">
-                  <q-select
+                  <div class="row justify-evenly items-center">
+                    <div class="col-10">
+                      <div class="row q-mb-md">
+                        <div class="col">
+                          <q-select
+                            outlined
+                            v-model="productNameModel[index]"
+                            use-input
+                            hide-selected
+                            fill-input
+                            input-debounce="0"
+                            label="Producto"
+                            :options="options2"
+                            @filter="filterFn2"
+                            :rules="[val => !!val || 'Debe seleccionar algún producto']"
+                          >
+                            <template v-slot:no-option>
+                              <q-item>
+                                <q-item-section class="text-grey">
+                                  No results
+                                </q-item-section>
+                              </q-item>
+                            </template>
+                          </q-select>
+                        </div>
+                        <div class="col q-mx-sm">
+                          <q-input
+                            v-model.number="order.detail[index].purchase_price"
+                            label="Precio"
+                            mask="#.##"
+                            fill-mask="0"
+                            reverse-fill-mask
+                            input-class="text-right"
+                            outlined
+                          />
+                        </div>
+                        <div class="col">
+                          <q-input
+                            v-model.number="order.detail[index].purchase_quantity"
+                            type="number"
+                            label="Cantidad"
+                            outlined
+                          />
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col q-mr-md">
+                          <q-input
+                            v-model.number="order.detail[index].purchase_received"
+                            type="number"
+                            label="Unidades Recibidas"
+                            outlined
+                          />
+                        </div>
+                        <div class="col">
+                          <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-1 self-center">
+                      <div class="column items-center">
+                        <q-btn flat round color="red-10" icon="delete" @click="removeProduct(index)"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row q-my-lg">
+                    <q-separator inset />
+                  </div>
+                  <!-- <q-select
                     outlined
                     v-model="productNameModel[index]"
                     use-input
@@ -97,7 +240,6 @@
                     label="Producto"
                     :options="options2"
                     @filter="filterFn2"
-                    style="width: 250px"
                   >
                     <template v-slot:no-option>
                       <q-item>
@@ -138,11 +280,11 @@
                   <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus" style="width: 250px"/>
                   <br/>
                   <q-btn flat round color="primary" icon="delete" @click="removeProduct(index)"/>
-                  <q-separator />
+                  <q-separator /> -->
                 </div>
               </div>
               <br/>
-              <q-btn flat round color="primary" icon="add" @click="addProduct()"/>
+              <q-btn flat round color="indigo-10" icon="add" @click="addProduct()"/>
             </div>  
         </div>
 
@@ -150,7 +292,7 @@
   </q-page>
 </template>
 
-<script lang="js">
+<script>
 //@js-check
 import Vue from 'vue'
 import SupplyOrdersService from '../../services/supplyOrders/supply-orders.service'
@@ -260,6 +402,13 @@ export default Vue.extend({
     },
     backToSupplyOrders(){
       this.$router.back();
+    },
+    isValidRef (val) {
+      const emailPattern = /^(?=[0-9#]{1,15}$)/;
+      return emailPattern.test(val) || 'Número de referencia inválido';
+    },
+    isGreaterThanZero (val) {
+      return parseNumber(val) != NaN && parseNumber(val) > 0 ? !!val : 'Número debe ser mayor que cero';
     },
     filterFn (val, update) {
       // call abort() at any time if you can't retrieve data somehow

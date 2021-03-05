@@ -13,112 +13,65 @@
           </div>
           <br />
         </div>
-            <!-- <q-form >
-              <q-item>
-                <q-item-section side>
-                  <q-avatar v-if="user.foto" size="100px">
-                    <img :src="user.foto">
-                  </q-avatar>
-                </q-item-section>
-                <q-item-section style="margin-left:10px">
-                  <q-item-label ><b>{{user.nombre}}</b></q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item v-if="user.email">
-                <q-item-section caption >
-                  <q-item-label caption>Email</q-item-label>
-                  <q-item-label ><b>{{user.email}}</b></q-item-label>
-                </q-item-section>
-
-                <q-item-section side horizontal>
-                  <q-btn round color="primary" icon="mail_outline" v-on:click.prevent="openUrl('mailto:' +user.email)"/>
-                </q-item-section>
-
-              </q-item>
-
-              <q-separator spaced inset v-if="user.email"/>
-
-              <q-item v-if="user.celular">
-                <q-item-section>
-                  <q-item-label caption>Celular</q-item-label>
-                  <q-item-label ><b>+562 {{user.celular}}</b></q-item-label>
-                </q-item-section>
-
-                <q-item-section side horizontal>
-                  <q-btn round color="primary" icon="phone" v-on:click.prevent="openUrl('tel:+562' +user.celular)" />
-                </q-item-section>
-
-              </q-item>
-
-              <q-separator spaced inset v-if="user.celular"/>
-            </q-form> -->
-
-            <div class="form-section" style="padding: 20px">
-              <q-form ref="myForm">
-                <q-input  
-                  outlined
-                  v-model="supplier.name"
-                  label="Nombre"
-                  lazy-rules
-                />
-                <br/>
-                <q-input  
-                  outlined
-                  v-model="supplier.address"
-                  label="Dirección"
-                  lazy-rules
-                />
-                <br/>
-                <q-input  
-                  outlined
-                  v-model="supplier.email"
-                  label="Correo"
-                  lazy-rules
-                />
-                <br/>
-                <q-input  
-                  outlined
-                  v-model="supplier.number"
-                  label="Número de Teléfono"
-                  lazy-rules
-                />
-                <br/>
-                <q-input  
-                  outlined
-                  v-model="supplier.agent"
-                  label="Representante"
-                  lazy-rules
-                />
-                <br/>
-              </q-form>
-            </div>       
-            <div class="row justify-end">
-              <q-btn
-                type="submit"
-                label="Eliminar"
-                class="q-mt-md"
-                color="red"
-                @click="deleteSupplier()"
-                style="margin=10px"
-              >
-                <template v-slot:loading>
-                  <q-spinner-facebook />
-                </template>
-              </q-btn>
-              
-              <q-btn
-                type="submit"
-                label="Guardar"
-                class="q-mt-md"
-                color="primary"
-                @click="updateSupplier()"
-                style="margin=10px"
-              >
-                <template v-slot:loading>
-                  <q-spinner-facebook />
-                </template>
-              </q-btn>
+          <div class="form-section" style="padding: 20px">
+              <div class="row">
+                <div class="col q-mr-md">
+                  <q-input  
+                    outlined
+                    v-model="supplier.name"
+                    label="Nombre"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar el nombre']"
+                  />
+                </div>
+                <div class="col">
+                  <q-input  
+                    outlined
+                    v-model="supplier.email"
+                    ref="email"
+                    type="email"
+                    label="Correo"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar un correo', isValidEmail]"
+                  />
+                </div>
+              </div>
+              <div class="row q-my-sm">
+                <div class="col">
+                  <q-input  
+                    outlined
+                    v-model="supplier.address"
+                    label="Dirección"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar una dirección']"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col q-mr-md">
+                  <q-input  
+                    outlined
+                    v-model="supplier.number"
+                    label="Número de Teléfono"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar un número de telefono', isValidPhone]"
+                  />
+                </div>
+                <div class="col">
+                  <q-input  
+                    outlined
+                    v-model="supplier.agent"
+                    label="Representante"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar el representante']"
+                  />
+                </div>
+              </div>
+            </div>
+                  
+            <div class="row items-end justify-end">
+                <q-btn flat color="red-10" label="Eliminar" class="q-pa-xs q-mr-xs float-right" :loading="loading2" @click="confirmDelete()"/>
+              <q-btn color="red-10" label="Guardar" class="q-pa-xs q-mr-md float-right" :loading="loading1" @click="checkSupplier()"/>
             </div>
           
         </div>
@@ -138,12 +91,14 @@ export default Vue.extend({
       text: '',
       supplier: {
         id: this.$router.currentRoute.params.id,
-        name: null,
-        address: null,
-        email: null,
-        number: null,
-        agent: null,
-      }
+        name: '',
+        address: '',
+        email: '',
+        number: '',
+        agent: '',
+      },
+      loading1: false,
+      loading2: false
     }
   },
   beforeMount(){
@@ -160,25 +115,75 @@ export default Vue.extend({
         complete: () => console.log('[complete]'),
       })
     },
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
+    checkSupplier(){
+      if (this.supplier.name === "" || this.supplier.address === "" || this.supplier.email === "" || this.supplier.number === "" || this.supplier.agent === ""){
+        this.showNotif("Faltan campos por completar", 'red-10');
+        return;
+      };
+      if (this.$refs.email.hasError){
+        this.showNotif("Existen campos por corregir", 'red-10');
+        return;
+      }
+      console.log("everything in order. Creating user...");
+      this.loading = true;
+      this.updateSupplier();
+    },
     updateSupplier(){
-      Loading.show()
+      if (this.loading1 || this.loading2){
+        return
+      }
+      this.loading1 = true;
       let subscription = SuppliersService.updateSupplier(this.supplier).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          console.log('[supplier updated]');
+          this.loading1 = false;
+          this.showNotif("Cambios guardados exitosamente", 'indigo-10');
+          setTimeout(() => this.backToUsers(), 1000);
+        }
+      })
+    },
+    confirmDelete () {
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de querer eliminar este proveedor?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        this.deleteSupplier();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
       })
     },
     deleteSupplier(){
-      Loading.show()
+      if (this.loading1 || this.loading2){
+        return
+      }
+      this.loading2 = true;
       let subscription = SuppliersService.deleteSupplier(this.supplier.id).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          this.loading2 = false;
+          console.log('[supplier Deleted]')
+          this.showNotif("Usuario Eliminado", 'indigo-10');
+          setTimeout(() => this.backToUsers(), 1000);
+        }
       })
+    },
+    isValidEmail (val) {
+      const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(val) || 'Correo inválido';
+    },
+    isValidPhone (val) {
+      const emailPattern = /^(?=[0-9+-]{1,15}$)/;
+      return emailPattern.test(val) || 'Teléfono inválido';
     },
     backToSuppliers(){
       this.$router.back();

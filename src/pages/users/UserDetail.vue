@@ -147,7 +147,7 @@ export default Vue.extend({
       let subscription = UsersService.updateUser(this.user).subscribe( {
         complete: () => {
           console.log('[user updated]');
-          this.loading = false;
+          this.loading1 = false;
           this.showNotif("Cambios guardados exitosamente", 'indigo-10');
           setTimeout(() => this.backToUsers(), 1000);
         }
@@ -182,7 +182,7 @@ export default Vue.extend({
       this.loading2 = true;
       let subscription = UsersService.deleteUser(this.user.id).subscribe( {
         complete: () => {
-          loading2 = false;
+          this.loading2 = false;
           console.log('[user Deleted]')
           this.showNotif("Usuario Eliminado", 'indigo-10');
           setTimeout(() => this.backToUsers(), 1000);

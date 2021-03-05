@@ -4,20 +4,19 @@
       <div class="col-md-12 col-xs-12 q-pt-lg">
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
-            <h5 class="text-primary text-weight-bolder q-ma-none">
+            <h5 class="text-indigo-10 text-weight-bolder q-ma-none">
               Proveedores
             </h5>
             <small class="text-subtitle2 text-grey-6 q-mb-none" >Existen {{this.count}} proveedores almacenados</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="primary" label="Crear proveedor" class="float-right" @click="$router.push({ name : 'SupplierCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="red-10" label="Crear proveedor" class="float-right q-pa-xs" @click="$router.push({ name : 'SupplierCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
         <div class="q-pa-md">
             <q-table
-              title="Proveedor"
               :loading="loading"
               :data="this.rows"
               :columns="columns"

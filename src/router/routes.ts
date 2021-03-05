@@ -2,6 +2,10 @@ import { RouteConfig } from 'vue-router'
 
 const routes: RouteConfig[] = [
   {
+    path: '/Login',
+    component: () => import('layouts/Login.vue')
+  },
+  {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [

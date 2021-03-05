@@ -12,7 +12,7 @@ import routes from './routes'
 export default route<Store<StateInterface>>(function ({ Vue }) {
   Vue.use(VueRouter)
 
-  const Router = new VueRouter({
+  const router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
 
@@ -23,5 +23,14 @@ export default route<Store<StateInterface>>(function ({ Vue }) {
     base: process.env.VUE_ROUTER_BASE
   })
 
-  return Router
+  router.beforeEach((to, from, next) => {
+    const loggedIn = localStorage.getItem("token");
+    if (to.path !== '/Login' && !loggedIn) {
+      next({ path: '/Login' })
+    }else{
+        next();
+    }
+  });
+
+  return router
 })
