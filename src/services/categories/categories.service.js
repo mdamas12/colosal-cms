@@ -20,7 +20,7 @@ class CategoriesService {
 
   createCategory(newCategory){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'categories/',{name: newCategory.name})
+      axios.post(API_URL + 'categories/',{name: newCategory.name, image: newCategory.image})
         .then((response) => {
           console.log(response);
           observer.next(response.data)
@@ -48,7 +48,7 @@ class CategoriesService {
 
   updateCategory(newCategory){
     return Observable.create((observer) => {
-      axios.put(API_URL + `categories/${newCategory.id}/`,{name: newCategory.name})
+      axios.put(API_URL + `categories/${newCategory.id}/`,{name: newCategory.name, image: newCategory.image})
         .then((response) => {
           console.log();
           observer.next(response.data)
