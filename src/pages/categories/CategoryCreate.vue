@@ -28,13 +28,13 @@
                     color="dark"
                   />
                 </div>
+                <!-- :filter="checkFileType" -->
                 <div class="row items-center q-my-sm">
                   <q-file 
                     outlined 
                     clearable 
                     counter 
                     v-model="category.image"        
-                    :filter="checkFileType"
                     @rejected="onRejected"
                     @input="getImage"
                   >
@@ -97,9 +97,9 @@ export default Vue.extend({
         complete: () => console.log('[complete]'),
       })
     },
-    checkFileType (files) {
-      return files.filter(file => file.type === 'image/png')
-    },
+    // checkFileType (files) {
+    //   return files.filter(file => file.type === 'image/png')
+    // },
     getImage(e){
       let reader = new FileReader();
       reader.readAsDataURL(e);
