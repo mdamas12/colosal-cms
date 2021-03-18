@@ -13,7 +13,6 @@
           </div>
           <br />
         </div>
-        <br />
             <!-- <q-form >
               <q-item>
                 <q-item-section side>
@@ -55,17 +54,15 @@
               <q-separator spaced inset v-if="user.celular"/>
             </q-form> -->
 
-            <h5 class="text-primary text-weight-bolder q-ma-none">
-              #{{this.$router.currentRoute.params.id}}
-            </h5>
             <div class="form-section" style="padding: 20px">
               <q-form ref="myForm">
                 <q-input  
                   outlined
                   v-model="feature.name"
                   label="Nombre"
+                  color="dark"
                   lazy-rules
-                  color="red-10"
+                  :rules="[val => !!val || 'Debe ingresar el nombre de la característica nueva']"
                 />
               </q-form>
             </div>       
@@ -73,10 +70,10 @@
               <q-btn
                 type="submit"
                 label="Eliminar"
-                class="q-mt-md"
-                color="indigo-10"
-                @click="deleteFeature()"
-                style="margin=10px"
+                class="q-mt-md q-pa-xs q-mr-sm"
+                color="red-10"
+                @click="confirmDelete()"
+                :loading="loading2"
               >
                 <template v-slot:loading>
                   <q-spinner-facebook />
@@ -86,10 +83,10 @@
               <q-btn
                 type="submit"
                 label="Guardar"
-                class="q-mt-md"
-                color="red-10"
-                @click="updateFeature()"
-                style="margin=10px"
+                class="q-mt-md q-pa-xs q-mr-md"
+                color="indigo-10"
+                @click="checkFeature()"
+                :loading="loading1"
               >
                 <template v-slot:loading>
                   <q-spinner-facebook />
@@ -99,11 +96,10 @@
           
         </div>
       </div>
-    <!-- </div> -->
   </q-page>
 </template>
 
-<script lang="js">
+<script>
 import Vue from 'vue'
 import FeaturesService from '../../services/features/features.service'
 import { Loading } from "quasar";
@@ -115,7 +111,9 @@ export default Vue.extend({
       feature: {
         id: this.$router.currentRoute.params.id,
         name: null
-      }
+      },
+      loading1: false,
+      loading2: false
     }
   },
   beforeMount(){
@@ -132,24 +130,62 @@ export default Vue.extend({
         complete: () => console.log('[complete]'),
       })
     },
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
+    checkFeature(){
+      if (this.loading1 || this.loading2){
+        return
+      };
+      if (this.feature.name === ""){
+        this.showNotif("Faltan campos por completar", 'red-10');
+        return;
+      };
+      console.log("everything in order. Creating feature...");
+      this.updateFeature();
+    },
     updateFeature(){
-      Loading.show()
+      this.loading1 = true;
       let subscription = FeaturesService.updateFeature(this.feature).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          console.log('[feature updated]');
+          this.loading1 = false;
+          this.showNotif("Cambios guardados exitosamente", 'indigo-10');
+          setTimeout(() => this.backToFeatures(), 1000);
+        }
       })
     },
     deleteFeature(){
-      Loading.show()
+      this.loading2 = true;
       let subscription = FeaturesService.deleteFeature(this.feature.id).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          this.loading2 = false;
+          console.log('[feature Deleted]')
+          this.showNotif("Característica Eliminada", 'indigo-10');
+          setTimeout(() => this.backToFeatures(), 1000);
+        }
+      })
+    },
+    confirmDelete () {
+      if (this.loading1 || this.loading2){
+        return
+      }
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de querer eliminar esta característica?',
+        cancel: true,
+        persistent: true,
+        color: 'red-10'
+      }).onOk(() => {
+        this.deleteFeature();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
       })
     },
     backToFeatures(){

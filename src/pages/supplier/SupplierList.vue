@@ -86,11 +86,9 @@ export default Vue.extend({
   methods: {
     onRequest(){
       this.loading = true;
-      console.log("pagination.page == "+ this.pagination.page);
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
       this.table.splice(0,1);
-      console.log(this.table);
       this.table.splice(0,0,1);
       console.log(`SuppliersService.getSuppliers(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       let subscription = SuppliersService.getSuppliers(this.limit, this.offset).subscribe({

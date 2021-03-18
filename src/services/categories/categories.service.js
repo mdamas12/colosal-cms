@@ -18,9 +18,28 @@ class CategoriesService {
     })
   }
 
+  getAllCategories (){
+    //  http://localhost:8000/panel/categories/list-all/
+    return Observable.create((observer) => {
+      axios.get(API_URL + 'categories/list-all')
+        .then((response) => {
+          observer.next(response.data)
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
   createCategory(newCategory){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'categories/',{name: newCategory.name, image: newCategory.image})
+      axios.post(API_URL + 'categories/save/',newCategory,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
         .then((response) => {
           console.log(response);
           observer.next(response.data)
@@ -46,9 +65,14 @@ class CategoriesService {
     })
   }
 
-  updateCategory(newCategory){
+  updateCategory(id, newCategory){
     return Observable.create((observer) => {
-      axios.put(API_URL + `categories/${newCategory.id}/`,{name: newCategory.name, image: newCategory.image})
+      axios.put(API_URL + `categories/${id}/`,newCategory,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
         .then((response) => {
           console.log();
           observer.next(response.data)

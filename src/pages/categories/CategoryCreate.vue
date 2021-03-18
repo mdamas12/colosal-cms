@@ -9,11 +9,11 @@
               </div>
               <div class="col2">
                 <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    Crear Categoría
+                    Editar Categoría
                 </h5>
               </div>
               <div class="col">
-                <q-btn color="red-10" label="Crear Categoría" class="q-pa-xs q-mt-xs q-mr-md float-right" @click="createCategory()"/>
+                <q-btn color="red-10" label="Crear Categoría" class="q-pa-xs q-mt-xs q-mr-md float-right" @click="checkCategory()"/>
               </div>
           </div>
 
@@ -23,9 +23,11 @@
                 <div class="row q-my-sm">
                   <q-input  
                     outlined
-                    v-model="category.name"
+                    v-model="name"
                     label="Nombre"
                     color="dark"
+                    lazy-rules
+                    :rules="[val => !!val || 'Debe ingresar el nombre']"
                   />
                 </div>
                 <!-- :filter="checkFileType" -->
@@ -34,23 +36,19 @@
                     outlined 
                     clearable 
                     counter 
-                    v-model="category.image"        
+                    v-model="image"        
                     @rejected="onRejected"
                     @input="getImage"
                   >
                     <template v-slot:prepend>
                       <q-icon name="attach_file" />
                     </template>
-                    
-                    <template v-slot:hint>
-                      Field hint
-                    </template>
                   </q-file>
                 </div>
 
               </div>
               <div class="col-2">
-                <div v-if="category.image !== null">
+                <div v-if="image !== null">
                   <q-img :src="preview" style="max-width: 150px" />
                 </div>
               </div>
@@ -69,38 +67,49 @@ import { Loading } from "quasar";
 export default Vue.extend({
   data () {
     return {
-      category : {
-        name: '',
-        image: null,
-      },
+      name: '',
+      image: null,
       preview: null,
       uploading: null
     }
   },
-
-  computed: {
-    isUploading () {
-      return this.uploading !== null
-    }
-  },
   methods: {
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
+    checkCategory(){
+      if (this.name === "" || this.image == null){
+        this.showNotif("Faltan campos por completar", 'red-10');
+        return;
+      };
+      console.log("everything in order. Creating user...");
+      this.createCategory();
+    },
     createCategory(){
       Loading.show();
-      const fd = new FormData();
-      fd.append('image', this.category.image, this.category.image.name);
-      console.log(this.category.image.name);
-      let subscription = CategoriesService.createCategory(this.category).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
-      })
+      if (this.image !== null){
+        const fd = new FormData();
+        fd.append('name', this.name);
+        fd.append('image', this.image, this.image.name);
+        let subscription = CategoriesService.createCategory(fd).subscribe( {
+          complete: () => {
+            Loading.hide()
+            this.$router.back();
+          }
+        });
+      }
     },
     // checkFileType (files) {
     //   return files.filter(file => file.type === 'image/png')
     // },
     getImage(e){
+      console.log(e);
       let reader = new FileReader();
       reader.readAsDataURL(e);
       reader.onload = e => {

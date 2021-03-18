@@ -210,7 +210,7 @@
                       <div class="row">
                         <div class="col q-mr-md">
                           <q-input
-                            v-model.number="order.detail[index].purchase_received"
+                            v-model.number="order.detail[index].purchase_Received"
                             type="number"
                             label="Unidades Recibidas"
                             outlined
@@ -270,7 +270,7 @@
                   />
                   <br/>
                   <q-input
-                    v-model.number="order.detail[index].purchase_received"
+                    v-model.number="order.detail[index].purchase_Received"
                     type="number"
                     label="Unidades Recibidas"
                     outlined
@@ -316,7 +316,7 @@ export default Vue.extend({
             product: 0,
             purchase_price: 0,
             purchase_quantity: 0,
-            purchase_received: 0,
+            purchase_Received: 0,
             status: ""
           }
         ]
@@ -374,7 +374,7 @@ export default Vue.extend({
         product: 0,
         purchase_price: 0,
         purchase_quantity: 0,
-        purchase_received: 0,
+        purchase_Received: 0,
         status: ""
       });
       this.productNameModel.push("");

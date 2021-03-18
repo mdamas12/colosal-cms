@@ -21,7 +21,7 @@ class SupplyOrdersService {
 
   createSupplyOrder(newSupplyOrder){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'purchases/',{purchase: newSupplyOrder.purchase, detail: newSupplyOrder.detail})
+      axios.post(API_URL + 'purchases/',{purchase: newSupplyOrder.purchase, products: newSupplyOrder.detail})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -48,7 +48,7 @@ class SupplyOrdersService {
 
   updateSupplyOrder(newSupplyOrder, id){
     return Observable.create((observer) => {
-      axios.put(API_URL + `purchases/${id}/`,{purchase: newSupplyOrder.purchase, detail: newSupplyOrder.detail})
+      axios.put(API_URL + `purchases/detail/${id}/`,{purchase: newSupplyOrder.purchase, products: newSupplyOrder.products})
         .then((response) => {
           console.log();
           observer.complete()

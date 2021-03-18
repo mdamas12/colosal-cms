@@ -371,7 +371,8 @@ export default Vue.extend({
         title: 'Confirmar',
         message: '¿Está seguro de querer eliminar esta promoción?',
         cancel: true,
-        persistent: true
+        persistent: true,
+        color: 'red-10'
       }).onOk(() => {
         this.deletePromotion();
       }).onCancel(() => {

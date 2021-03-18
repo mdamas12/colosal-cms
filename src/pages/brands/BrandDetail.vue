@@ -60,8 +60,9 @@
                   outlined
                   v-model="brand.name"
                   label="Nombre"
+                  color="dark"
                   lazy-rules
-                  color="red-10"
+                  :rules="[val => !!val || 'Debe ingresar el nombre de la marca nueva']"
                 />
               </q-form>
             </div>       
@@ -69,10 +70,10 @@
               <q-btn
                 type="submit"
                 label="Eliminar"
-                class="q-mt-md"
-                color="indigo-10"
-                @click="deleteBrand()"
-                style="margin=10px"
+                class="q-mt-md q-pa-xs q-mr-sm"
+                color="red-10"
+                @click="confirmDelete()"
+                :loading="loading2"
               >
                 <template v-slot:loading>
                   <q-spinner-facebook />
@@ -82,10 +83,10 @@
               <q-btn
                 type="submit"
                 label="Guardar"
-                class="q-mt-md"
-                color="red-10"
-                @click="updateBrand()"
-                style="margin=10px"
+                class="q-mt-md q-pa-xs q-mr-md"
+                color="indigo-10"
+                @click="checkBrand()"
+                :loading="loading1"
               >
                 <template v-slot:loading>
                   <q-spinner-facebook />
@@ -98,7 +99,7 @@
   </q-page>
 </template>
 
-<script lang="js">
+<script>
 import Vue from 'vue'
 import BrandsService from '../../services/brands/brands.service'
 import { Loading } from "quasar";
@@ -110,7 +111,9 @@ export default Vue.extend({
       brand: {
         id: this.$router.currentRoute.params.id,
         name: null
-      }
+      },
+      loading1: false,
+      loading2: false
     }
   },
   beforeMount(){
@@ -127,24 +130,62 @@ export default Vue.extend({
         complete: () => console.log('[complete]'),
       })
     },
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
+    checkBrand(){
+      if (this.loading1 || this.loading2){
+        return
+      };
+      if (this.brand.name === ""){
+        this.showNotif("Faltan campos por completar", 'red-10');
+        return;
+      };
+      console.log("everything in order. Creating brand...");
+      this.updateBrand();
+    },
     updateBrand(){
-      Loading.show()
+      this.loading1 = true;
       let subscription = BrandsService.updateBrand(this.brand).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          console.log('[brand updated]');
+          this.loading1 = false;
+          this.showNotif("Cambios guardados exitosamente", 'indigo-10');
+          setTimeout(() => this.backToBrands(), 1000);
+        }
       })
     },
     deleteBrand(){
-      Loading.show()
+      this.loading2 = true;
       let subscription = BrandsService.deleteBrand(this.brand.id).subscribe( {
-        next: () => {
-          Loading.hide()
-          this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          this.loading2 = false;
+          console.log('[brand Deleted]')
+          this.showNotif("Marca Eliminada", 'indigo-10');
+          setTimeout(() => this.backToBrands(), 1000);
+        }
+      })
+    },
+    confirmDelete () {
+      if (this.loading1 || this.loading2){
+        return
+      }
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de querer eliminar esta marca?',
+        cancel: true,
+        persistent: true,
+        color: 'red-10'
+      }).onOk(() => {
+        this.deleteBrand();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
       })
     },
     backToBrands(){

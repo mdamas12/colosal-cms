@@ -18,13 +18,14 @@
                   outlined
                   v-model="brand.name"
                   label="Nombre"
-                  lazy-rules
                   color="dark"
+                  lazy-rules
+                  :rules="[val => !!val || 'Debe ingresar el nombre de la marca nueva']"
                 />
               </q-form>
             </div>  
 
-            <q-btn color="red-10" label="Crear Marca" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createBrand()"/>
+            <q-btn color="red-10" label="Crear Marca" class="q-pa-xs q-mt-md q-mr-md float-right" @click="checkBrand()"/>
 
         </div>
 
@@ -42,18 +43,36 @@ export default Vue.extend({
     return {
       brand : {
         name: ''
-      }
+      },
     }
   },
   methods: {
+    showNotif (message: string, color: string) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
+    checkBrand(){
+      if (this.brand.name === ""){
+        this.showNotif("Faltan campos por completar", 'red-10');
+        return;
+      };
+      console.log("everything in order. Creating user...");
+      this.createBrand();
+    },
     createBrand(){
       Loading.show()
       let subscription = BrandsService.createBrand(this.brand).subscribe( {
-        next: () => {
+        complete: () => {
           Loading.hide()
           this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+          this.showNotif("Marca creada exitosamente", 'indigo-10');
+          setTimeout(() => this.$router.back, 1000);
+        }
       })
     },
   }

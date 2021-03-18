@@ -9,7 +9,7 @@
                 </div>
                 <div class="col2">
                   <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                      Crear Compra a Proveedor
+                      Editar Compra a Proveedor
                   </h5>
                 </div>
                 <div class="col">
@@ -164,7 +164,7 @@
                   Detalle de Productos
               </h5>
               <div class="q-gutter-md">
-                <div v-for="(item, index) in this.order.detail">
+                <div v-for="(item, index) in this.order.products">
                   <div class="row justify-evenly items-center">
                     <div class="col-10">
                       <div class="row q-mb-md">
@@ -192,7 +192,7 @@
                         </div>
                         <div class="col q-mx-sm">
                           <q-input
-                            v-model.number="order.detail[index].purchase_price"
+                            v-model.number="order.products[index].purchase_price"
                             label="Precio"
                             mask="#.##"
                             fill-mask="0"
@@ -203,7 +203,7 @@
                         </div>
                         <div class="col">
                           <q-input
-                            v-model.number="order.detail[index].purchase_quantity"
+                            v-model.number="order.products[index].purchase_quantity"
                             type="number"
                             label="Cantidad"
                             outlined
@@ -213,14 +213,14 @@
                       <div class="row">
                         <div class="col q-mr-md">
                           <q-input
-                            v-model.number="order.detail[index].purchase_received"
+                            v-model.number="order.products[index].purchase_Received"
                             type="number"
                             label="Unidades Recibidas"
                             outlined
                           />
                         </div>
                         <div class="col">
-                          <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus"/>
+                          <q-select outlined v-model="order.products[index].status" :options="statusOptions" label="Estatus"/>
                         </div>
                       </div>
                     </div>
@@ -254,7 +254,7 @@
                   </q-select>
                   <br/>
                   <q-input
-                    v-model.number="order.detail[index].purchase_price"
+                    v-model.number="order.products[index].purchase_price"
                     label="Precio"
                     mask="#.##"
                     fill-mask="0"
@@ -265,7 +265,7 @@
                   />
                   <br/>
                   <q-input
-                    v-model.number="order.detail[index].purchase_quantity"
+                    v-model.number="order.products[index].purchase_quantity"
                     type="number"
                     label="Cantidad"
                     outlined
@@ -273,14 +273,14 @@
                   />
                   <br/>
                   <q-input
-                    v-model.number="order.detail[index].purchase_received"
+                    v-model.number="order.products[index].purchase_Received"
                     type="number"
                     label="Unidades Recibidas"
                     outlined
                     style="max-width: 200px"
                   />
                   <br/>
-                  <q-select outlined v-model="order.detail[index].status" :options="statusOptions" label="Estatus" style="width: 250px"/>
+                  <q-select outlined v-model="order.products[index].status" :options="statusOptions" label="Estatus" style="width: 250px"/>
                   <br/>
                   <q-btn flat round color="primary" icon="delete" @click="removeProduct(index)"/>
                   <q-separator /> -->
@@ -309,6 +309,7 @@ export default Vue.extend({
       loading1: false,
       loading2: false,
       order: {
+        id: this.$router.currentRoute.params.id,
         purchase: {
           date: "",
           description: "",
@@ -317,19 +318,19 @@ export default Vue.extend({
           amount: "",
           provider: 0,
         },
-        detail : []
+        products : []
       },
       supplyOrderId: this.$router.currentRoute.params.id,
       supplierOptions: [],
       supplierIndex: [],
       options: [],
-      productOptions: [],
-      productIndex: [],
+      productOptions: [""],
+      productIndex: [0],
       options2: [],
       currencyOptions: ["USD", "BS"],
       statusOptions: ["COMPLETE"],
       supplierNameModel: "",
-      productNameModel: []
+      productNameModel: [""]
     }
   },
   mounted(){
@@ -348,44 +349,48 @@ export default Vue.extend({
         },
         complete: () => {console.log("[complete]\nsupplierOptions: "+this.supplierOptions+"\nsupplierIndex: "+this.supplierIndex)}
       })
+      this.productNameModel.splice(0,1);
+      this.productOptions.splice(0,1);
+      this.productIndex.splice(0,1);
       let subscription2 = axios.get("http://localhost:8000/panel/products/?limit=25&offset=0")
         .then((response) => {
           for (let i = 0; i < response.data.results.length; i++) {
             this.productOptions.push(response.data.results[i].name);
             this.productIndex.push(response.data.results[i].id);
           }
+          let subscription3 = SupplyOrdersService.getSupplyOrder(this.supplyOrderId).subscribe({
+            next: data =>{
+              console.log(data)
+              this.order.purchase.date = data.date;
+              this.order.purchase.description = data.description;
+              this.order.purchase.invoice = data.invoice;
+              this.order.purchase.coin = data.coin;
+              this.order.purchase.amount = data.amount;
+              this.order.purchase.provider = data.provider.id;
+              this.supplierNameModel = data.provider.name;
+              for (let i = 0; i < data.PurchaseDetail.length; i++) {
+                this.order.products.push({
+                  product: data.PurchaseDetail[i].product.id,
+                  purchase_price: data.PurchaseDetail[i].purchase_price,
+                  purchase_quantity: data.PurchaseDetail[i].purchase_quantity,
+                  purchase_Received: data.PurchaseDetail[i].purchase_Received,
+                  status: data.PurchaseDetail[i].status
+                });
+                console.log("Producto: "+ this.productOptions[this.productIndex.indexOf(data.PurchaseDetail[i].product.id)]);
+                this.productNameModel.push(this.productOptions[this.productIndex.indexOf(data.PurchaseDetail[i].product.id)]);
+              }
+            },
+            complete: () => {
+              Loading.hide();
+            }
+          });
         })
         .catch((error) => {
           console.log(error);
         })
-      let subscription3 = SupplyOrdersService.getSupplyOrder(this.supplyOrderId).subscribe({
-        next: data =>{
-          console.log(data)
-          this.order.purchase.date = data.date;
-          this.order.purchase.description = data.description;
-          this.order.purchase.invoice = data.invoice;
-          this.order.purchase.coin = data.coin;
-          this.order.purchase.amount = data.amount;
-          this.order.purchase.provider = data.provider.id;
-          this.supplierNameModel = data.provider.name;
-          for (let i = 0; i < data.PurchaseDetail.length; i++) {
-            this.order.detail.push({
-              product: data.PurchaseDetail[i].product.id,
-              purchase_price: data.PurchaseDetail[i].purchase_price,
-              purchase_quantity: data.PurchaseDetail[i].purchase_quantity,
-              purchase_received: data.PurchaseDetail[i].purchase_Received,
-              status: data.PurchaseDetail[i].status
-            })
-            this.productNameModel.push(data.PurchaseDetail[i].product.name)
-          }
-        },
-        complete: () => {
-          this.Loading.hide();
-        }
-      });
     },
     addProduct(){
-      this.order.detail.push({
+      this.order.products.push({
         //  product: 0,
         //  purchase_price: 0,
         //  purchase_quantity: 0,
@@ -394,14 +399,14 @@ export default Vue.extend({
         product: 0,
         purchase_price: 0,
         purchase_quantity: 0,
-        purchase_received: 0,
+        purchase_Received: 0,
         status: ""
       });
       this.productNameModel.push("");
     },
     removeProduct(index){
-      if (this.order.detail.length > 1){
-        this.order.detail.splice(index,1);
+      if (this.order.products.length > 1){
+        this.order.products.splice(index,1);
         this.productNameModel.splice(index,1)
       }
     },
@@ -409,11 +414,9 @@ export default Vue.extend({
       if (this.loading1 || this.loading2){
         return
       }
-      console.log("productNameModel[0] = "+this.productNameModel[0]);
-      console.log("");
       this.order.purchase.provider = this.supplierOptions.indexOf(this.supplierNameModel) >= -1? this.supplierIndex[this.supplierOptions.indexOf(this.supplierNameModel)]: null;
-      for (let i = 0; i < this.order.detail.length; i++) {
-        this.order.detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
+      for (let i = 0; i < this.order.products.length; i++) {
+        this.order.products[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
       }
       console.log("JSON.stringify(this.order): \n"+JSON.stringify(this.order));
       this.loading1 = true;
@@ -434,7 +437,8 @@ export default Vue.extend({
         title: 'Confirmar',
         message: '¿Está seguro de querer eliminar esta orden de compra?',
         cancel: true,
-        persistent: true
+        persistent: true,
+        color: 'red-10'
       }).onOk(() => {
         this.deleteSupplyOrder();
       }).onCancel(() => {

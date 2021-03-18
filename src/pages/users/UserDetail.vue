@@ -132,6 +132,9 @@ export default Vue.extend({
       })
     },
     checkUser(){
+      if (this.loading1 || this.loading2){
+        return
+      }
       if (this.user.first_name === "" || this.user.last_name === "" || this.user.username === ""){
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
@@ -140,9 +143,6 @@ export default Vue.extend({
       this.updateUser();
     },
     updateUser(){
-      if (this.loading1 || this.loading2){
-        return
-      }
       this.loading1 = true;
       let subscription = UsersService.updateUser(this.user).subscribe( {
         complete: () => {
@@ -164,11 +164,15 @@ export default Vue.extend({
       this.$router.back();
     },
     confirmDelete () {
+      if (this.loading1 || this.loading2){
+        return
+      }
       this.$q.dialog({
         title: 'Confirmar',
         message: '¿Está seguro de querer eliminar este usuario?',
         cancel: true,
-        persistent: true
+        persistent: true,
+        color: 'red-10'
       }).onOk(() => {
         this.deleteUser();
       }).onCancel(() => {
@@ -176,9 +180,6 @@ export default Vue.extend({
       })
     },
     deleteUser(){
-      if (this.loading1 || this.loading2){
-        return
-      }
       this.loading2 = true;
       let subscription = UsersService.deleteUser(this.user.id).subscribe( {
         complete: () => {
@@ -188,9 +189,6 @@ export default Vue.extend({
           setTimeout(() => this.backToUsers(), 1000);
         }
       })
-    },
-    backToUsers(){
-      this.$router.back();
     }
   },
   // watch: {

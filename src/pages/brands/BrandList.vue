@@ -11,7 +11,7 @@
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="red-10" label="Crear marca" class="float-right" @click="$router.push({ name : 'BrandCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="red-10" label="Crear marca" class="q-pa-xs float-right" @click="$router.push({ name : 'BrandCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
@@ -93,21 +93,18 @@ export default Vue.extend({
   methods: {
     onRequest(){
       this.loading = true;
-      console.log("pagination.page == "+ this.pagination.page);
+      Loading.show();
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
       this.table.splice(0,1);
-      console.log(this.table);
-      this.table.splice(0,0,1);
       console.log(`BrandsService.getBrands(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
         next: data => {
-          console.log(data)
           this.rows.splice(0, this.rows.length, ...data.results);
-          console.log(this.rows)
           this.count = data.count
           this.numberOfPages = Math.ceil(this.count / this.limit);
           this.loading = false;
+          Loading.hide();
         },
         complete: () => console.log('[complete]'),
       })

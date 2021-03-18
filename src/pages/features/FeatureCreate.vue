@@ -18,13 +18,14 @@
                   outlined
                   v-model="feature.name"
                   label="Nombre"
-                  lazy-rules
                   color="dark"
+                  lazy-rules
+                  :rules="[val => !!val || 'Debe ingresar el nombre de la característica nueva']"
                 />
               </q-form>
             </div>  
 
-            <q-btn color="red-10" label="Crear Característica" class="q-pa-xs q-mt-md q-mr-md float-right" @click="createFeature()"/>
+            <q-btn color="red-10" label="Crear Característica" class="q-pa-xs q-mt-md q-mr-md float-right" @click="checkFeature()"/>
 
         </div>
 
@@ -42,18 +43,36 @@ export default Vue.extend({
     return {
       feature : {
         name: ''
-      }
+      },
     }
   },
   methods: {
+    showNotif (message: string, color: string) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
+    checkFeature(){
+      if (this.feature.name === ""){
+        this.showNotif("Faltan campos por completar", 'red-10');
+        return;
+      };
+      console.log("everything in order. Creating user...");
+      this.createFeature();
+    },
     createFeature(){
       Loading.show()
       let subscription = FeaturesService.createFeature(this.feature).subscribe( {
-        next: () => {
+        complete: () => {
           Loading.hide()
           this.$router.back();
-        },
-        complete: () => console.log('[complete]'),
+          this.showNotif("Característica creada exitosamente", 'indigo-10');
+          setTimeout(() => this.$router.back, 1000);
+        }
       })
     },
   }

@@ -16,15 +16,29 @@
         </div>
 
         <div class="q-pa-md">
-            <q-table
-              :loading="loading"
-              :data="this.rows"
-              :columns="columns"
-              row-key="name"
-              :pagination.sync="pagination"
-              hide-pagination
-              @row-click="onRowClick"
-            />
+          <q-input outlined bottom-slots v-model="text" label="Buscar" counter>
+            <template v-slot:before>
+              <q-icon name="account_circle" />
+            </template>
+
+            <template v-slot:append>
+              <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
+              <q-icon name="search" />
+            </template>
+
+            <!-- <template v-slot:hint>
+              Field hint
+            </template> -->
+          </q-input>
+          <q-table
+            :loading="loading"
+            :data="this.rows"
+            :columns="columns"
+            row-key="name"
+            :pagination.sync="pagination"
+            hide-pagination
+            @row-click="onRowClick"
+          />
 
           <div class="row justify-center q-mt-md">
             <q-pagination

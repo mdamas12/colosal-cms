@@ -11,7 +11,7 @@
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="red-10" label="Crear característica" class="float-right" @click="$router.push({ name : 'FeatureCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="red-10" label="Crear característica" class="q-pa-xs float-right" @click="$router.push({ name : 'FeatureCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
@@ -26,13 +26,14 @@
               @row-click="onRowClick"
             />
 
-          <div class="row justify-center q-mt-md"  v-if="numberOfPages > 1">
+          <div class="row justify-center q-mt-md" v-if="numberOfPages > 1">
             <q-pagination
               v-model="pagination.page"
               color="indigo-10"
               :max="this.numberOfPages"
               size="sm"
               @click="onRequest()"
+  
             />
           </div>
         </div>       
@@ -72,13 +73,13 @@ export default Vue.extend({
         {
           name: 'desc',
           required: true,
-          label: "id",
+          label: "ID",
           align: 'left',
           field: row => row.id,
           format: val => `${val}`,
           sortable: false,
         },
-        { name: 'nombre', align: 'left', label: 'Nombre', field: 'name', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis',*/ },
+        { name: 'nombre', align: 'left', label: 'Nombre', field: 'name', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */}
       ],
       rows: []
     }
@@ -91,21 +92,18 @@ export default Vue.extend({
   methods: {
     onRequest(){
       this.loading = true;
-      console.log("pagination.page == "+ this.pagination.page);
+      Loading.show();
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
       this.table.splice(0,1);
-      console.log(this.table);
-      this.table.splice(0,0,1);
       console.log(`FeaturesService.getFeatures(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       let subscription = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
         next: data => {
-          console.log(data)
           this.rows.splice(0, this.rows.length, ...data.results);
-          console.log(this.rows)
           this.count = data.count
           this.numberOfPages = Math.ceil(this.count / this.limit);
           this.loading = false;
+          Loading.hide();
         },
         complete: () => console.log('[complete]'),
       })

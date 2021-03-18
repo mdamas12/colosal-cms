@@ -7,7 +7,7 @@
             <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
           </div>
           <div v-if="supplier.name != null">
-            <h5 class="vertical-top col2 text-primary text-weight-bolder q-pa-sm" style="margin-top:-3px">
+            <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
                 Proveedor: {{supplier.name}}
             </h5>
           </div>
@@ -18,6 +18,7 @@
                 <div class="col q-mr-md">
                   <q-input  
                     outlined
+                    color="dark"
                     v-model="supplier.name"
                     label="Nombre"
                     lazy-rules
@@ -28,6 +29,7 @@
                   <q-input  
                     outlined
                     v-model="supplier.email"
+                    color="dark"
                     ref="email"
                     type="email"
                     label="Correo"
@@ -41,6 +43,7 @@
                   <q-input  
                     outlined
                     v-model="supplier.address"
+                    color="dark"
                     label="Dirección"
                     lazy-rules
                     :rules="[val => !!val || 'Debe ingresar una dirección']"
@@ -52,6 +55,7 @@
                   <q-input  
                     outlined
                     v-model="supplier.number"
+                    color="dark"
                     label="Número de Teléfono"
                     lazy-rules
                     :rules="[val => !!val || 'Debe ingresar un número de telefono', isValidPhone]"
@@ -61,6 +65,7 @@
                   <q-input  
                     outlined
                     v-model="supplier.agent"
+                    color="dark"
                     label="Representante"
                     lazy-rules
                     :rules="[val => !!val || 'Debe ingresar el representante']"
@@ -147,7 +152,7 @@ export default Vue.extend({
           console.log('[supplier updated]');
           this.loading1 = false;
           this.showNotif("Cambios guardados exitosamente", 'indigo-10');
-          setTimeout(() => this.backToUsers(), 1000);
+          setTimeout(() => this.$router.back(), 1000);
         }
       })
     },
@@ -156,7 +161,8 @@ export default Vue.extend({
         title: 'Confirmar',
         message: '¿Está seguro de querer eliminar este proveedor?',
         cancel: true,
-        persistent: true
+        persistent: true,
+        color: 'red-10'
       }).onOk(() => {
         this.deleteSupplier();
       }).onCancel(() => {
@@ -172,8 +178,8 @@ export default Vue.extend({
         complete: () => {
           this.loading2 = false;
           console.log('[supplier Deleted]')
-          this.showNotif("Usuario Eliminado", 'indigo-10');
-          setTimeout(() => this.backToUsers(), 1000);
+          this.showNotif("Proveedor eliminado exitosamente", 'indigo-10');
+          setTimeout(() => this.$router.back(), 1000);
         }
       })
     },
