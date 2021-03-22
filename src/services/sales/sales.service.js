@@ -19,11 +19,37 @@ class SalesService {
     })
   }
 
+  getSalesByStatus (id){
+    return Observable.create((observer) => {
+      axios.get(API_URL + `sales/list-satus/${id}/`)
+        .then((response) => {
+          observer.next(response.data)
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
   createSale(newSale){
     return Observable.create((observer) => {
       axios.post(API_URL + 'sales/sale-panel/',{sale: newSale.sale, sale_detail: newSale.sale_detail})
         .then((response) => {
           console.log(response);
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
+  searchUsers(email){
+    return Observable.create((observer) => {
+      axios.get(API_URL + `sales/customer/${email}/`)
+        .then((response) => {
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {

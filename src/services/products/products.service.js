@@ -32,6 +32,19 @@ class ProductsService{
       })
     }
 
+    searchProducts (query){
+      return Observable.create((observer) => {
+        axios.get(API_URL + `products/coincidence/${query}/`)
+          .then((response) => {
+            observer.next(response.data)
+            observer.complete()
+          })
+          .catch((error) => {
+            observer.error(error)
+          })
+      })
+    }
+
     createProduct(newProduct){
         return Observable.create((observer) => {
           axios.post(API_URL + 'products/',newProduct)

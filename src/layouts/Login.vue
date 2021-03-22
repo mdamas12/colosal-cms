@@ -135,7 +135,7 @@ export default Vue.extend({
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
       };
-      if (this.$refs.username.hasError || this.$refs.password.hasError){
+      if ((this.$refs.username as Vue & { validate: () => boolean }).validate || (this.$refs.password as Vue & { validate: () => boolean }).validate){
         this.showNotif("Existen campos por corregir", 'red-10');
         return;
       }

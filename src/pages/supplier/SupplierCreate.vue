@@ -105,7 +105,7 @@ export default Vue.extend({
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
       };
-      if (this.$refs.email.hasError){
+      if ((this.$refs.email as Vue & { validate: () => boolean }).validate()){
         this.showNotif("Existen campos por corregir", 'red-10');
         return;
       }

@@ -17,9 +17,9 @@
                 </div>
             </div>
 
-						<div class="q-gutter-md">
+						<div class="q-mx-xs">
               <q-form ref="myForm">
-                <div class="row">
+                <div class="row q-mb-md">
                   <div class="col">
                     <div class="row">
                       <div class="col">
@@ -27,8 +27,9 @@
                           outlined
                           v-model="promotion.name"
                           label="Nombre"
+                          lazy-rules
+                          :rules="[val => !!val || 'Debe ingresar el nombre']"
                         />
-                        <br/>
                       </div>
                     </div>
                   </div>
@@ -49,25 +50,25 @@
                     </q-file>
                   </div> -->
                 </div>
-                <br/>
-                <q-input  
-                  outlined
-                  v-model="promotion.description"
-                  autogrow
-                  label="Descripción"
-                />
-                <br/><br/>
+                <div class="row q-mb-md">
+                  <q-input  
+                    outlined
+                    v-model="promotion.description"
+                    autogrow
+                    label="Descripción"
+                  />
+                </div>
 
-                <div class="row">
+                <div class="row q-mb-md">
                   <div class="col">
                     <div class="row">
-                      <div class="col-2">
+                      <div class="col">
                         <q-select outlined v-model="promotion.coin" :options="currencyOptions" label="Moneda"/>
                       </div>
-                      <div class="col-2 q-mx-md">
+                      <div class="col q-ml-sm">
                         <q-input
                           outlined
-                          v-model="promotion.price"
+                          v-model.number="promotion.price"
                           label="Costo total"
                           mask="#.##"
                           fill-mask="0"
@@ -76,33 +77,43 @@
                           input-class="text-right"
                         />
                       </div>
-                      <div class="col">
-                        <q-select
-                          outlined
-                          v-model="promotion.category"
-                          use-input
-                          hide-selected
-                          fill-input
-                          input-debounce="0"
-                          label="Categoría"
-                          :options="options"
-                          @filter="filterFn"
-                        >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-grey">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                        </q-select>
-                      </div>
                     </div>
+                  </div>
+                </div>
+
+                <div class="row q-mb-md">
+                  <div class="col">
+                    <q-select
+                      outlined
+                      v-model="categoryNameModel"
+                      use-input
+                      hide-selected
+                      fill-input
+                      input-debounce="0"
+                      label="Categoría"
+                      :options="options"
+                      @filter="filterFn"
+                    >
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            No results
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </div>
+                  <div class="col-2 q-ml-sm">
+                    <q-input
+                      v-model.number="promotion.quantity"
+                      type="number"
+                      label="Existencias"
+                      outlined
+                    />
                   </div>
                 </div>
                 
               </q-form>
-              <br/>
               <q-separator inset/>
               <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-md">
                   Detalle de Productos
@@ -139,6 +150,8 @@
                             type="number"
                             label="Cantidad"
                             outlined
+                            lazy-rules
+                            :rules="[val => !!val || 'Debe ingresar el nombre']"
                           />
                         </div>
                         <div class="col-1 self-center">
@@ -243,6 +256,9 @@ export default Vue.extend({
       }
     },
     createPromotion(){
+      console.log('this.categoryNameModel: ' + this.categoryNameModel)
+      console.log('this.categoryOptions.indexOf(this.categoryNameModel): ' + this.categoryOptions.indexOf(this.categoryNameModel))
+      console.log('this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]: '+ this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)])
       this.promotion.category = this.categoryOptions.indexOf(this.categoryNameModel) >= -1? this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]: null;
       for (let i = 0; i < this.detail.length; i++) {
         this.detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 

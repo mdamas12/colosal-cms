@@ -62,7 +62,7 @@ v-model="leftDrawerOpen"
           v-bind="link"
           v-ripple
           clickable
-          @click="goTo(link.namePath)"
+          @click="goTo(link.to)"
         >
         <!-- colocar lo siguiente en la linea 65":replace="{ name: link.to }"" -->
         <q-item-section avatar>
@@ -113,7 +113,7 @@ export default Vue.extend({
       showProfile: false,
       menu: [
         { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Users' },
-        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
+        // { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
         { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
         { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
         { title: 'Características', caption: 'quasar.dev', icon: 'storage', to: 'Features' },
@@ -138,7 +138,7 @@ export default Vue.extend({
       // this.$router.push("/login");
     },
     goTo(namePath : string){
-      this.$router.push({name : namePath})
+      this.$router.push({path : `/${namePath}`})
     }
   }
 })
