@@ -140,8 +140,6 @@
                         use-input
                         hide-selected
                         fill-input
-                        :loading="searchingProducts[index]"
-                        :hint="productHint[index]"
                         v-model="productNameModel[index]"
                         input-debounce="0"
                         label="Producto"
@@ -201,8 +199,6 @@ export default Vue.extend({
       clientQuery:'',
       productQuery:'',
       searchingClient: false,
-      productHint: [''],
-      searchingProducts: [false],
       loading: false,
       sale: {
         description: "",
@@ -214,13 +210,6 @@ export default Vue.extend({
       sale_detail:[{
         product: 0,
         quantity: 0,
-        price: 0
-      }],
-      selectedProducts: [{
-        id: 0,
-        label: '',
-        value: '',
-        name: '',
         price: 0
       }],
       clientOptions: [{
@@ -306,8 +295,6 @@ export default Vue.extend({
       if (this.sale_detail.length > 1){
         this.sale_detail.splice(index,1);
         this.productNameModel.splice(index,1);
-        this.productHint.splice(index,1)
-        this.searchingProducts.splice(index,1)
       }
     },
     createSale(){
@@ -337,8 +324,8 @@ export default Vue.extend({
         this.showNotif("Proveer nombre de banco", 'red-10');
         return;
       };
-      this.sale.customer = this.clientOptions.indexOf(this.clientNameModel) >= -1? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
-      this.sale.bank = this.bankOptions.indexOf(this.bankNameModel) >= -1? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
+      this.sale.customer = this.clientOptions.indexOf(this.clientNameModel) >= 0 ? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
+      this.sale.bank = this.bankOptions.indexOf(this.bankNameModel) >= 0 ? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
 
       // for (let i = 0; i < this.sale_detail.length; i++) {
       //   this.sale_detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 

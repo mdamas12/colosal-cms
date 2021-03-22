@@ -13,22 +13,33 @@
                   </h5>
                 </div>
                 <div class="col">
-                  <q-btn color="red-10" label="Crear Promoción" class="q-pa-xs float-right" @click="createPromotion()"/>
+                  <q-btn color="red-10" label="Crear Promoción" :loading="loading" class="q-pa-xs float-right" @click="createPromotion()"/>
                 </div>
             </div>
 
 						<div class="q-mx-xs">
               <q-form ref="myForm">
-                <div class="row q-mb-md">
+                <div class="row">
                   <div class="col">
-                    <div class="row">
+                    <div class="row q-mb-md">
                       <div class="col">
                         <q-input  
                           outlined
                           v-model="promotion.name"
                           label="Nombre"
                           lazy-rules
+                          color="dark"
                           :rules="[val => !!val || 'Debe ingresar el nombre']"
+                        />
+                      </div>
+                    </div>
+                    <div class="row q-mb-lg">
+                      <div class="col">
+                        <q-input  
+                          outlined
+                          v-model="promotion.description"
+                          label="Descripción"
+                          color="dark"
                         />
                       </div>
                     </div>
@@ -50,44 +61,36 @@
                     </q-file>
                   </div> -->
                 </div>
-                <div class="row q-mb-md">
-                  <q-input  
-                    outlined
-                    v-model="promotion.description"
-                    autogrow
-                    label="Descripción"
-                  />
-                </div>
-
+                 
                 <div class="row q-mb-md">
                   <div class="col">
-                    <div class="row">
-                      <div class="col">
-                        <q-select outlined v-model="promotion.coin" :options="currencyOptions" label="Moneda"/>
-                      </div>
-                      <div class="col q-ml-sm">
-                        <q-input
-                          outlined
-                          v-model.number="promotion.price"
-                          label="Costo total"
-                          mask="#.##"
-                          fill-mask="0"
-                          :prefix="promotion.coin"
-                          reverse-fill-mask
-                          input-class="text-right"
-                        />
-                      </div>
-                    </div>
+                    <q-select outlined v-model="promotion.coin" color="dark" :options="currencyOptions" label="Moneda"/>
+                  </div>
+                  <div class="col q-ml-sm">
+                    <q-input
+                      outlined
+                      v-model.number="promotion.price"
+                      label="Precio"
+                      mask="#.##"
+                      fill-mask="0"
+                      ref="price"
+                      color="dark"
+                      :prefix="promotion.coin"
+                      reverse-fill-mask
+                      input-class="text-right"
+                      :rules="[val => !!val || 'Ingrese el precio', isGreaterThanZero]"
+                    />
                   </div>
                 </div>
 
-                <div class="row q-mb-md">
+                <div class="row q-mb-xl">
                   <div class="col">
                     <q-select
                       outlined
                       v-model="categoryNameModel"
                       use-input
                       hide-selected
+                      color="dark"
                       fill-input
                       input-debounce="0"
                       label="Categoría"
@@ -109,56 +112,56 @@
                       type="number"
                       label="Existencias"
                       outlined
+                      color="dark"
                     />
                   </div>
                 </div>
                 
               </q-form>
               <q-separator inset/>
-              <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-md">
+              <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-px-md">
                   Detalle de Productos
               </h5>
               <div class="q-gutter-md">
                 <div v-for="(item, index) in this.detail">
-                  <div class="row q-my-md">
-                    <div class="col">
+                  <div class="row q-mb-md">
+                    <div class="col-8">
+                      <q-select
+                        outlined
+                        use-input
+                        hide-selected
+                        fill-input
+                        color="dark"
+                        v-model="productNameModel[index]"
+                        input-debounce="0"
+                        label="Producto"
+                        :options="options2"
+                        @filter="filterFn2"
+                        @input="getProductInfo(productNameModel[index], index)"
+                      >
+                        <template v-slot:no-option>
+                          <q-item>
+                            <q-item-section class="text-grey">
+                              No results
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-select>
+                    </div>
+                    <div class="col-2 q-mx-auto">
+                      <q-input
+                        type="number"
+                        v-model.number="detail[index].quantity"
+                        label="Cantidad"
+                        outlined
+                        color="dark"
+                        lazy-rules
+                        :rules="[val => !!val || 'Ingresar cantidad comprada', isGreaterThanZero]"
+                      />
+                    </div>
+                    <div class="col-1 self-center">
                       <div class="row">
-                        <div class="col-8">
-                          <q-select
-                            outlined
-                            v-model="productNameModel[index]"
-                            use-input
-                            hide-selected
-                            fill-input
-                            input-debounce="0"
-                            label="Producto"
-                            :options="options2"
-                            @filter="filterFn2"
-                          >
-                            <template v-slot:no-option>
-                              <q-item>
-                                <q-item-section class="text-grey">
-                                  No results
-                                </q-item-section>
-                              </q-item>
-                            </template>
-                          </q-select>
-                        </div>
-                        <div class="col-2 q-mx-auto">
-                          <q-input
-                            v-model.number="detail[index].quantity"
-                            type="number"
-                            label="Cantidad"
-                            outlined
-                            lazy-rules
-                            :rules="[val => !!val || 'Debe ingresar el nombre']"
-                          />
-                        </div>
-                        <div class="col-1 self-center">
-                          <div class="row">
-                            <q-btn flat round color="indigo-10" icon="delete" @click="removeProduct(index)"/>
-                          </div>
-                        </div>
+                        <q-btn flat round color="indigo-10" icon="delete" @click="removeProduct(index)"/>
                       </div>
                     </div>
                   </div>
@@ -174,6 +177,7 @@
 
 <script>
 //@js-check
+import _ from 'lodash'
 import Vue from 'vue'
 import PromotionsService from '../../services/promotions/promotions.service'
 import CategoriesService from '../../services/categories/categories.service'
@@ -194,14 +198,19 @@ export default Vue.extend({
       },
       detail : [
         {
-          quantity: 1,
+          quantity: 0,
           product: 0,
         }
       ],
+      loading: false,
       categoryOptions: [],
       categoryIndex: [],
       options: [],
-      productOptions: [],
+      productOptions: [{
+        id: 0,
+        name: '',
+        price: 0
+      }],
       productIndex: [],
       options2: [],
       currencyOptions: ["USD", "BS"],
@@ -216,38 +225,31 @@ export default Vue.extend({
   },
   methods: {
     onRequest(){
-      let subscription = CategoriesService.getCategories(25,0).subscribe({
+      this.productOptions.pop();
+      CategoriesService.getAllCategories().subscribe({
         next : data =>{
-          for (let i = 0; i < data.results.length; i++) {
-            this.categoryOptions.push(data.results[i].name);
-            this.categoryIndex.push(data.results[i].id);
+          for (let i = 0; i < data.length; i++) {
+            this.categoryOptions.push(data[i].name);
+            this.categoryIndex.push(data[i].id);
           }
         },
         complete: () => {console.log("[complete]\ncategoryOptions: "+this.categoryOptions+"\ncategoryIndex: "+this.categoryIndex)}
-      });
-      let subscription2 = ProductsService.getAllProducts().subscribe({
-        next: data => {
-          console.log(data.results);
-          for (let i = 0; i < data.results.length; i++) {
-            this.productOptions.push(data.results[i].name);
-            this.productIndex.push(data.results[i].id);
-          }
-          // for (let i = 0; i < data.results.length; i++) {
-          //   this.productOptions.push(data.results[i].name);
-          //   this.productIndex.push(data.results[i].id);
-          // }
-        },
-
-        complete: () => {console.log("[complete]\nproductOptions: "+this.productOptions+"\nproductIndex: "+this.productIndex)}
-      });
+      })
     },
     addProduct(){
       this.detail.push({
-        quantity: 1,
+        quantity: 0,
         product: 0,
       });
-      this.productNameModel.push("");
+      this.productNameModel.push('');
       console.log('this.productNameModel.length: '+this.productNameModel.length);
+    },
+    getProductInfo(item, index){
+      console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
+      if (this.productOptions.indexOf(item) >= 0){
+        this.detail[index].product = this.productIndex[this.productOptions.indexOf(item)]
+      }
+      console.log(this.detail)
     },
     removeProduct(index){
       if (this.detail.length > 1){
@@ -256,35 +258,57 @@ export default Vue.extend({
       }
     },
     createPromotion(){
-      console.log('this.categoryNameModel: ' + this.categoryNameModel)
-      console.log('this.categoryOptions.indexOf(this.categoryNameModel): ' + this.categoryOptions.indexOf(this.categoryNameModel))
-      console.log('this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]: '+ this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)])
-      this.promotion.category = this.categoryOptions.indexOf(this.categoryNameModel) >= -1? this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]: null;
-      for (let i = 0; i < this.detail.length; i++) {
-        this.detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
+      if (this.promotion.name === ''){
+        this.showNotif("Proveer nombre de promoción", 'red-10')
+        return
       }
-      /* const vm = this
-      console.log("JSON.stringify(this.promotion): \n"+JSON.stringify(this.promotion));
-      var reader = new FileReader()
-      reader.readAsDataURL(this.promotion.image)
-      reader.onload = () => {
-        let iconBase64 = reader.result
-        this.promotion.image = iconBase64;
-      */  
-        let subscription = PromotionsService.createPromotion(this.promotion, this.detail).subscribe( {
-          next: () => {
-            setTimeout(() => this.backToPromotions(), 500);
-          },
-          complete: () => console.log('[complete]'),
-        })
+      if (this.promotion.coin === ''){
+        this.showNotif("Especificar el tipo de moneda", 'red-10')
+        return
+      }
+      if (!this.promotion.price > 0){
+        this.showNotif("Añadir el precio de la promo", 'red-10')
+        return
+      }
+      // console.log(this.categoryOptions)
+      // console.log(`this.categoryNameModel: ${this.categoryNameModel}\n!this.categoryOptions.indexOf(${this.categoryNameModel}) >= 0: ${!this.categoryOptions.indexOf(this.categoryNameModel) >= 0}`)
+      if (!(this.categoryOptions.indexOf(this.categoryNameModel) >= 0)){
+        this.showNotif("Agregar categoría de la promo", 'red-10')
+        return
+      }
+      for (var i = 0; i < this.detail.length; i++) {
+        if (this.productNameModel[i] === ''){
+          this.showNotif(`Seleccionar nombre del producto ${i}`, 'red-10')
+          return
+        }
+        if (!this.detail[i].quantity > 0){
+          this.showNotif(`Especificar cantidad de ${this.productNameModel[i]}s`, 'red-10')
+          return
+        }
+      }
+      this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
+      this.loading = true
+      PromotionsService.createPromotion(this.promotion, this.detail).subscribe( {
+        complete: () => {
+          this.loading = false
+          this.showNotif("Promoción creada exitosamente", 'indigo-10');
+          setTimeout(this.$router.back(),1000);
+        }
+      })
       //}
     },
-    backToPromotions(){
-      this.$router.back();
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
     },
     filterFn (val, update) {
       // call abort() at any time if you can't retrieve data somehow
-      setTimeout(() => {
+      // setTimeout(() => {
         update(() => {
           if (val === '') {
             this.options = this.categoryOptions;
@@ -295,24 +319,48 @@ export default Vue.extend({
             console.log("val: "+val)
           }
         })
-      },1500)
+      // },1500)
     },
+    
     filterFn2 (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options2 = this.productOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options2 = this.productOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      }, 1500)
+      update (() => {
+        if (val === ''){
+          return
+        }
+        this.productQuery = val
+        this.debouncedGetProducts()
+      })
     },
+    getProducts(){
+      ProductsService.searchProducts(this.productQuery).subscribe({
+        next: data => {
+          console.log(data.results)
+          console.log(data.results.length)
+          this.productOptions.splice(0, this.productOptions.length)
+          this.productIndex.splice(0, this.productIndex.length)
+          if (data.results.length > 0) {
+            for (let i = 0; i < data.results.length; i++) {
+              this.productOptions.push(data.results[i].name);
+              this.productIndex.push(data.results[i].id);
+            }
+            this.options2 = this.productOptions
+            console.log(this.productOptions)
+          }       
+        },
+        complete: () => {
+          console.log('[complete]')
+        }
+      })
+    },
+    isGreaterThanZero (val) {
+      return val > 0 ? !!val: 'Ingresar cantidad comprada';
+    },
+    backToPromotions(){
+      this.$router.push({path:"promotions/"});
+    }
+  },
+  created: function() {
+    this.debouncedGetProducts = _.debounce(this.getProducts, 500)
   }
 })
 </script>
