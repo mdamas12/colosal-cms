@@ -275,7 +275,7 @@ export default Vue.extend({
         this.showNotif("Ingresar fecha de compra", 'red-10');
         return;
       };
-      if (this.order.puchase.invoice == ''){
+      if (this.order.purchase.invoice == ''){
         this.showNotif("Ingresar número de factura", 'red-10');
         return;
       };

@@ -94,7 +94,7 @@
                             <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
                             <q-btn color="indigo-10" label="Validar" class="q-mr-xs q-pa-xs float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
-                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" />
+                            <!-- <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" /> -->
                           </div>
                         </div>
                       </q-td>
@@ -144,7 +144,6 @@
                       <q-td colspan="100%">
                         <div class="column items-end">
                           <div class="row">
-                            <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
                             <q-btn color="indigo-10" label="Regresar" class="q-mr-xs q-pa-xs float-right" @click="changeSaleStatus(props.row, 'POR VALIDAR')" />
                             <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" />
@@ -197,9 +196,8 @@
                       <q-td colspan="100%">
                         <div class="column items-end">
                           <div class="row">
-                            <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
-                            <q-btn color="green" label="REGRESAR" class="float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
+                            <q-btn color="indigo-10" label="REGRESAR" class="float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
                           </div>
                         </div>
                       </q-td>
@@ -335,9 +333,9 @@ export default Vue.extend({
         complete: () => {
           if (sale.status === 'POR VALIDAR'){
             this.toValidate.splice(this.toValidate.indexOf(sale),1);
-          }else if (value === 'POR ENTREGAR'){
+          }else if (sale.status === 'POR ENTREGAR'){
             this.toDeliver.splice(this.toDeliver.indexOf(sale),1);
-          }else if(value === 'PROCESADA'){
+          }else if(sale.status === 'PROCESADA'){
             this.processed.splice(this.processed.indexOf(sale),1);
           }
           // console.log("Pasó de estar: ",sale.status);
@@ -351,6 +349,9 @@ export default Vue.extend({
             this.toValidate.splice(0, 0, sale);
           }
           console.log("[sale updated]");
+          console.log(this.toValidate)
+          console.log(this.toDeliver)
+          console.log(this.processed)
         }
       });
     },

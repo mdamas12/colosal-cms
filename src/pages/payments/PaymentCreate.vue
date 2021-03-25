@@ -200,8 +200,7 @@ export default Vue.extend({
       this.createPayment()
     },
     createPayment(){
-      if (this.bank.account_number !== '')
-        this.bank.account_number = this.id_type + this.bank.account_number
+      this.bank.owner_id = this.id_type + '-' + this.bank.owner_id
       console.log("everything in order. Creating payment...");
       this.loading = true;
       PaymentsService.createPayment({bank: this.bank, method: this.method}).subscribe({
