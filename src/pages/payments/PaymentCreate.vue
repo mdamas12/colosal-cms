@@ -11,14 +11,14 @@
                 </div>
                 <div class="col2">
                   <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                      Nueva Venta
+                      Nuevo Método de Pago
                   </h5>
                 </div>
               </div>
 
               <div class="row">
                 <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    Información de Compra
+                    Información del Titular
                 </h6>
               </div>
               
@@ -26,7 +26,7 @@
             <div class="column items-end">
               <div class="col">
                 <div class="row">
-                  <q-btn color="red-10" label="Crear compra" class="q-pa-xs float-right" @click="createPayment()">
+                  <q-btn color="red-10" label="Crear compra" :loading="loading" class="q-pa-xs float-right" @click="checkPayment()">
                     <template v-slot:loading>
                       <q-spinner-facebook /> 
                     </template>
@@ -36,140 +36,100 @@
             </div>
           </div>
 
-          <div class="q-ma-sm">
-            <div class="row q-ma-bg">
-              <div class="col">               
+          <div class="q-mx-sm q-mb-lg">
+            <div class="row q-mb-md">
+              <div class="col-1">
                 <q-select
                   outlined
-                  use-input
-                  hide-selected
-                  fill-input
-                  input-debounce="0"
-                  v-model="clientNameModel"
-                  label="Cliente"
-                  stack-label
-                  :options="options"
-                  @filter="filterFn"
-                >
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0"></div>
-                  </template>
-                </q-select>           
+                  v-model="id_type"
+                  color="dark"
+                  :options="id_options"
+                  :rules="[val => !!val || 'Debe ingresar el tipo de documento']"
+                /> 
               </div>
-              <div class="col q-mx-sm">               
+              <div class="col q-ml-xs q-mr-sm">               
                 <q-input  
                   outlined
-                  v-model="payment.description"
-                  autogrow
-                  label="Descripción"
+                  color="dark"
+                  v-model="bank.owner_id"
+                  label="No. identificación del titular"
+                  :rules="[val => !!val || 'Debe ingresar el número de identificación']"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  outlined
+                  color="dark"
+                  v-model="bank.account_owner"
+                  label="Nombre del titular"
+                  :rules="[val => !!val || 'Debe ingresar el nombre del banco']"
                 />
               </div>
             </div>
-            <br/>
-            <q-separator inset class="q-my-md"/>
-            <div class="row q-ma-bg">
+            <div class="row q-mb-md">
+              <div class="col q-ml-xs q-mr-sm">               
+                <q-input  
+                  outlined
+                  color="dark"
+                  v-model="bank.email"
+                  label="Correo del titular"
+                  ref="email"
+                  :rules="[val => !!val || 'Debe ingresar el correo', isValidEmail]"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  outlined
+                  color="dark"
+                  v-model="bank.phone"
+                  label="Número de teléfono del titular"
+                  ref="phone"
+                  :rules="[val => !!val || 'Debe ingresar un número de telefono', isValidPhone]"
+                />  
+              </div>
+            </div>
+
+            <q-separator inset class="q-mt-lg"/>
+
+            <div class="row q-mx-bg">
               <div class="col2">
-                <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    Información de Pago
+                <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm">
+                    Información de la cuenta
                 </h6>
               </div>
             </div>
 
-            <div class="row q-ma-bg">
+            <div class="row q-mb-md">
               <div class="col">               
-                <q-select
+                <q-input
                   outlined
-                  use-input
-                  hide-selected
-                  fill-input
-                  input-debounce="0"
-                  v-model="bankNameModel"
+                  color="dark"
+                  v-model="bank.name"
                   label="Banco"
-                  stack-label
-                  :options="options3"
-                  @filter="filterFn3"
-                >
-                  <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0"></div>
-                  </template>
-                </q-select>              
+                  :rules="[val => !!val || 'Debe ingresar el nombre del banco']"
+                />         
               </div>
               <div class="col q-mx-sm">               
-                <q-select
+                <q-input
                   outlined
-                  v-model="payment.coin"
-                  :options="currencyOptions"
-                  label="Moneda"
-                  stack-label
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="money" />
-                  </template>
-                </q-select>           
-              </div>
+                  color="dark"
+                  v-model="bank.account_number"
+                  label="Número de cuenta"
+                />         
+              </div> 
               <div class="col">               
-                <q-select
-                  outlined
-                  v-model="payment.payment_type"
-                  :options="paymentOptions"
-                  label="Forma de Pago"
-                  stack-label
-                >
-                </q-select>           
+                <q-select outlined v-model="bank.currency" color="dark" :options="currencyOptions" label="Moneda" :rules="[val => !!val || 'Debe seleccionar el tipo de moneda']"/>
               </div>
             </div>
-            <br/>
-            <q-separator inset class="q-my-md"/>
-            <div class="row q-ma-bg">
+            <div class="row q-mx-bg">
               <div class="col2">
-                <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    Productos Adquiridos
+                <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm">
+                    Métodos de pago
                 </h6>
               </div>
             </div>
-
-            <div class="row q-mx-md">
-              <div class="col">
-                <div v-for="(item, index) in this.payment_detail">
-                  <div class="row q-mb-md">
-                    <div class="col-8">
-                      <q-select
-                        outlined
-                        use-input
-                        hide-selected
-                        fill-input
-                        v-model="productNameModel[index]"
-                        input-debounce="0"
-                        label="Producto"
-                        :options="options2"
-                        @filter="filterFn2"
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-grey">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                      </q-select>
-                    </div>
-                    <div class="col-2 q-mx-auto">
-                      <q-input
-                        type="number"
-                        v-model.number="payment_detail[index].quantity"
-                        label="Cantidad"
-                        outlined
-                      />
-                    </div>
-                    <div class="col-1 self-center">
-                      <div class="row">
-                        <q-btn flat round color="indigo-10" icon="delete" @click="this.removeProduct(index)"/>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <q-btn flat round color="indigo-10" icon="add" @click="addProduct()"/>
-              </div>
+            <div class="q-gutter-sm" v-for="(item,index) in this.paymentOptions">
+              <q-checkbox v-model="paymentValue[index]" :label="item" color="red-10" />
             </div>
           </div>
         </div>
@@ -177,171 +137,82 @@
   </q-page>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
-import PaymentsService from '../../services/payments/payments.service'
-import ClientsService from '../../services/customers/customers.service'
-import ProductsService from '../../services/products/products.service'
 import PaymentsService from '../../services/payments/payments.service'
 import { Loading } from 'quasar';
 
 export default Vue.extend({
   data () {
     return {
-      paymentOptions: ['ZELLE', 'TRANSFERENCIA BS', 'TRANSFERENCIA $', 'PAGO MOVIL', 'EFECTIVO'],
-      currencyOptions: ["USD", "BS"],
       loading: false,
-      payment: {
-        description: "",
-        customer: 0,
-        bank: 0,
-        payment_type: "",
-        coin : "",
+      paymentValue: [false],
+      paymentOptions: ['ZELLE', 'TRANSFERENCIA', 'PAGO MOVIL'],
+      currencyOptions: ['USD', 'BS'],
+      bank: {
+        name: '',
+        account_owner: '',
+        account_number: '',
+        owner_id: '',
+        email: '',
+        phone: '',
+        currency: ''
       },
-      payment_detail:[{
-        product: 0,
-        price: 0,
-        quantity: 0,
+      method: [{
+        payment_type: ''
       }],
-      selectedProducts: [{
-        id: 0,
-        label: '',
-        value: '',
-        name: '',
-        price: 0
-      }],
-      clientOptions: [{
-        id: 0,
-        name: ''
-      }],
-      bankOptions: [{
-        id: 0,
-        name: '',
-      }],
-      productOptions: [{
-        id: 0,
-        name: '',
-        price: 0
-      }],
-      clientIndex: [],
-      options: [],
-      productIndex: [],
-      productPrices: [],
-      options2: [],
-      clientNameModel: "",
-      productNameModel: [],
-      bankIndex: [],
-      options3: [],
-      bankNameModel: ""
+      id_type: '',
+      id_options: ['V', 'E', 'P', 'J', 'G']
     }
   },
   mounted(){
     let vm = this;
-    vm.onRequest();
+    this.paymentValue.pop()
+    for (var i = 0; i < this.paymentOptions.length; i++){
+      this.paymentValue.push(false)
+    }
+    console.log(this.paymentValue)
+    vm.method.pop()
   },
   methods: {
-    onRequest(){
-      // Loading.show();
-      let subscription = ClientsService.getCustomers().subscribe({
-        next: data => {
-          this.clientOptions.pop();
-          for (let i = 0; i < data.results.length; i++) {
-            this.clientOptions.push(data.results[i].fullname);
-            this.clientIndex.push(data.results[i].id);
-          }
-        },
-        complete: () => {
-          console.log('[complete]');
-        }
-      });
-      
-      let subscription2 = ProductsService.getAllProducts().subscribe({
-        next: data2 => {
-          this.productOptions.pop();
-          for (let i = 0; i < data2.results.length; i++) {
-            this.productOptions.push(data2.results[i].name);
-            this.productIndex.push(data2.results[i].id);
-            this.productPrices.push(data2.results[i].price);
-          }
-        },
-        complete: () => {
-          console.log('[complete]');
-        }
-      });
-
-      let subscription3 = PaymentsService.getPayments().subscribe({
-        next: data3 => {
-          this.bankOptions.pop();
-          for (let i = 0; i < data3.length; i++) {
-            this.bankOptions.push(data3[i].name);
-            this.bankIndex.push(data3[i].id);
-          }
-        },
-        complete: () => {
-          console.log('[complete]');
-          // Loading.hide();
-        }
-      });
-    },
-    addProduct(){
-      this.payment_detail.push({
-        product: 0,
-        price: 0,
-        quantity: 0
-      });
-      this.productNameModel.push("");
-    },
-    removeProduct(index){
-      if (this.payment_detail.length > 1){
-        this.payment_detail.splice(index,1);
-        this.productNameModel.splice(index,1);
+    checkPayment() {
+      if (this.bank.owner_id === '' || this.id_type === '' ||this.bank.account_owner === '' || this.bank.email === '' || this.bank.account_owner === ''){
+        this.showNotif("Completar información del titular", 'red-10')
+        return
       }
+      if (this.bank.name === '' || this.bank.currency === ''){
+        this.showNotif("Completar información de la cuenta", 'red-10')
+        return
+      }
+      // if ((this.$refs.email as Vue & { validate: () => string }).validate() || (this.$refs.phone as Vue & { validate: () => string }).validate() || (this.$refs.accNumber as Vue & { validate: () => string }).validate()) {
+      //   this.showNotif("Existen campos por corregir", 'red-10')
+      //   return
+      // }
+      for (var i = 0; i < this.paymentOptions.length; i++){
+        if (this.paymentValue[i]){
+          this.method.push({payment_type: this.paymentOptions[i]})
+        }
+      }
+      if (!(this.method.length > 0)){
+        this.showNotif("Seleccionar al menos un método de pago", 'red-10')
+        return
+      }
+      this.createPayment()
     },
     createPayment(){
-      if (this.clientNameModel === ""){
-        this.showNotif("Proveer nombre de cliente", 'red-10');
-        return;
-      };
-      if (this.payment.coin === "" || this.payment.payment_type === ""){
-        this.showNotif("Completar información de pago", 'red-10');
-        return;
-      };
-      if (this.payment_detail.length == 0){
-        this.showNotif("Debe agregar al menos un producto", 'red-10');
-        return;
-      };
-      for (var i=0; i < this.selectedProducts.length; i++) {
-        if (this.productNameModel[i] === ""){
-          this.showNotif(`Falta información del producto ${i}`, 'red-10');
-          return;
-        }
-        if (this.payment_detail[i].quantity <= 0){
-          this.showNotif(`Especificar cantidad en ${this.selectedProducts[i].name}`, 'red-10');
-          return;
-        }
-      };
-      if (this.bankNameModel === ""){
-        this.showNotif("Proveer nombre de banco", 'red-10');
-        return;
-      };
-      this.payment.customer = this.clientOptions.indexOf(this.clientNameModel) >= -1? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
-      this.payment.bank = this.bankOptions.indexOf(this.bankNameModel) >= -1? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
-
-      for (let i = 0; i < this.payment_detail.length; i++) {
-        this.payment_detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
-        this.payment_detail[i].price = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productPrices[this.productOptions.indexOf(this.productNameModel[i])]: null; 
-      }
+      if (this.bank.account_number !== '')
+        this.bank.account_number = this.id_type + this.bank.account_number
       console.log("everything in order. Creating payment...");
       this.loading = true;
-      let subscription = PaymentsService.createPayment({payment: this.payment, payment_detail: this.payment_detail}).subscribe({
+      PaymentsService.createPayment({bank: this.bank, method: this.method}).subscribe({
         complete: () =>{
           this.loading = false;
-          this.showNotif("Venta creada exitosamente", 'indigo-10');
-          setTimeout(backToPayments(),1000);
+          this.showNotif("Método de pago registrado exitosamente", 'indigo-10');
+          setTimeout(() => this.$router.back(),1000);
         }
       });
     },
-    showNotif (message, color) {
+    showNotif (message: string, color: string) {
       this.$q.notify({
         message: message,
         color: color,
@@ -350,56 +221,17 @@ export default Vue.extend({
         ]
       })
     },
-    filterFn (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      // setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options = this.clientOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options = this.clientOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      // }, 1500)
+    isValidNumber (val: string) {
+      const numberPattern = /^(?=[0-9]{1,20}$)/;
+      return numberPattern.test(val) || 'Número inválido';
     },
-    filterFn2 (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      // setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options2 = this.productOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options2 = this.productOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      // }, 1500)
+    isValidPhone (val: string) {
+      const phonePattern = /^(?=[0-9+-]{1,15}$)/;
+      return phonePattern.test(val) || 'Teléfono inválido';
     },
-    filterFn3 (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      // setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options3 = this.bankOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options3 = this.bankOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      // }, 1500)
-    },
-    backToPayments(){
-      this.$router.push({path:"payments/"});
+    isValidEmail (val: string) {
+      const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(val) || 'Correo inválido';
     }
   }
 })

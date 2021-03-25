@@ -123,8 +123,17 @@ const routes: RouteConfig[] = [
         component: () => import('pages/Sales.vue'),
         children: [
           { name: 'SalesList', path: '', component: () => import('pages/sales/SalesList.vue') },
-          // { name: 'SalesDetail', path: 'detail/:id', component: () => import('pages/sales/SalesDetail.vue') },
           { name: 'SalesCreate', path: 'create', component: () => import('pages/sales/SalesCreate.vue') }
+        ]
+      },
+      {
+        name: 'Payments',
+        path: 'payments',
+        component: () => import('pages/Payments.vue'),
+        children: [
+          { name: 'PaymentList', path: '', component: () => import('pages/payments/PaymentList.vue') },
+          // { name: 'PaymentDetail', path: 'detail/:id', component: () => import('pages/sales/PaymentDetail.vue') },  // Falta servicio
+          { name: 'PaymentCreate', path: 'create', component: () => import('pages/payments/PaymentCreate.vue') }
         ]
       }
     ]

@@ -5,13 +5,12 @@
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
             <h5 class="text-indigo-10 text-weight-bolder q-ma-none">
-              Promociones
+              Métodos de pago
             </h5>
-            <small class="text-subtitle2 text-grey-7 q-mb-none" >Existen {{this.count}} promociones almacenadas</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
           <div class="col">
-              <q-btn color="red-10" label="Crear promoción" class="float-right" @click="$router.push({ name : 'PaymentCreate'/* , params : {contact : contact }  */})"/>
+              <q-btn color="red-10" label="Crear pago" class="float-right q-pa-xs" @click="$router.push({ name : 'PaymentCreate'/* , params : {contact : contact }  */})"/>
           </div>
         </div>
 
@@ -23,7 +22,6 @@
               row-key="name"
               :pagination.sync="pagination"
               hide-pagination
-              @row-click="onRowClick"
             />
 
           <div class="row justify-center q-mt-md" v-if="numberOfPages > 1">
@@ -67,21 +65,15 @@ export default Vue.extend({
       currentPage: 1,
       numberOfPages: 0,
       columns: [
-        { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
-        { name: 'description', align: 'left', label: 'Descripción', field: 'description', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
-        { name: 'price', align: 'left', label: 'Precio', field: 'price', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
-        { name: 'coin', align: 'left', label: 'Moneda', field: 'coin', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
-        { name: 'quantity', align: 'left', label: 'Existencias', field: 'quantity', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'name', align: 'left', label: 'Banco', field: 'name', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'currency', align: 'left', label: 'Tipo de pago', field: 'currency', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'account_owner', align: 'left', label: 'Titular', field: 'account_owner', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'phone', align: 'left', label: 'Teléfono', field: 'phone', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'owner_id', align: 'left', label: 'No. identif', field: 'owner_id', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
+        { name: 'account_number', align: 'left', label: 'No. cuenta', field: 'account_number', sortable: false/*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis' */},
       ],
-      rows: [],
-      payment: {
-        name: "",
-        description: "",
-        image: "",
-        price: 0,
-        coin: "",
-        quantity: 0,
-      },
+      rows: []
     }
   },
   mounted () {
@@ -96,13 +88,11 @@ export default Vue.extend({
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
       this.table.splice(0,1);
-      console.log(this.table);
-      this.table.splice(0,0,1);
       console.log(`PaymentsService.getPayments(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       let subscription = PaymentsService.getPayments(this.limit, this.offset).subscribe({
         next: data => {
           console.log(data)
-          this.rows.splice(0, this.rows.length, ...data.results);
+          this.rows.splice(0, this.rows.length, ...data);
           console.log(this.rows)
           this.count = data.count
           this.numberOfPages = Math.ceil(this.count / this.limit);

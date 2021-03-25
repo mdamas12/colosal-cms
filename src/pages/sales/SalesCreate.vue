@@ -52,6 +52,7 @@
                   :hint="clientHint"
                   :options="options"
                   @filter="filterFn"
+                  @input="setClient()"
                 >
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="0"></div>
@@ -146,6 +147,7 @@
                         :options="options2"
                         @filter="filterFn2"
                         @input="getProductInfo(productNameModel[index], index)"
+                        :rules="[val => !!val || 'Debe seleccionar algún producto']"
                       >
                         <template v-slot:no-option>
                           <q-item>
@@ -324,7 +326,6 @@ export default Vue.extend({
         this.showNotif("Proveer nombre de banco", 'red-10');
         return;
       };
-      this.sale.customer = this.clientOptions.indexOf(this.clientNameModel) >= 0 ? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
       this.sale.bank = this.bankOptions.indexOf(this.bankNameModel) >= 0 ? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
 
       // for (let i = 0; i < this.sale_detail.length; i++) {
@@ -384,6 +385,9 @@ export default Vue.extend({
           this.searchingClient = false        
         }
       })
+    },
+    setClient(){
+      this.sale.customer = this.clientOptions.indexOf(this.clientNameModel) >= 0 ? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
     },
     filterFn2 (val, update) {
       update (() => {

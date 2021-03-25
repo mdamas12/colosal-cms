@@ -37,6 +37,7 @@
                           v-model="promotion.name"
                           label="Nombre"
                           lazy-rules
+                          color="dark"
                           :rules="[val => !!val || 'Debe ingresar el nombre']"
                         />
                       </div>
@@ -60,19 +61,22 @@
                   </div> -->
                 </div>
                 <div class="row q-mb-md">
-                  <q-input  
-                    outlined
-                    v-model="promotion.description"
-                    autogrow
-                    label="Descripción"
-                  />
+                  <div class="col">
+                    <q-input  
+                      outlined
+                      v-model="promotion.description"
+                      autogrow
+                      color="dark"
+                      label="Descripción"
+                    />
+                  </div>
                 </div>
 
                 <div class="row q-mb-md">
                   <div class="col">
                     <div class="row">
                       <div class="col">
-                        <q-select outlined v-model="promotion.coin" :options="currencyOptions" label="Moneda"/>
+                        <q-select outlined v-model="promotion.coin" color="dark" :options="currencyOptions" label="Moneda"/>
                       </div>
                       <div class="col q-ml-sm">
                         <q-input
@@ -81,6 +85,7 @@
                           label="Costo total"
                           mask="#.##"
                           fill-mask="0"
+                          color="dark"
                           :prefix="promotion.coin"
                           reverse-fill-mask
                           input-class="text-right"
@@ -98,6 +103,7 @@
                       use-input
                       hide-selected
                       fill-input
+                      color="dark"
                       input-debounce="0"
                       label="Categoría"
                       :options="options"
@@ -118,6 +124,7 @@
                       type="number"
                       label="Existencias"
                       outlined
+                      color="dark"
                     />
                   </div>
                 </div>
@@ -137,38 +144,29 @@
                       <div class="col">
                         <div class="row">
                           <div class="col-8">
-                            <q-select
+                            <q-input
                               outlined
-                              readonly
                               v-model="savedproductNameModel[index]"
-                              use-input
+                              disable
                               hide-selected
                               fill-input
+                              color="dark"
                               input-debounce="0"
                               label="Producto"
-                              :options="options2"
-                              @filter="filterFn2"
-                            >
-                              <template v-slot:no-option>
-                                <q-item>
-                                  <q-item-section class="text-grey">
-                                    No results
-                                  </q-item-section>
-                                </q-item>
-                              </template>
-                            </q-select>
+                            />
                           </div>
                           <div class="col-2 q-mx-auto">
                             <q-input
                               v-model.number="savedProductDetail[index].quantity"
                               type="number"
                               label="Cantidad"
+                              color="dark"
                               outlined
                             />
                           </div>
                           <div class="col-1 self-center">
                             <div class="row">
-                              <q-btn flat round color="indigo-10" icon="delete" @click="removeSavedProduct(index)"/>
+                              <q-btn flat round color="indigo-10" icon="delete" @click="removeProduct(index)"/>
                             </div>
                           </div>
                         </div>
@@ -193,6 +191,7 @@
                             use-input
                             hide-selected
                             fill-input
+                            color="dark"
                             input-debounce="0"
                             label="Producto"
                             :options="options2"
@@ -212,6 +211,7 @@
                             v-model.number="detail[index].quantity"
                             type="number"
                             label="Cantidad"
+                            color="dark"
                             outlined
                           />
                         </div>
@@ -235,11 +235,12 @@
 
 <script>
 //@js-check
+import _ from 'lodash'
 import Vue from 'vue'
 import PromotionsService from '../../services/promotions/promotions.service'
 import CategoriesService from '../../services/categories/categories.service'
 import ProductsService from '../../services/products/products.service'
-import axios from 'axios'
+import { Loading } from 'quasar'
 
 export default Vue.extend({
   data () {
@@ -248,7 +249,7 @@ export default Vue.extend({
       promotion: {
         name: "",
         description: "",
-        //image: null,
+        image: null,
         price: 0,
         coin: "",
         quantity: 0,
@@ -256,16 +257,22 @@ export default Vue.extend({
       },
       detail : [
         {
-          quantity: 1,
+          quantity: 0,
           product: 0,
         }
       ],
+      loading1: false,
+      loading2: false,
       fetched: false,
       categoryOptions: [],
       categoryIndex: [],
       options: [],
       productIndex: [],
-      productOptions: [],
+      productOptions: [{
+        id: 0,
+        name: '',
+        price: 0
+      }],
       options2: [],
       currencyOptions: ["USD", "BS"],
       statusOptions: ["COMPLETE"],
@@ -274,7 +281,7 @@ export default Vue.extend({
       savedProductDetail: [
         {
           id: 0,
-          quantity: 1,
+          quantity: 0,
           product: 0,
         }
       ],
@@ -287,63 +294,62 @@ export default Vue.extend({
   },
   methods: {
     onRequest(){
-      this.detail.pop();
-      let subscription = CategoriesService.getCategories(25,0).subscribe({
+      this.detail.pop()
+      this.productOptions.pop()
+      this.savedProductDetail.pop()
+      Loading.show();
+      CategoriesService.getAllCategories().subscribe({
         next : data =>{
-          for (let i = 0; i < data.results.length; i++) {
-            this.categoryOptions.push(data.results[i].name);
-            this.categoryIndex.push(data.results[i].id);
+          for (let i = 0; i < data.length; i++) {
+            this.categoryOptions.push(data[i].name);
+            this.categoryIndex.push(data[i].id);
           }
         },
         complete: () => {console.log("[complete]\ncategoryOptions: "+this.categoryOptions+"\ncategoryIndex: "+this.categoryIndex)}
-      });
-      let subscription2 = ProductsService.getAllProducts().subscribe({
-        next: data => {
-          console.log(data.results);
-          for (let i = 0; i < data.results.length; i++) {
-            this.productOptions.push(data.results[i].name);
-            this.productIndex.push(data.results[i].id);
-          }
-          // for (let i = 0; i < data.results.length; i++) {
-          //   this.productOptions.push(data.results[i].name);
-          //   this.productIndex.push(data.results[i].id);
-          // }
-        },
-
-        complete: () => {console.log("[complete]\nproductOptions: "+this.productOptions+"\nproductIndex: "+this.productIndex)}
-      });
-      let subscription3 = PromotionsService.getPromotion(this.promotionId).subscribe({
+      })
+      PromotionsService.getPromotion(this.promotionId).subscribe({
         next: data =>{
-          this.promotion.name =        data.name;
+          console.log(data)
+          this.promotion.name = data.name;
           this.promotion.description = data.description;
-          this.promotion.image =       data.image;
-          this.promotion.price =       data.price;
-          this.promotion.coin =        data.coin;
-          this.promotion.quantity =    data.quantity;
-          this.promotion.category =    data.category.id;
-          this.categoryNameModel =     data.category.name
+          this.promotion.image = data.image;
+          this.promotion.price = data.price;
+          this.promotion.coin = data.coin;
+          this.promotion.quantity = data.quantity;
+          this.promotion.category = data.category.id;
+          this.categoryNameModel = data.category.name
+          this.savedProductDetail.splice(0,1)
+          console.log(this.savedProductDetail)
           for (let i = 0; i < data.promotion_detail.length; i++) {
             this.savedProductDetail.push({
               id: data.promotion_detail[i].id,
               product: data.promotion_detail[i].product.id,
               quantity: data.promotion_detail[i].quantity
             });
-            this.savedproductNameModel.push(data.promotion_detail[i].product.name);
+            this.savedproductNameModel.push(data.promotion_detail[i].product.name)
+            console.log(this.savedProductDetail)
           }
-          this.savedProductDetail.splice(0,1);
         },
         complete: () => {
           this.fetched = true;
+          Loading.hide()
         }
       })
     },
     addProduct(){
       this.detail.push({
-        quantity: 1,
+        quantity: 0,
         product: 0,
       });
-      this.productNameModel.push("");
-      console.log('this.productNameModel.length: '+this.productNameModel.length);     
+      this.productNameModel.push('');
+      console.log('this.productNameModel.length: '+this.productNameModel.length);
+    },
+    getProductInfo(item, index){
+      console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
+      if (this.productOptions.indexOf(item) >= 0){
+        this.detail[index].product = this.productIndex[this.productOptions.indexOf(item)]
+      }
+      console.log(this.detail)
     },
     removeSavedProduct(index){
       this.savedProductDetail.splice(index,1);
@@ -356,27 +362,49 @@ export default Vue.extend({
       }
     },
     updatePromotion(){
-      this.promotion.category = this.categoryOptions.indexOf(this.categoryNameModel) >= -1? this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]: null;
-      for (let i = 0; i < this.detail.length; i++) {
-        this.detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
+      if (this.promotion.name === ''){
+        this.showNotif("Proveer nombre de promoción", 'red-10')
+        return
       }
-      /* const vm = this
-      console.log("JSON.stringify(this.promotion): \n"+JSON.stringify(this.promotion));
-      var reader = new FileReader()
-      reader.readAsDataURL(this.promotion.image)
-      reader.onload = () => {
-        let iconBase64 = reader.result
-        this.promotion.image = iconBase64;
-      */  
-        let subscription = PromotionsService.updatePromotion(this.promotion, this.savedProductDetail, this.detail, this.promotionId).subscribe( {
-          next: () => {
-            setTimeout(() => this.backToPromotions(), 500);
-          },
-          complete: () => console.log('[complete]'),
-        })
+      if (this.promotion.coin === ''){
+        this.showNotif("Especificar el tipo de moneda", 'red-10')
+        return
+      }
+      if (!this.promotion.price > 0){
+        this.showNotif("Añadir el precio de la promo", 'red-10')
+        return
+      }
+      // console.log(this.categoryOptions)
+      // console.log(`this.categoryNameModel: ${this.categoryNameModel}\n!this.categoryOptions.indexOf(${this.categoryNameModel}) >= 0: ${!this.categoryOptions.indexOf(this.categoryNameModel) >= 0}`)
+      if (!(this.categoryOptions.indexOf(this.categoryNameModel) >= 0)){
+        this.showNotif("Agregar categoría de la promo", 'red-10')
+        return
+      }
+      for (var i = 0; i < this.detail.length; i++) {
+        if (this.productNameModel[i] === ''){
+          this.showNotif(`Seleccionar nombre del producto ${i}`, 'red-10')
+          return
+        }
+        if (!this.detail[i].quantity > 0){
+          this.showNotif(`Especificar cantidad de ${this.productNameModel[i]}s`, 'red-10')
+          return
+        }
+      }
+      this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
+      this.loading = true
+      PromotionsService.updatePromotion(this.promotion, this.savedProductDetail, this.detail, this.promotionId).subscribe({
+        complete: () => {
+          this.loading = false
+          this.showNotif("Promoción creada exitosamente", 'indigo-10')
+          setTimeout(this.$router.back(),1000)
+        }
+      })
       //}
     },
     confirmDelete () {
+      if (this.loading1 || this.loading2){
+        return
+      }
       this.$q.dialog({
         title: 'Confirmar',
         message: '¿Está seguro de querer eliminar esta promoción?',
@@ -390,18 +418,31 @@ export default Vue.extend({
       })
     },
     deletePromotion(){
-      let subscription = PromotionsService.deletePromotion(this.promotionId).subscribe({
+      this.loading2 = true;
+      PromotionsService.deletePromotion(this.promotionId).subscribe({
         next: () => {
-          this.$router.push({path: '/Promotions'})
+          this.loading2 = false;
+          console.log('[user Deleted]')
+          this.showNotif("Usuario Eliminado", 'indigo-10');
+          setTimeout(() => this.$router.push({path: '/Promotions'}), 1000);
         }
       })
     },
     backToPromotions(){
       this.$router.back();
     },
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
     filterFn (val, update) {
       // call abort() at any time if you can't retrieve data somehow
-      setTimeout(() => {
+      // setTimeout(() => {
         update(() => {
           if (val === '') {
             this.options = this.categoryOptions;
@@ -412,24 +453,48 @@ export default Vue.extend({
             console.log("val: "+val)
           }
         })
-      },1500)
+      // },1500)
     },
+    
     filterFn2 (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options2 = this.productOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options2 = this.productOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      }, 1500)
+      update (() => {
+        if (val === ''){
+          return
+        }
+        this.productQuery = val
+        this.debouncedGetProducts()
+      })
     },
+    getProducts(){
+      ProductsService.searchProducts(this.productQuery).subscribe({
+        next: data => {
+          console.log(data.results)
+          console.log(data.results.length)
+          this.productOptions.splice(0, this.productOptions.length)
+          this.productIndex.splice(0, this.productIndex.length)
+          if (data.results.length > 0) {
+            for (let i = 0; i < data.results.length; i++) {
+              this.productOptions.push(data.results[i].name);
+              this.productIndex.push(data.results[i].id);
+            }
+            this.options2 = this.productOptions
+            console.log(this.productOptions)
+          }       
+        },
+        complete: () => {
+          console.log('[complete]')
+        }
+      })
+    },
+    isGreaterThanZero (val) {
+      return val > 0 ? !!val: 'Ingresar cantidad comprada';
+    },
+    backToPromotions(){
+      this.$router.push({path:"promotions/"});
+    }
+  },
+  created: function() {
+    this.debouncedGetProducts = _.debounce(this.getProducts, 500)
   }
 })
 </script>

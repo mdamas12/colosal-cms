@@ -47,6 +47,19 @@ class SuppliersService {
     })
   }
 
+  searchSuppliers(name){
+    return Observable.create((observer) => {
+      axios.get(API_URL + `providers/search/${name}/`)
+        .then((response) => {
+          observer.next(response.data)
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
   updateSupplier(newSupplier){
     return Observable.create((observer) => {
       axios.put(API_URL + `providers/${newSupplier.id}/`,{name: newSupplier.name, address: newSupplier.address, email: newSupplier.email, number: newSupplier.number, agent: newSupplier.agent})

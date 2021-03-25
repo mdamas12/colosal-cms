@@ -21,7 +21,7 @@ class SalesService {
 
   getSalesByStatus (id){
     return Observable.create((observer) => {
-      axios.get(API_URL + `sales/list-satus/${id}/`)
+      axios.get(API_URL + `sales/list-status/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -89,7 +89,7 @@ class SalesService {
     return Observable.create((observer) => {
       axios.put(API_URL + `sales/detail/${id}/`,{sale: {status: value}})
         .then((response) => {
-          console.log();
+          console.log(response);
           observer.complete()
         })
         .catch((error) => {

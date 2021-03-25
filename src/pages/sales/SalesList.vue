@@ -94,7 +94,7 @@
                             <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
                             <q-btn color="indigo-10" label="Validar" class="q-mr-xs q-pa-xs float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
-                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESAR')" />
+                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" />
                           </div>
                         </div>
                       </q-td>
@@ -106,10 +106,10 @@
 
               <q-tab-panel name="deliver">
                 <q-table
-                  title="Por entergar"
+                  title="Por Entregar"
                   :data="toDeliver"
                   :columns="columns2"
-                  row-key="name"
+                  row-key="id"
                   :loading="!isDeliverFetched"
                 >
 
@@ -138,15 +138,16 @@
                       >
                         {{ col.value }}
                       </q-td>
+                      <!-- <q-tr :props="props" class="cursor-pointer" @click.native="$router.push({ path: `/sales/detail/${props.row._id}`})"></q-tr> -->
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
                         <div class="column items-end">
                           <div class="row">
-                            <q-btn flat round color="indigo-10" icon="delete" class="q-mr-sm float-right"/>
+                            <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
-                            <q-btn color="red-10" label="regresar" class="q-mr-xs float-right" @click="changeSaleStatus(props.row, 'POR VALIDAR')" />
-                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESAR')" />
+                            <q-btn color="indigo-10" label="Regresar" class="q-mr-xs q-pa-xs float-right" @click="changeSaleStatus(props.row, 'POR VALIDAR')" />
+                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" />
                           </div>
                         </div>
                       </q-td>
@@ -161,7 +162,7 @@
                   title="Procesado"
                   :data="processed"
                   :columns="columns3"
-                  row-key="name"
+                  row-key="id"
                   :loading="!isProcessedFetched"
                 >
 
@@ -190,19 +191,21 @@
                       >
                         {{ col.value }}
                       </q-td>
+                      <!-- <q-tr :props="props" class="cursor-pointer" @click.native="$router.push({ path: `/sales/detail/${props.row._id}`})"></q-tr> -->
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
                         <div class="column items-end">
                           <div class="row">
-                            <q-btn flat round color="green" icon="delete" class="q-mr-sm float-right"/>
+                            <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
-                            <q-btn color="indigo-10" label="Regresar" class="float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
+                            <q-btn color="green" label="REGRESAR" class="float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
                           </div>
                         </div>
                       </q-td>
                     </q-tr>
                   </template>
+
                 </q-table>
               </q-tab-panel>
             </q-tab-panels>
@@ -314,9 +317,9 @@ export default Vue.extend({
       // busca de ventas por validar
       SalesService.getSalesByStatus(1).subscribe({
         next: data => {
-          console.log(data.results);
-          for (let i = 0; i < data.results.length; i++){
-            this.toValidate.push({id: data.results[i].id, customer: data.results[i].customer, created: data.results[i].created.substring(0,10),payment_type: data.results[i].payment_type, bank: data.results[i].bank, coin: data.results[i].coin, amount: data.results[i].amount, status: data.results[i].status});
+          console.log(data);
+          for (let i = 0; i < data.length; i++){
+            this.toValidate.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
           };
         },
         complete: () => {
@@ -334,17 +337,17 @@ export default Vue.extend({
             this.toValidate.splice(this.toValidate.indexOf(sale),1);
           }else if (value === 'POR ENTREGAR'){
             this.toDeliver.splice(this.toDeliver.indexOf(sale),1);
-          }else if(value === 'PROCESADO'){
+          }else if(value === 'PROCESADA'){
             this.processed.splice(this.processed.indexOf(sale),1);
           }
           // console.log("Pasó de estar: ",sale.status);
-          // sale.status = value;
+          sale.status = value;
           // console.log("a estar: ",sale.status);
-          if (value === 'POR ENTREGAR'){
+          if (value === 'POR ENTREGAR' && this.isDeliverFetched){
             this.toDeliver.splice(0, 0, sale);
-          }else if(value === 'PROCESADO' && this.isDeliverFetched){
+          }else if((value === 'PROCESADA')  && this.isProcessedFetched){
             this.processed.splice(0, 0, sale);
-          }else if(value === 'POR VALIDAR' && this.isProcessedFetched){
+          }else if(value === 'POR VALIDAR'){
             this.toValidate.splice(0, 0, sale);
           }
           console.log("[sale updated]");
@@ -371,7 +374,7 @@ export default Vue.extend({
             this.toValidate.splice(this.toValidate.indexOf(sale),1);
           }else if (value === 'POR ENTREGAR'){
             this.toDeliver.splice(this.toDeliver.indexOf(sale),1);
-          }else if(value === 'PROCESADO'){
+          }else if(value === 'PROCESADA'){
             this.processed.splice(this.processed.indexOf(sale),1);
           }
         }
@@ -384,9 +387,9 @@ export default Vue.extend({
         console.log('current tab: ' + this.tab + '\nwas it fetched?: ' + this.isDeliverFetched)
         SalesService.getSalesByStatus(2).subscribe({
           next: data => {
-            console.log(data.results);
-            for (let i = 0; i < data.results.length; i++){
-              this.toDeliver.push({id: data.results[i].id, customer: data.results[i].customer, created: data.results[i].created.substring(0,10), payment_type: data.results[i].payment_type, bank: data.results[i].bank, coin: data.results[i].coin, amount: data.results[i].amount, status: data.results[i].status});
+            console.log(data);
+            for (let i = 0; i < data.length; i++){
+              this.toDeliver.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
             }
           },
           complete: () => {
@@ -399,9 +402,9 @@ export default Vue.extend({
         // busqueda de ventas procesadas
         SalesService.getSalesByStatus(3).subscribe({
           next: data => {
-            console.log(data.results);
-            for (let i = 0; i < data.results.length; i++){
-              this.processed.push({id: data.results[i].id, customer: data.results[i].customer, created: data.results[i].created.substring(0,10), payment_type: data.results[i].payment_type, bank: data.results[i].bank, coin: data.results[i].coin, amount: data.results[i].amount, status: data.results[i].status});
+            console.log(data);
+            for (let i = 0; i < data.length; i++){
+              this.processed.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
               // console.log("toValidate: "+this.toValidate+"\ntoDeliver: "+this.toDeliver+"\nprocessed: "+this.processed);
             };
           },

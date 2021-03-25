@@ -4,7 +4,7 @@
 
         <div class="q-pa-sm">
             <div class="row">
-                <div class="col" style="max-width:40px;">
+                <div class="col" style="max-width:40px">
                     <q-btn flat round icon="keyboard_backspace" style="color:#9E9E9E" @click="$router.back()" />
                 </div>
                 <div class="col2">
@@ -42,6 +42,33 @@
                           color="dark"
                         />
                       </div>
+                    </div>
+                  </div>
+                  <div class="row justify-between items-center">
+                    <div class="col-9 justify-evenly">
+                      <!-- :filter="checkFileType" -->
+                      <!-- <div class="row items-center q-my-sm">
+                        <div class="col">
+                        <q-file 
+                          outlined 
+                          clearable 
+                          counter 
+                          v-model="promotion.image"        
+                          @rejected="onRejected"
+                          @input="getImage"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="col-2">
+                      <div v-if="image !== null">
+                        <q-img :src="preview" style="max-width: 150px" />
+                      </div> -->
                     </div>
                   </div>
                   <!-- <div class="col q-ml-md">
@@ -182,17 +209,17 @@ import Vue from 'vue'
 import PromotionsService from '../../services/promotions/promotions.service'
 import CategoriesService from '../../services/categories/categories.service'
 import ProductsService from '../../services/products/products.service'
-import axios from 'axios'
+import { Loading } from 'quasar'
 
 export default Vue.extend({
   data () {
     return {
       promotion: {
-        name: "",
-        description: "",
-        //image: null,
+        name: '',
+        description: '',
+        // image: null,
         price: 0,
-        coin: "",
+        coin: '',
         quantity: 0,
         category: 0
       },
@@ -202,6 +229,8 @@ export default Vue.extend({
           product: 0,
         }
       ],
+      preview: null,
+      uploading: null,
       loading: false,
       categoryOptions: [],
       categoryIndex: [],
@@ -213,47 +242,46 @@ export default Vue.extend({
       }],
       productIndex: [],
       options2: [],
-      currencyOptions: ["USD", "BS"],
-      statusOptions: ["COMPLETE"],
-      categoryNameModel: "",
-      productNameModel: [""]
+      currencyOptions: ['USD', 'BS'],
+      statusOptions: ['COMPLETE'],
+      categoryNameModel: '',
+      productNameModel: ['']
     }
   },
   mounted(){
-    let vm = this;
-    vm.onRequest();
+    let vm = this
+    vm.onRequest()
   },
   methods: {
     onRequest(){
-      this.productOptions.pop();
+      this.productOptions.pop()
+      Loading.show()
       CategoriesService.getAllCategories().subscribe({
         next : data =>{
           for (let i = 0; i < data.length; i++) {
-            this.categoryOptions.push(data[i].name);
-            this.categoryIndex.push(data[i].id);
+            this.categoryOptions.push(data[i].name)
+            this.categoryIndex.push(data[i].id)
           }
         },
-        complete: () => {console.log("[complete]\ncategoryOptions: "+this.categoryOptions+"\ncategoryIndex: "+this.categoryIndex)}
+        complete: () => { Loading.hide() }
       })
     },
     addProduct(){
       this.detail.push({
         quantity: 0,
         product: 0,
-      });
-      this.productNameModel.push('');
-      console.log('this.productNameModel.length: '+this.productNameModel.length);
+      })
+      this.productNameModel.push('')
     },
     getProductInfo(item, index){
       console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
       if (this.productOptions.indexOf(item) >= 0){
         this.detail[index].product = this.productIndex[this.productOptions.indexOf(item)]
       }
-      console.log(this.detail)
     },
     removeProduct(index){
       if (this.detail.length > 1){
-        this.detail.splice(index,1);
+        this.detail.splice(index,1)
         this.productNameModel.splice(index,1)
       }
     },
@@ -266,12 +294,14 @@ export default Vue.extend({
         this.showNotif("Especificar el tipo de moneda", 'red-10')
         return
       }
+      // if (this.promotion.image == null){
+      //   this.showNotif("Faltan campos por completar", 'red-10')
+      //   return
+      // }
       if (!this.promotion.price > 0){
         this.showNotif("Añadir el precio de la promo", 'red-10')
         return
       }
-      // console.log(this.categoryOptions)
-      // console.log(`this.categoryNameModel: ${this.categoryNameModel}\n!this.categoryOptions.indexOf(${this.categoryNameModel}) >= 0: ${!this.categoryOptions.indexOf(this.categoryNameModel) >= 0}`)
       if (!(this.categoryOptions.indexOf(this.categoryNameModel) >= 0)){
         this.showNotif("Agregar categoría de la promo", 'red-10')
         return
@@ -286,16 +316,17 @@ export default Vue.extend({
           return
         }
       }
-      this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
-      this.loading = true
-      PromotionsService.createPromotion(this.promotion, this.detail).subscribe( {
-        complete: () => {
-          this.loading = false
-          this.showNotif("Promoción creada exitosamente", 'indigo-10');
-          setTimeout(this.$router.back(),1000);
-        }
-      })
-      //}
+      // if (this.promotion.image === null){        // begin
+        this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
+        this.loading = true
+        PromotionsService.createPromotion(this.promotion, this.detail).subscribe( {
+          complete: () => {
+            this.loading = false
+            this.showNotif("Promoción creada exitosamente", 'indigo-10')
+            setTimeout(this.$router.back(),1000)
+          }
+        })
+      // }                                          // end
     },
     showNotif (message, color) {
       this.$q.notify({
@@ -311,12 +342,11 @@ export default Vue.extend({
       // setTimeout(() => {
         update(() => {
           if (val === '') {
-            this.options = this.categoryOptions;
+            this.options = this.categoryOptions
           }
           else {
             const needle = val.toLowerCase()
             this.options = this.categoryOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
           }
         })
       // },1500)
@@ -334,17 +364,14 @@ export default Vue.extend({
     getProducts(){
       ProductsService.searchProducts(this.productQuery).subscribe({
         next: data => {
-          console.log(data.results)
-          console.log(data.results.length)
           this.productOptions.splice(0, this.productOptions.length)
           this.productIndex.splice(0, this.productIndex.length)
           if (data.results.length > 0) {
             for (let i = 0; i < data.results.length; i++) {
-              this.productOptions.push(data.results[i].name);
-              this.productIndex.push(data.results[i].id);
+              this.productOptions.push(data.results[i].name)
+              this.productIndex.push(data.results[i].id)
             }
             this.options2 = this.productOptions
-            console.log(this.productOptions)
           }       
         },
         complete: () => {
@@ -352,11 +379,30 @@ export default Vue.extend({
         }
       })
     },
+    // checkFileType (files) {
+    //   return files.filter(file => file.type === 'image/png')
+    // },
+    // getImage(e){
+    //   console.log(e)
+    //   let reader = new FileReader()
+    //   reader.readAsDataURL(e)
+    //   reader.onload = e => {
+    //     this.preview = e.target.result
+    //   }
+    // },
+    // onRejected (rejectedEntries) {
+    //   // Notify plugin needs to be installed
+    //   // https://quasar.dev/quasar-plugins/notify#Installation
+    //   this.$q.notify({
+    //     type: 'negative',
+    //     message: `El archivo seleccionado no es de tipo .png`
+    //   })
+    // },
     isGreaterThanZero (val) {
-      return val > 0 ? !!val: 'Ingresar cantidad comprada';
+      return val > 0 ? !!val: 'Ingresar cantidad comprada'
     },
     backToPromotions(){
-      this.$router.push({path:"promotions/"});
+      this.$router.push({path:"/promotions"})
     }
   },
   created: function() {
