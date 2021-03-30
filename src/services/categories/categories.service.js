@@ -19,7 +19,6 @@ class CategoriesService {
   }
 
   getAllCategories (){
-    //  http://localhost:8000/panel/categories/list-all/
     return Observable.create((observer) => {
       axios.get(API_URL + 'categories/list-all')
         .then((response) => {

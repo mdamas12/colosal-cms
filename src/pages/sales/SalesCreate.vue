@@ -26,7 +26,7 @@
             <div class="column items-end">
               <div class="col">
                 <div class="row">
-                  <q-btn color="red-10" label="Crear compra" class="q-pa-xs float-right" @click="createSale()">
+                  <q-btn color="red-10" :loading="loading" label="Crear compra" class="q-pa-xs float-right" @click="createSale()">
                     <template v-slot:loading>
                       <q-spinner-facebook /> 
                     </template>
@@ -48,8 +48,11 @@
                   v-model="clientNameModel"
                   label="Cliente"
                   stack-label
+                  :loading="searchingClient"
+                  :hint="clientHint"
                   :options="options"
                   @filter="filterFn"
+                  @input="setClient()"
                 >
                   <template v-slot:control>
                     <div class="self-center full-width no-outline" tabindex="0"></div>
@@ -143,6 +146,8 @@
                         label="Producto"
                         :options="options2"
                         @filter="filterFn2"
+                        @input="getProductInfo(productNameModel[index], index)"
+                        :rules="[val => !!val || 'Debe seleccionar algún producto']"
                       >
                         <template v-slot:no-option>
                           <q-item>
@@ -159,11 +164,13 @@
                         v-model.number="sale_detail[index].quantity"
                         label="Cantidad"
                         outlined
+                        lazy-rules
+                        :rules="[val => !!val || 'Ingresar cantidad comprada', isGreaterThanZero]"
                       />
                     </div>
                     <div class="col-1 self-center">
                       <div class="row">
-                        <q-btn flat round color="indigo-10" icon="delete" @click="this.removeProduct(index)"/>
+                        <q-btn flat round color="indigo-10" icon="delete" @click="removeProduct(index)"/>
                       </div>
                     </div>
                   </div>
@@ -178,9 +185,9 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import Vue from 'vue'
 import SalesService from '../../services/sales/sales.service'
-import UsersService from '../../services/users/users.service'
 import ProductsService from '../../services/products/products.service'
 import PaymentsService from '../../services/payments/payments.service'
 import { Loading } from 'quasar';
@@ -188,26 +195,23 @@ import { Loading } from 'quasar';
 export default Vue.extend({
   data () {
     return {
-      paymentOptions: ['ZELLE', 'TRANSFERENCIA BS', 'TRANSFERENCIA $', 'PAGO MOVIL', 'EFECTIVO'],
+      paymentOptions: ['ZELLE', 'TRANSFERENCIA BS', 'PAGO MOVIL', 'EFECTIVO'],
       currencyOptions: ["USD", "BS"],
+      clientHint:'',
+      clientQuery:'',
+      productQuery:'',
+      searchingClient: false,
       loading: false,
       sale: {
         description: "",
-        user: 0,
+        customer: 0,
         bank: 0,
         payment_type: "",
-        coin : "",
+        coin : ""
       },
       sale_detail:[{
         product: 0,
-        price: 0,
         quantity: 0,
-      }],
-      selectedProducts: [{
-        id: 0,
-        label: '',
-        value: '',
-        name: '',
         price: 0
       }],
       clientOptions: [{
@@ -223,6 +227,7 @@ export default Vue.extend({
         name: '',
         price: 0
       }],
+      currentProductIndex: 0,
       clientIndex: [],
       options: [],
       productIndex: [],
@@ -241,33 +246,21 @@ export default Vue.extend({
   },
   methods: {
     onRequest(){
-      // Loading.show();
-      let subscription = UsersService.getUsers().subscribe({
-        next: data => {
-          this.clientOptions.pop();
-          for (let i = 0; i < data.results.length; i++) {
-            this.clientOptions.push(data.results[i].fullname);
-            this.clientIndex.push(data.results[i].id);
-          }
-        },
-        complete: () => {
-          console.log('[complete]');
-        }
-      });
-      
-      let subscription2 = ProductsService.getAllProducts().subscribe({
-        next: data2 => {
-          this.productOptions.pop();
-          for (let i = 0; i < data2.results.length; i++) {
-            this.productOptions.push(data2.results[i].name);
-            this.productIndex.push(data2.results[i].id);
-            this.productPrices.push(data2.results[i].price);
-          }
-        },
-        complete: () => {
-          console.log('[complete]');
-        }
-      });
+      Loading.show();
+      this.productOptions.pop();
+      // let subscription2 = ProductsService.getAllProducts().subscribe({
+      //   next: data2 => {
+      //     this.productOptions.pop();
+      //     for (let i = 0; i < data2.results.length; i++) {
+      //       this.productOptions.push(data2.results[i].name);
+      //       this.productIndex.push(data2.results[i].id);
+      //       this.productPrices.push(data2.results[i].price);
+      //     }
+      //   },
+      //   complete: () => {
+      //     console.log('[complete]');
+      //   }
+      // });
 
       let subscription3 = PaymentsService.getPayments().subscribe({
         next: data3 => {
@@ -279,7 +272,7 @@ export default Vue.extend({
         },
         complete: () => {
           console.log('[complete]');
-          // Loading.hide();
+          Loading.hide();
         }
       });
     },
@@ -289,7 +282,16 @@ export default Vue.extend({
         price: 0,
         quantity: 0
       });
-      this.productNameModel.push("");
+      this.productNameModel.push('');
+    },
+    //  settear todo para que el producto se escriba en el modelo de sale_detail
+    getProductInfo(item, index){
+      console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
+      if (this.productOptions.indexOf(item) >= 0){
+        this.sale_detail[index].product = this.productIndex[this.productOptions.indexOf(item)]
+        this.sale_detail[index].price = parseFloat(this.productPrices[this.productOptions.indexOf(item)])
+      }
+      console.log(this.sale_detail)
     },
     removeProduct(index){
       if (this.sale_detail.length > 1){
@@ -299,7 +301,7 @@ export default Vue.extend({
     },
     createSale(){
       if (this.clientNameModel === ""){
-        this.showNotif("Proveer nombre de cliente", 'red-10');
+        this.showNotif("Proveer correo de cliente", 'red-10');
         return;
       };
       if (this.sale.coin === "" || this.sale.payment_type === ""){
@@ -310,13 +312,13 @@ export default Vue.extend({
         this.showNotif("Debe agregar al menos un producto", 'red-10');
         return;
       };
-      for (var i=0; i < this.selectedProducts.length; i++) {
+      for (var i=0; i < this.sale_detail.length; i++) {
         if (this.productNameModel[i] === ""){
           this.showNotif(`Falta información del producto ${i}`, 'red-10');
           return;
         }
         if (this.sale_detail[i].quantity <= 0){
-          this.showNotif(`Especificar cantidad en ${this.selectedProducts[i].name}`, 'red-10');
+          this.showNotif(`Especificar cantidad de ${this.productNameModel[i]}s`, 'red-10');
           return;
         }
       };
@@ -324,20 +326,19 @@ export default Vue.extend({
         this.showNotif("Proveer nombre de banco", 'red-10');
         return;
       };
-      this.sale.user = this.clientOptions.indexOf(this.clientNameModel) >= -1? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
-      this.sale.bank = this.bankOptions.indexOf(this.bankNameModel) >= -1? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
+      this.sale.bank = this.bankOptions.indexOf(this.bankNameModel) >= 0 ? this.bankIndex[this.bankOptions.indexOf(this.bankNameModel)]: null;
 
-      for (let i = 0; i < this.sale_detail.length; i++) {
-        this.sale_detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
-        this.sale_detail[i].price = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productPrices[this.productOptions.indexOf(this.productNameModel[i])]: null; 
-      }
+      // for (let i = 0; i < this.sale_detail.length; i++) {
+      //   this.sale_detail[i].product = this.productOptions.indexOf(this.productNameModel[i]) >= -1? this.productIndex[this.productOptions.indexOf(this.productNameModel[i])]: null; 
+      //   this.sale_detail[i].price = this.productOptions.indexOf(this.productNameModel[i]) >= -1? parseFloat(this.productPrices[this.productOptions.indexOf(this.productNameModel[i])]): null; 
+      // }
       console.log("everything in order. Creating sale...");
       this.loading = true;
       let subscription = SalesService.createSale({sale: this.sale, sale_detail: this.sale_detail}).subscribe({
         complete: () =>{
           this.loading = false;
           this.showNotif("Venta creada exitosamente", 'indigo-10');
-          setTimeout(backToSales(),1000);
+          setTimeout(this.$router.back(),1000);
         }
       });
     },
@@ -351,36 +352,73 @@ export default Vue.extend({
       })
     },
     filterFn (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      // setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options = this.clientOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options = this.clientOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      // }, 1500)
+      update (() => {
+        if (val === ''){
+          this.clientHint = 'Ingrese el correo del cliente'
+          return
+        }
+        this.clientHint = 'Esperando a que termine de escribir'
+        this.clientQuery = val
+        this.debouncedGetClient()
+      })
+    },
+    getClients(){
+      this.searchingClient = true
+      this.clientHint = 'Solicitando...'
+      SalesService.searchUsers(this.clientQuery).subscribe({
+        next: data => {
+          console.log(data)
+          this.clientOptions.splice(0, this.clientOptions.length)
+          this.clientIndex.splice(0, this.clientIndex.length);
+          if (data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              this.clientOptions.push(data[i].email);
+              this.clientIndex.push(data[i].id);
+              this.clientHint = 'Recibido'
+            }
+            this.options = this.clientOptions
+          }else{
+            this.clientHint = 'No se encontraron resultados'
+          }        
+        },
+        complete: () => {
+          this.searchingClient = false        
+        }
+      })
+    },
+    setClient(){
+      this.sale.customer = this.clientOptions.indexOf(this.clientNameModel) >= 0 ? this.clientIndex[this.clientOptions.indexOf(this.clientNameModel)]: null;
     },
     filterFn2 (val, update) {
-      // call abort() at any time if you can't retrieve data somehow
-      // setTimeout(() => {
-        update(() => {
-          if (val === '') {
-            this.options2 = this.productOptions;
-          }
-          else {
-            const needle = val.toLowerCase()
-            this.options2 = this.productOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            console.log("val: "+val)
-          }
-          
-        })
-      // }, 1500)
+      update (() => {
+        if (val === ''){
+          return
+        }
+        this.productQuery = val
+        this.debouncedGetProducts()
+      })
+    },
+    getProducts(){
+      ProductsService.searchProducts(this.productQuery).subscribe({
+        next: data => {
+          console.log(data.results)
+          console.log(data.results.length)
+          this.productOptions.splice(0, this.productOptions.length)
+          this.productIndex.splice(0, this.productIndex.length)
+          if (data.results.length > 0) {
+            for (let i = 0; i < data.results.length; i++) {
+              this.productOptions.push(data.results[i].name);
+              this.productIndex.push(data.results[i].id);
+              this.productPrices.push(data.results[i].price)
+            }
+            this.options2 = this.productOptions
+            console.log(this.productOptions)
+          }       
+        },
+        complete: () => {
+          console.log('[complete]')
+        }
+      })
     },
     filterFn3 (val, update) {
       // call abort() at any time if you can't retrieve data somehow
@@ -398,9 +436,16 @@ export default Vue.extend({
         })
       // }, 1500)
     },
+    isGreaterThanZero (val) {
+      return val > 0 ? !!val: 'Ingresar cantidad comprada';
+    },
     backToSales(){
       this.$router.push({path:"sales/"});
     }
+  },
+  created: function() {
+    this.debouncedGetClient = _.debounce(this.getClients, 500)
+    this.debouncedGetProducts = _.debounce(this.getProducts, 500)
   }
 })
 </script>

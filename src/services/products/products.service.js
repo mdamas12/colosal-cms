@@ -32,8 +32,25 @@ class ProductsService{
       })
     }
 
+<<<<<<< HEAD
     createProduct(product, features,gallery){
         
+=======
+    searchProducts (query){
+      return Observable.create((observer) => {
+        axios.get(API_URL + `products/coincidence/${query}/`)
+          .then((response) => {
+            observer.next(response.data)
+            observer.complete()
+          })
+          .catch((error) => {
+            observer.error(error)
+          })
+      })
+    }
+
+    createProduct(newProduct){
+>>>>>>> 9a75cc7e30ca439bfc821ac512d22d940190f3e4
         return Observable.create((observer) => {
           axios({
             method: 'post', //you can set what request you want to be

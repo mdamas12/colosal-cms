@@ -55,8 +55,9 @@
                 <q-table
                   title="Por Validar"
                   :data="toValidate"
-                  :columns="columns"
+                  :columns="columns1"
                   row-key="id"
+                  :loading="!isValidateFetched"
                 >
 
                   <template v-slot:header="props">
@@ -93,7 +94,7 @@
                             <q-btn flat round color="red-10" icon="delete" class="q-mr-sm float-right" @click="confirmDelete(props.row)" />
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
                             <q-btn color="indigo-10" label="Validar" class="q-mr-xs q-pa-xs float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
-                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESAR')" />
+                            <!-- <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" /> -->
                           </div>
                         </div>
                       </q-td>
@@ -105,10 +106,11 @@
 
               <q-tab-panel name="deliver">
                 <q-table
-                  title="Por entergar"
+                  title="Por Entregar"
                   :data="toDeliver"
-                  :columns="columns"
-                  row-key="name"
+                  :columns="columns2"
+                  row-key="id"
+                  :loading="!isDeliverFetched"
                 >
 
                   <template v-slot:header="props">
@@ -136,15 +138,15 @@
                       >
                         {{ col.value }}
                       </q-td>
+                      <!-- <q-tr :props="props" class="cursor-pointer" @click.native="$router.push({ path: `/sales/detail/${props.row._id}`})"></q-tr> -->
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
                         <div class="column items-end">
                           <div class="row">
-                            <q-btn flat round color="indigo-10" icon="delete" class="q-mr-sm float-right"/>
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
-                            <q-btn color="red-10" label="regresar" class="q-mr-xs float-right" @click="changeSaleStatus(props.row, 'POR VALIDAR')" />
-                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESAR')" />
+                            <q-btn color="indigo-10" label="Regresar" class="q-mr-xs q-pa-xs float-right" @click="changeSaleStatus(props.row, 'POR VALIDAR')" />
+                            <q-btn color="green" label="Procesar" class="float-right" @click="changeSaleStatus(props.row, 'PROCESADA')" />
                           </div>
                         </div>
                       </q-td>
@@ -158,8 +160,9 @@
                 <q-table
                   title="Procesado"
                   :data="processed"
-                  :columns="columns"
-                  row-key="name"
+                  :columns="columns3"
+                  row-key="id"
+                  :loading="!isProcessedFetched"
                 >
 
                   <template v-slot:header="props">
@@ -187,19 +190,20 @@
                       >
                         {{ col.value }}
                       </q-td>
+                      <!-- <q-tr :props="props" class="cursor-pointer" @click.native="$router.push({ path: `/sales/detail/${props.row._id}`})"></q-tr> -->
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
                         <div class="column items-end">
                           <div class="row">
-                            <q-btn flat round color="green" icon="delete" class="q-mr-sm float-right"/>
                             <!-- <q-btn flat round color="black" icon="edit" class="q-mr-md float-right" @click="$router.push({ path: `/sales/detail/${props.row.id}`})"/> -->
-                            <q-btn color="indigo-10" label="Regresar" class="float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
+                            <q-btn color="indigo-10" label="REGRESAR" class="float-right" @click="changeSaleStatus(props.row, 'POR ENTREGAR')" />
                           </div>
                         </div>
                       </q-td>
                     </q-tr>
                   </template>
+
                 </q-table>
               </q-tab-panel>
             </q-tab-panels>
@@ -219,6 +223,9 @@ export default Vue.extend({
     return {
       tab: 'validate',
       text: '',
+      isValidateFetched: false,
+      isDeliverFetched: false,
+      isProcessedFetched: false,
       toValidate: [{
         description: "",
         customer: {},
@@ -246,7 +253,7 @@ export default Vue.extend({
         coin : "",
         amount: 0,
       }], 
-      columns: [
+      columns1: [
         {
           name: 'id',
           required: true,
@@ -255,13 +262,45 @@ export default Vue.extend({
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'customer', label: 'Cliente', field: row => row.customer, format: val => `${val.fullname}`, sortable: true},
+        { name: 'customer', label: 'Cliente', field: row => row.customer, format: val => `${val.email}`, sortable: true},
         { name: 'created', label: 'Fecha', field: row => row.created, format: val => `${val}`},
         { name: 'payment_type', label: 'Forma de Pago', field: 'payment_type', sortable: true },
         { name: 'bank', label: 'Banco', sortable: true, field: row => row.bank, format: val => `${val.name}`},
         { name: 'coin', label: 'Moneda', field: 'coin' },
         { name: 'amount', label: 'Monto', field: 'amount' },
       ],
+      columns2: [
+        {
+          name: 'id',
+          required: true,
+          label: 'Referencia',
+          field: row => row.id,
+          format: val => `${val}`,
+          sortable: true
+        },
+        { name: 'customer', label: 'Cliente', field: row => row.customer, format: val => `${val.email}`, sortable: true},
+        { name: 'created', label: 'Fecha', field: row => row.created, format: val => `${val}`},
+        { name: 'payment_type', label: 'Forma de Pago', field: 'payment_type', sortable: true },
+        { name: 'bank', label: 'Banco', sortable: true, field: row => row.bank, format: val => `${val.name}`},
+        { name: 'coin', label: 'Moneda', field: 'coin' },
+        { name: 'amount', label: 'Monto', field: 'amount' },
+      ],
+      columns3: [
+        {
+          name: 'id',
+          required: true,
+          label: 'Referencia',
+          field: row => row.id,
+          format: val => `${val}`,
+          sortable: true
+        },
+        { name: 'customer', label: 'Cliente', field: row => row.customer, format: val => `${val.email}`, sortable: true},
+        { name: 'created', label: 'Fecha', field: row => row.created, format: val => `${val}`},
+        { name: 'payment_type', label: 'Forma de Pago', field: 'payment_type', sortable: true },
+        { name: 'bank', label: 'Banco', sortable: true, field: row => row.bank, format: val => `${val.name}`},
+        { name: 'coin', label: 'Moneda', field: 'coin' },
+        { name: 'amount', label: 'Monto', field: 'amount' },
+      ]
     }
   },
   mounted (){
@@ -273,22 +312,18 @@ export default Vue.extend({
       this.toValidate.pop();
       this.toDeliver.pop();
       this.processed.pop();
-      let subscription = SalesService.getSales().subscribe({
+      // busca de ventas por validar
+      SalesService.getSalesByStatus(1).subscribe({
         next: data => {
-          console.log(data.results);
-          for (let i = 0; i < data.results.length; i++){
-            if (data.results[i].status === 'POR VALIDAR'){
-              this.toValidate.push({id: data.results[i].id, customer: data.results[i].customer, created: data.results[i].created.substring(0,10),payment_type: data.results[i].payment_type, bank: data.results[i].bank, coin: data.results[i].coin, amount: data.results[i].amount, status: data.results[i].status});
-            }else if(data.results[i].status === 'POR ENTREGAR'){
-              this.toDeliver.push({id: data.results[i].id, customer: data.results[i].customer, created: data.results[i].created.substring(0,10), payment_type: data.results[i].payment_type, bank: data.results[i].bank, coin: data.results[i].coin, amount: data.results[i].amount});
-            }else if(data.results[i].status === 'PROCESADO'){
-              this.processed.push({id: data.results[i].id, customer: data.results[i].customer, created: data.results[i].created.substring(0,10), payment_type: data.results[i].payment_type, bank: data.results[i].bank, coin: data.results[i].coin, amount: data.results[i].amount});
-            }
-            // console.log("toValidate: "+this.toValidate+"\ntoDeliver: "+this.toDeliver+"\nprocessed: "+this.processed);
+          console.log(data);
+          for (let i = 0; i < data.length; i++){
+            this.toValidate.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
           };
         },
         complete: () => {
-          console.log("[completed]");
+          console.log("[completed]")
+          this.isValidateFetched = true
+            console.log(JSON.stringify(this.toValidate) + JSON.stringify(this.toDeliver) + JSON.stringify(this.processed))
         }
       })
     },
@@ -298,22 +333,25 @@ export default Vue.extend({
         complete: () => {
           if (sale.status === 'POR VALIDAR'){
             this.toValidate.splice(this.toValidate.indexOf(sale),1);
-          }else if (value === 'POR ENTREGAR'){
+          }else if (sale.status === 'POR ENTREGAR'){
             this.toDeliver.splice(this.toDeliver.indexOf(sale),1);
-          }else if(value === 'PROCESADO'){
+          }else if(sale.status === 'PROCESADA'){
             this.processed.splice(this.processed.indexOf(sale),1);
           }
           // console.log("Pasó de estar: ",sale.status);
-          // sale.status = value;
+          sale.status = value;
           // console.log("a estar: ",sale.status);
-          if (value === 'POR ENTREGAR'){
-            this.toDeliver.push(sale);
-          }else if(value === 'PROCESADO'){
-            this.processed.push(sale);
+          if (value === 'POR ENTREGAR' && this.isDeliverFetched){
+            this.toDeliver.splice(0, 0, sale);
+          }else if((value === 'PROCESADA')  && this.isProcessedFetched){
+            this.processed.splice(0, 0, sale);
           }else if(value === 'POR VALIDAR'){
-            this.toValidate.push(sale);
+            this.toValidate.splice(0, 0, sale);
           }
           console.log("[sale updated]");
+          console.log(this.toValidate)
+          console.log(this.toDeliver)
+          console.log(this.processed)
         }
       });
     },
@@ -337,15 +375,47 @@ export default Vue.extend({
             this.toValidate.splice(this.toValidate.indexOf(sale),1);
           }else if (value === 'POR ENTREGAR'){
             this.toDeliver.splice(this.toDeliver.indexOf(sale),1);
-          }else if(value === 'PROCESADO'){
+          }else if(value === 'PROCESADA'){
             this.processed.splice(this.processed.indexOf(sale),1);
           }
         }
       })
     },
-    backToProducts(){
-      this.$router.back();
-    },
+  },
+  watch: {
+    tab: function(){
+      if (this.tab === 'deliver' && !this.isDeliverFetched) {
+        console.log('current tab: ' + this.tab + '\nwas it fetched?: ' + this.isDeliverFetched)
+        SalesService.getSalesByStatus(2).subscribe({
+          next: data => {
+            console.log(data);
+            for (let i = 0; i < data.length; i++){
+              this.toDeliver.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
+            }
+          },
+          complete: () => {
+            this.isDeliverFetched = true
+            console.log(JSON.stringify(this.toValidate) + JSON.stringify(this.toDeliver) + JSON.stringify(this.processed))
+          }
+        })
+      }else if (this.tab === 'processed' && !this.isProcessedFetched){
+        console.log('current tab: ' + this.tab + '\nwas it fetched?: ' + this.isProcessedFetched)
+        // busqueda de ventas procesadas
+        SalesService.getSalesByStatus(3).subscribe({
+          next: data => {
+            console.log(data);
+            for (let i = 0; i < data.length; i++){
+              this.processed.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
+              // console.log("toValidate: "+this.toValidate+"\ntoDeliver: "+this.toDeliver+"\nprocessed: "+this.processed);
+            };
+          },
+          complete: () => {          
+            this.isProcessedFetched = true
+            console.log(JSON.stringify(this.toValidate) + JSON.stringify(this.toDeliver) + JSON.stringify(this.processed))
+          }
+        })
+      }
+    }
   }
 })
 </script>

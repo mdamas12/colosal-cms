@@ -85,7 +85,7 @@
   </q-page>
 </template>
 
-<script lang="js">
+<script>
 import Vue from 'vue'
 import SuppliersService from '../../services/suppliers/suppliers.service'
 import { Loading } from "quasar";

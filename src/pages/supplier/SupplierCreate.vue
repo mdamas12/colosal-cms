@@ -105,10 +105,10 @@ export default Vue.extend({
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
       };
-      if (this.$refs.email.hasError){
-        this.showNotif("Existen campos por corregir", 'red-10');
-        return;
-      }
+      // if ((this.$refs.email as Vue & { validate: () => boolean }).validate()){
+      //   this.showNotif("Existen campos por corregir", 'red-10');
+      //   return;
+      // }
       console.log("everything in order. Creating user...");
       this.loading = true;
       this.createSupplier();

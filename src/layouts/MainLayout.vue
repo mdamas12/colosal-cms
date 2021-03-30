@@ -62,7 +62,7 @@ v-model="leftDrawerOpen"
           v-bind="link"
           v-ripple
           clickable
-          @click="goTo(link.namePath)"
+          @click="goTo(link.to)"
         >
         <!-- colocar lo siguiente en la linea 65":replace="{ name: link.to }"" -->
         <q-item-section avatar>
@@ -113,14 +113,15 @@ export default Vue.extend({
       showProfile: false,
       menu: [
         { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Users' },
-        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
+        // { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
         { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
         { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
         { title: 'Características', caption: 'quasar.dev', icon: 'storage', to: 'Features' },
         { title: 'Proveedores', caption: 'quasar.dev', icon: 'contacts', to: 'Suppliers' },
         { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'shop_two', to: 'SupplyOrders' },
         { title: 'Promociones', caption: 'quasar.dev', icon: 'emoji_events', to: 'Promotions' },
-        { title: 'Ventas', caption: 'quasar.dev', icon: 'local_offer', to: 'Sales' }
+        { title: 'Ventas', caption: 'quasar.dev', icon: 'local_offer', to: 'Sales' },
+        { title: 'Métodos de pago', caption: 'quasar.dev', icon: 'credit_card', to: 'Payments' }
       ],
       profile: {
         nombre: 'Hola',
@@ -138,7 +139,7 @@ export default Vue.extend({
       // this.$router.push("/login");
     },
     goTo(namePath : string){
-      this.$router.push({name : namePath})
+      this.$router.push({path : `/${namePath}`})
     }
   }
 })

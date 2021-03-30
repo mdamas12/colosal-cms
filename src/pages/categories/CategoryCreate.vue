@@ -21,17 +21,20 @@
             <div class="row justify-between items-center">
               <div class="col-9 justify-evenly">
                 <div class="row q-my-sm">
-                  <q-input  
-                    outlined
-                    v-model="name"
-                    label="Nombre"
-                    color="dark"
-                    lazy-rules
-                    :rules="[val => !!val || 'Debe ingresar el nombre']"
-                  />
+                  <div class="col">
+                    <q-input  
+                      outlined
+                      v-model="name"
+                      label="Nombre"
+                      color="dark"
+                      lazy-rules
+                      :rules="[val => !!val || 'Debe ingresar el nombre']"
+                    />
+                  </div>
                 </div>
                 <!-- :filter="checkFileType" -->
                 <div class="row items-center q-my-sm">
+                  <div class="col">
                   <q-file 
                     outlined 
                     clearable 
@@ -44,6 +47,7 @@
                       <q-icon name="attach_file" />
                     </template>
                   </q-file>
+                  </div>
                 </div>
 
               </div>
