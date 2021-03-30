@@ -124,10 +124,10 @@ export default Vue.extend({
         { title: 'Métodos de pago', caption: 'quasar.dev', icon: 'credit_card', to: 'Payments' }
       ],
       profile: {
-        nombre: 'Hola',
-        apellidoPaterno: 'BEBE',
+        nombre: 'Usuario',
+        apellidoPaterno: ' Ejemplo',
         foto: '',
-        apellidoMaterno: 'BEllo',
+        apellidoMaterno: '',
         email: '',
         cargo: ''
       }

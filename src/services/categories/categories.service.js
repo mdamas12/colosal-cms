@@ -87,11 +87,12 @@ class CategoriesService {
     return Observable.create((observer) => {
       axios.delete(API_URL + `categories/${id}/`)
         .then((response) => {
-          console.log();
+          console.log("Entreee");
           observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
+          console.log("nooo Entreee",error);
           observer.error(error)
         })
     })

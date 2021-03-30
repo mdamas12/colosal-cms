@@ -91,8 +91,10 @@ export default Vue.extend({
   methods: {
     onInit(){
       Loading.show()
+      console.log("Sera exto?")
       let subscription = CategoriesService.getCategory(this.id).subscribe( {
         next: data => {
+          console.log("Sera exto?")
           this.name = data.name;                                                    // recibir el nombre del servicio
           // console.log(data)
           var imageUrl = encodeURI(data.image);                                     // data.image es un string, convertir a URL
@@ -174,6 +176,7 @@ export default Vue.extend({
       })
     },
     confirmDelete () {
+      let vm = this
       if (this.loading1 || this.loading2){
         return
       };
@@ -184,20 +187,20 @@ export default Vue.extend({
         persistent: true,
         color: 'red-10'
       }).onOk(() => {
-        this.deleteBrand();
+        vm.deleteCategory();
       }).onCancel(() => {
         // console.log('>>>> Cancel')
       })
     },
     deleteCategory(){
       this.loading2 = true;
-      let subscription = CategoriesService.deleteCategory(this.category.id).subscribe( {
+      let subscription = CategoriesService.deleteCategory(this.id).subscribe( {
         next: () => {
           this.loading2 = false;
           console.log('[brand Deleted]')
           this.showNotif("Categoría Eliminada", 'indigo-10');
           setTimeout(() => this.$router.back(), 1000);
-          this.$router.back();
+          //this.$router.back();
         },
         complete: () => console.log('[complete]'),
       })
