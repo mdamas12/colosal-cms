@@ -91,10 +91,8 @@ export default Vue.extend({
   methods: {
     onInit(){
       Loading.show()
-      console.log("Sera exto?")
       let subscription = CategoriesService.getCategory(this.id).subscribe( {
         next: data => {
-          console.log("Sera exto?")
           this.name = data.name;                                                    // recibir el nombre del servicio
           // console.log(data)
           var imageUrl = encodeURI(data.image);                                     // data.image es un string, convertir a URL
