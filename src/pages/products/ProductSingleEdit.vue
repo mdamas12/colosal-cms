@@ -84,11 +84,34 @@
                     />
                   <br>
 
-                  <!--REVISAR TEMA DE IMAGEN, ACA LA BINDEO PARA PODER RECIBIRLA EN LA VISTA, SIN EMBARGO RECURSO 404
-                      AGREGAR EL Q-FLE CUANDO SE SOLUCIONE EL PROBLEMA ------------------------------------------------->
-                        <q-img v-bind:src="product.image"></q-img>
-                  <!-- ------------------------------------------------------------------------------------------------->
-                        <br>
+         <!-- image -->
+                <div class="row items-center q-my-sm">
+                  <q-file 
+                    ref="product.image"
+                    outlined 
+                    clearable 
+                    counter 
+                    v-model="product.image"        
+                    @rejected="onRejected"
+                    @input="getImage"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="attach_file" />
+                    </template>
+                    
+                    <template v-slot:hint>
+                      image portada
+                    </template>
+                  </q-file>
+                </div>
+                <div class="col-2">
+                <div v-if="product.image !== null">
+                  <q-img :src="preview" style="max-width: 150px" />
+                </div>
+               </div>
+
+
+                  <br>
                       <div class="row">
                         <div class="col">
                           <div class="row">
@@ -288,7 +311,7 @@
               </div>
               <q-btn color="red-10" label="Guardar Cambios" class="q-pa-xs q-mt-md q-mr-md float-right" @click="updateProduct()"/>
               <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushDetail()"/>
-              <!--<q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushImagenes()"/>-->
+              <q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushImagenes()"/>
             </form>
         </div>
         <br><br>
@@ -312,6 +335,8 @@ export default Vue.extend({
     var productBrand : any = null
     var productCategory : any = null
     return {
+      preview: null,
+      url_test : "http://localhost:8000/media/products/closet_4tzq9jh.jpg",
       product : {
         id: this.$router.currentRoute.params.id,
         name: null,
@@ -337,7 +362,7 @@ export default Vue.extend({
       optionsBrands: [],
       optionsCategories: [],
        optionsMoneda: [
-        'USD', 'BsS'
+        'USD', 'BS'
       ],
       items:new Array(),
       item:{
@@ -378,7 +403,22 @@ export default Vue.extend({
         let subscription = ProductsService.getProduct(id).subscribe( {
             next: (data:any) => {
               console.log(data)
-            this.product = data
+              this.product = data
+              var imageUrl = encodeURI(data.image);                                     // data.image es un string, convertir a URL
+              // console.log(imageUrl);
+              fetch(imageUrl)                                                           // convertir URL a blob
+                .then(res => res.blob())
+                .then(blob => {   
+                  const n = data.image.indexOf("products/") + 9;                       // buscar el subíndice de la cadena donde empieza el nombre de la imagen (después de categories/)
+                  const imageName = data.image.substring(n);                              // guardar el nombre de la imagen en una variable
+                  const extension = imageName.substring(imageName.indexOf(".") + 1);      // guardar la extensión de la imagen en una variable
+                  // console.log(extension)
+                  const file = new File([blob], imageName, {type: `image/${extension}`}); // crear un archivo de la imagen pasándole los argumentos necesarios
+                  // console.log(file)
+                  this.product.image = file;                                                      // asignar el archivo al v-model
+                  this.getImage(file);
+
+              });
             },
             complete: () => console.log('[complete]'),
         })
@@ -526,6 +566,22 @@ export default Vue.extend({
     },
     removeCharacteristic(position){
         this.items.splice(position,1)
+    },
+    getImage(e){                                                                        // usado para convertir la imagen en base64 para mostrar por pantalla
+      let reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = e => {
+
+        this.preview = e.target.result;
+      }
+    },
+    onRejected (rejectedEntries) {
+      // Notify plugin needs to be installed
+      // https://quasar.dev/quasar-plugins/notify#Installation
+      this.$q.notify({
+        type: 'negative',
+        message: `El archivo seleccionado no es de tipo .png`
+      })
     },
     backToProducts(){
       this.$router.back();

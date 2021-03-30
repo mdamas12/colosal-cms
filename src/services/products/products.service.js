@@ -32,18 +32,59 @@ class ProductsService{
       })
     }
 
-    createProduct(newProduct){
+    createProduct(product, features,gallery){
+        
         return Observable.create((observer) => {
-          axios.post(API_URL + 'products/',newProduct)
-            .then((response) => {
-              console.log(response.data);
-              observer.next(response.data)
-              observer.complete()
-            })
-            .catch((error) => {
-              observer.error(error)
-            })
-        })
+          axios({
+            method: 'post', //you can set what request you want to be
+            url: API_URL + 'products/',
+            data: product,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then((response) => {
+              //console.log(response.data);
+              let product_id  = response.data.id
+              if (Object.keys(features).length === 0){
+                observer.next(response.data)
+                observer.complete()
+              }
+              axios({
+                method: 'post', 
+                url: API_URL + 'products/features/',
+                data:{features : features, product: response.data.id}
+              }).then((response) => {
+                  if (Object.keys(gallery).length === 0){
+                    observer.next(response.data)
+                    observer.complete()
+                    //console.log(response.data);
+                  }
+                  gallery.append('product', product_id )
+                  axios({
+                    method: 'post', 
+                    url: API_URL + 'products/gallery/',
+                    data: gallery,
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  }).then((response) => {
+                      observer.next(response.data)
+                      observer.complete()
+                      //console.log(response.data);
+                    }).catch((error) => {
+                      console.log(error);
+                      observer.error(error)
+                    });
+                }).catch((error) => {
+                  console.log(error);
+                  //observer.error(error)
+                });
+          
+              }).catch((error) => {
+                console.log(error);
+                 //observer.error(error)
+              });
+        }); 
       }
 
       getProduct (id){

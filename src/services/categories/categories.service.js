@@ -34,6 +34,7 @@ class CategoriesService {
 
   createCategory(newCategory){
     return Observable.create((observer) => {
+      console.log(newCategory)
       axios.post(API_URL + 'categories/save/',newCategory,
       {
         headers: {

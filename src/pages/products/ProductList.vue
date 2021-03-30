@@ -197,18 +197,18 @@ export default Vue.extend({
   methods: {
     onRequest(){
       this.loading = true;
-      console.log("pagination.page == "+ this.pagination.page);
+      //console.log("pagination.page == "+ this.pagination.page);
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
       this.table.splice(0,1);
-      console.log(this.table);
+     // console.log(this.table);
       this.table.splice(0,0,1);
-      console.log(`ProductsService.getProducts(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
+     // console.log(`ProductsService.getProducts(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       let subscription = ProductsService.getProducts(this.limit, this.offset).subscribe({
         next: data => {
-          console.log(data)
+          //console.log(data)
           this.rows.splice(0, this.rows.length, ...data.results);
-          console.log(this.rows)
+          //console.log(this.rows)
           this.count = data.count
           this.numberOfPages = Math.ceil(this.count / this.limit);
           this.loading = false;
@@ -218,7 +218,7 @@ export default Vue.extend({
       let subscription3 = ProductsService.getAllProducts().subscribe({
         next: data => {
           this.products = data.results
-          console.log(data)
+          //console.log(data)
         }
       }); 
     },   
@@ -231,11 +231,11 @@ export default Vue.extend({
       let subscription = ProductsService.getProduct(id).subscribe( {
         next: data => {
           this.product = data
-          console.log(data)
+          //console.log(data)
         },
         complete: () => console.log('[complete]'),
       })
-      console.log(this.product.id)
+     // console.log(this.product.id)
     //  this.$router.push({path: `/products/detail/${this.product.id}`})
     }
   },

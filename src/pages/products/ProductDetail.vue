@@ -8,7 +8,7 @@
               </div>
               <div v-if="product.name != null">
                 <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                    #{{this.$router.currentRoute.params.id}}: {{product.name}}
+                    #{{this.$router.currentRoute.params.id}}: {{product.name}}, hola
                 </h5>
               </div>
             </div>

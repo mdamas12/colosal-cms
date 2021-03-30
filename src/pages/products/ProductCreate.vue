@@ -251,31 +251,40 @@
                       <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeCharacteristic(index)" /> 
                   </div>    
                 </div>
-
-                <div class="row" v-for="itemI in images" :key="itemI.id">
+                <br>
+                
+                <div class="row" v-for="(itemI,index) in images" :key="itemI.id">
+               
                   <div class="col-md-6 col-xs-12">
                           <q-file
-                              v-model= "productImages"
+                              v-model= "itemI.image"
                               label="Imagen Galeria"
                               color="indigo-10"
                               outlined>
-                          <template v-slot:prepend>
+                          <template v-slot:append>
                             <q-icon name="attach_file" />
                           </template>
                         </q-file>
                   </div>
+                  <div class="col">
+                      <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeImege(index)" /> 
+                  </div>  
                 </div>
+                 <br>
               </div>
-              <q-btn color="indigo-10" type="submit" label="Crear Producto" class="q-pa-xs q-mt-md q-mr-md float-right"/>
-              <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushDetail()"/>
-              <!--<q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushImagenes()"/>-->
+              <div class="row">
+              <q-btn color="indigo-10" type="submit" label="Crear Producto" class="q-pa-xs q-mt-md q-mr-md "/>
+              <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md " @click="pushDetail()"/>
+              <q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md " @click="pushImagenes()"/>
+             </div>
             </form>
         </div>
       </div>
   </q-page>
 </template>
 
-<script lang="ts">
+
+<script >
 import Vue from 'vue'
 import ProductsService from '../../services/products/products.service'
 import FeaturesService from '../../services/features/features.service'
@@ -284,12 +293,13 @@ import CategoriesService from '../../services/categories/categories.service'
 import axios from 'axios'
 import Characteristic from 'src/models/features/Feature'
 import { Loading } from "quasar";
+import { get } from 'http'
 
 export default Vue.extend({
   data () {
-    var productCategory : any = null
-    var productBrand : any = null
-    var productFeature : any = null
+    var productCategory = null
+    var productBrand = null
+    var productFeature  = null
     return {
       product : {
       name: '',
@@ -332,7 +342,7 @@ export default Vue.extend({
       name: '',
       model: null,
       optionsMoneda: [
-        'USD', 'BsS'
+        'USD', 'BS'
       ],
       text: '',
       dense: false,
@@ -350,8 +360,7 @@ export default Vue.extend({
       showInput: false,
      items:new Array(),
      item:{
-      //  characteristic: null,
-      //  description: ''
+     
       },
     images: new Array(),
     itemI:{},
@@ -364,19 +373,19 @@ export default Vue.extend({
   methods: {
     onRequest(){
       let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
-        next: (data: any) => {
+        next: (data) => {
           // console.log(data)
           this.optionsBrands = data.results
         },
       })
        let subscription2 = CategoriesService.getCategories(this.limit, this.offset).subscribe({
-        next: (data: any) => {
+        next: (data) => {
           // console.log(data)
           this.optionsCategories = data.results
         },
       })
       let subscription3 = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
-        next: (data: any) => {
+        next: (data) => {
           // console.log(data)
           this.optionsFeatures = data.results
         },
@@ -429,65 +438,47 @@ export default Vue.extend({
       }else {
         this.createProduct()
       }
+      
     },
     createProduct(){
       let vm = this
+      const gallery = new FormData();
+      const product = new FormData();
+      const features = new FormData();
+      product.append('name', vm.productName);
+      product.append('description', vm.productDescription);
+      product.append('image', vm.productImage);
+      product.append('price', vm.productPrice);
+      product.append('coin', vm.productCoin);
+      product.append('brand', vm.productBrand.id);
+      product.append('category', vm.productCategory.id);
+      product.append('quantity', vm.productQuantity);
 
-      var reader = new FileReader()
-      reader.readAsDataURL(vm.productImage)
-      reader.onload = () => {
-        //console.log('file to base64 result:' + reader.result)
-        let iconBase64 = reader.result
-        let product = {
-          name: vm.productName,
-          description : vm.productDescription,
-          image : iconBase64,
-          price : vm.productPrice,
-          coin : vm.productCoin,
-          brand : vm.productBrand.id,
-          category : vm.productCategory.id,
-          quantity : vm.productQuantity,
-          detail : vm.items
-        }
-
-        var features = []
-
-        for(let item of vm.items){
-          features.push({
-            "feature" : item.characteristic.id,
-            "description" : item.description
-          })
-        }
-
-        let dataPost = {
-          "product" : product,
-          "features" : features
-        }
-
-        Loading.show()
-        
-        var subscription = ProductsService.createProduct(dataPost).subscribe({
-        next: () => {
-          Loading.hide()
-          setTimeout(() => this.backToProducts(), 500);
-        },
-          complete: () => {},
-        })
+        //console.log(dataPost.product.get("name"))
+        //Loading.show()
+      let i=0;
+      for(let item of vm.images){
+        gallery.append('image['+i+']', item.image);
+        i++;
       }
-      reader.onerror = function (error) {
-        this.$q.notify({
-          color: 'negative',
-          message: error
-        })
-      }
+       
+        //var subscription = ProductsService.createProduct(product,vm.items, images ).subscribe({
+        console.log(product)
+   
+      let subscription = ProductsService.createProduct(product,vm.items, gallery).subscribe( {
+          complete: () => {
+            Loading.hide()
+            this.$router.back();
+          }
+      });
     },
     productos(){
       {
         axios.get('http://localhost:8000/panel/features/')
-        .then((response: { data: any })=>{
+        .then((response)=>{
           console.log(response.data)
         })
-        .catch((error: any)=>{
+        .catch((error)=>{
           console.log(error)
         })
       }
@@ -507,7 +498,7 @@ export default Vue.extend({
 
     pushImagenes(){
       this.itemI = {
-        images: this.productImages,
+        image: null
       };
 
       this.images.push(this.itemI);
@@ -519,6 +510,10 @@ export default Vue.extend({
 
     removeCharacteristic(position){
         this.items.splice(position,1)
+    },
+
+     removeImege(position){
+        this.images.splice(position,1)
     }
   }
 })
