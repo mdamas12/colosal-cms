@@ -113,7 +113,7 @@ export default Vue.extend({
       showProfile: false,
       menu: [
         { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Users' },
-        // { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
+        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
         { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
         { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
         { title: 'Características', caption: 'quasar.dev', icon: 'storage', to: 'Features' },

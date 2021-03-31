@@ -10,22 +10,22 @@ const routes: RouteConfig[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      // {
-      //   name: 'Products',
-      //   path: 'products',
-      //   redirect: {
-      //     name: 'ProductsList'
-      //   },
-      //   component: () => import('pages/Products.vue'),
-      //   children: [
-      //     { name: 'ProductsList', path: '', component: () => import('pages/products/ProductList.vue') },
-      //     { name: 'ProductsCreate', path: 'create', component: () => import('pages/products/ProductCreate.vue') },
-      //     { name: 'ProductsEdit', path: 'edit', component: () => import('pages/products/ProductEdit.vue') },
-      //     { name: 'ProductsSingleEdit', path: 'edit/:id', component: () => import('pages/products/ProductSingleEdit.vue') },
-      //     { name: 'ProductsDetail', path: 'detail/:id', component: () => import('pages/products/ProductDetail.vue') },
+       {
+         name: 'Products',
+         path: 'products',
+         redirect: {
+           name: 'ProductsList'
+         },
+         component: () => import('pages/Products.vue'),
+         children: [
+           { name: 'ProductsList', path: '', component: () => import('pages/products/ProductList.vue') },
+           { name: 'ProductsCreate', path: 'create', component: () => import('pages/products/ProductCreate.vue') },
+           //{ name: 'ProductsEdit', path: 'edit', component: () => import('pages/products/ProductEdit.vue') },
+           { name: 'ProductsSingleEdit', path: 'edit/:id', component: () => import('pages/products/ProductSingleEdit.vue') },
+           { name: 'ProductsDetail', path: 'detail/:id', component: () => import('pages/products/ProductDetail.vue') },
 
-      //   ]
-      // },
+         ]
+       },
       {
         name: 'Categories',
         path: 'categories',
