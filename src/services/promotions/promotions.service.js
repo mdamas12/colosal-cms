@@ -24,6 +24,7 @@ class PromotionsService {
       axios.post(API_URL + 'promotions/',{promotion: promotion, Detail: detail})
         .then((response) => {
           console.log(response);
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -51,6 +52,7 @@ class PromotionsService {
       axios.put(API_URL + `promotions/search/${id}/`,{promotion: promotion, Detail: detail, newDetail: newDetail})
         .then((response) => {
           console.log();
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
@@ -64,6 +66,7 @@ class PromotionsService {
       axios.delete(API_URL + `promotions/search/${id}/`)
         .then((response) => {
           console.log();
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {

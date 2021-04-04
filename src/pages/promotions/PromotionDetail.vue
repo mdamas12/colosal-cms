@@ -423,7 +423,7 @@ export default Vue.extend({
         next: () => {
           this.loading2 = false;
           console.log('[user Deleted]')
-          this.showNotif("Usuario Eliminado", 'indigo-10');
+          this.showNotif("Promoción Eliminada exitosamente", 'indigo-10');
           setTimeout(() => this.$router.push({path: '/Promotions'}), 1000);
         }
       })
