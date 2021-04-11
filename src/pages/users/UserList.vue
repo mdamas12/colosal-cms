@@ -16,7 +16,7 @@
         </div>
 
         <div class="q-pa-md">
-          <q-input outlined bottom-slots v-model="text" label="Buscar" counter>
+          <q-input outlined bottom-slots v-model="text" @keyup="searchUser" label="Buscar" counter>
             <template v-slot:before>
               <q-icon name="account_circle" />
             </template>
@@ -69,6 +69,7 @@ export default Vue.extend({
   data(){    
     return {
       loading: false,
+      text: '',
       pagination: {
         // sortBy: 'desc',
         // descending: false,
@@ -109,6 +110,7 @@ export default Vue.extend({
   },
   methods: {
     onRequest(){
+      this.rows = []
       console.log("pagination.page == "+ this.pagination.page);
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
@@ -137,8 +139,38 @@ export default Vue.extend({
         },
         complete: () => console.log('[complete]'),
       })
-      
-    },   
+    },
+    searchUser(){
+      if(this.text.length < 3)
+        return
+      this.rows = []
+      console.log("pagination.page == "+ this.pagination.page);
+      this.pagination.currentPage = this.pagination.page;
+      this.offset = this.limit * (this.pagination.page - 1);
+      this.table.splice(0,1);
+      this.loading = true;
+      let subscription = UsersService.findUsers(this.text).subscribe({
+        next: data => {
+          for (let i = 0; i < data.results.length; i++) {
+            this.rows.push({
+              id: data.results[i].id,
+              is_superuser: data.results[i].is_superuser,
+              username: data.results[i].username,
+              name: String(data.results[i].first_name +' '+data.results[i].last_name),
+              email: data.results[i].email,
+              // is_staff: true,
+              // is_active: true,
+              date: data.results[i].date_joined.substring(0,10)
+            })
+          }
+          console.log(this.rows)
+          this.count = data.count
+          this.numberOfPages = Math.ceil(this.count / this.limit);
+          this.loading = false;
+        },
+        complete: () => console.log('[complete]'),
+      })
+    },     
     onRowClick (evt, row){
       //console.log(`/users/detail/${row.id}`);
       this.$router.push({path: `/users/detail/${row.id}`})

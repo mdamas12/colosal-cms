@@ -18,6 +18,19 @@ class UsersService {
     })
   }
 
+  findUsers (query){
+    return Observable.create((observer) => {
+      axios.get(API_URL + `user/find/?query=${query}`)
+        .then((response) => {
+          observer.next(response.data)
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
   createUser(newUser){
     return Observable.create((observer) => {
       axios.post(API_URL + 'users/',{is_superuser: newUser.is_superuser, username: newUser.username, first_name: newUser.first_name, last_name: newUser.last_name, email: newUser.email, password: newUser.password, is_staff: true, is_active: true})

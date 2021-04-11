@@ -105,7 +105,6 @@ class ProductsService{
           axios.get(API_URL + `products/search/${id}/`)
             .then((response) => {
               observer.next(response.data)
-              // debugger
               observer.complete()
             })
             .catch((error) => {
@@ -128,14 +127,17 @@ class ProductsService{
         })
       }
 
-      deleteProduct (id){
+      deleteProduct(id){
+        console.log("sss");
         return Observable.create((observer) => {
-          axios.delete(API_URL + `products/${id}/`)
+          axios.delete(API_URL + `products/search/${id}/`)
             .then((response) => {
-              console.log();
+              console.log("Siiiiii");
+              observer.next(response.data)
               observer.complete()
             })
             .catch((error) => {
+              console.log(error.response.data);
               observer.error(error)
             })
         })
@@ -146,6 +148,7 @@ class ProductsService{
           axios.get(API_URL + `products/product-detail/${id}/`)
           .then((response) =>{
             console.log();
+            observer.next(response.data)
             observer.complete()
           })
           .catch((error)=>{
@@ -159,6 +162,7 @@ class ProductsService{
           axios.delete(API_URL + `products/product-detail/${id}/`)
           .then((response) =>{
             console.log();
+            observer.next(response.data)
             observer.complete()
           })
           .catch((error)=>{

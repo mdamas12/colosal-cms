@@ -11,6 +11,11 @@
                 #{{this.$router.currentRoute.params.id}}: {{product.name}}
             </h5>
           </div>
+
+          <div class="col">
+              <!--<q-btn color="indigo-10" label="Editar producto" class="float-right" @click="$router.push({ name : 'ProductsEdit'/* , params : {contact : contact }  */})"/>-->
+              <q-btn color="red-10" label="Eliminar producto" class="float-right" @click="deleteProduct"/>
+          </div>
         </div>
         <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md  q-mx-lg">
               <div class="form-section">
@@ -554,6 +559,16 @@ export default Vue.extend({
     //       message: error
     //     })
     //   }
+    },
+    deleteProduct(){
+      Loading.show()
+        var subscription = ProductsService.deleteProduct(this.product.id).subscribe({
+        next: () => {
+          Loading.hide()
+          setTimeout(() => this.backToProducts(), 500);
+        },
+          complete: () => {},
+        })
     },
     pushDetail() {
       this.item = {

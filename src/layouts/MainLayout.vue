@@ -49,7 +49,8 @@ v-model="leftDrawerOpen"
     <q-drawer
       show-if-above
       bordered
-      content-class="bg-grey-4">
+      content-class="bg-grey-3"
+      style="color:#8A8A8A">
       <q-list>
         <q-item-label header class="q-mt-lg q-mb-lg">
           <q-img src="~assets/logo_colosal.png" style="width: 180px" />
@@ -104,6 +105,7 @@ v-model="leftDrawerOpen"
 
 import Vue from 'vue'
 import ProfileDetail from '../components/commons/ProfileDetail.vue'
+import { fasUserFriends, fasShoppingBasket, fasCertificate, fasThLarge, fasThList, fasDolly, fasHandshake, fasBullhorn, fasTags, fasCreditCard } from '@quasar/extras/fontawesome-v5'
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -112,16 +114,16 @@ export default Vue.extend({
     return {
       showProfile: false,
       menu: [
-        { title: 'Usuarios', caption: 'quasar.dev', icon: 'people', to: 'Users' },
-        { title: 'Productos', caption: 'quasar.dev', icon: 'dialpad', to: 'Products' },
-        { title: 'Marcas', caption: 'quasar.dev', icon: 'grid_view', to: 'Brands' },
-        { title: 'Categorias', caption: 'quasar.dev', icon: 'category', to: 'Categories' },
-        { title: 'Características', caption: 'quasar.dev', icon: 'storage', to: 'Features' },
-        { title: 'Proveedores', caption: 'quasar.dev', icon: 'contacts', to: 'Suppliers' },
-        { title: 'Compras a proveedores', caption: 'quasar.dev', icon: 'shop_two', to: 'SupplyOrders' },
-        { title: 'Promociones', caption: 'quasar.dev', icon: 'emoji_events', to: 'Promotions' },
-        { title: 'Ventas', caption: 'quasar.dev', icon: 'local_offer', to: 'Sales' },
-        { title: 'Métodos de pago', caption: 'quasar.dev', icon: 'credit_card', to: 'Payments' }
+        { title: 'Usuarios', caption: 'quasar.dev', icon: fasUserFriends, to: 'Users' },
+        { title: 'Productos', caption: 'quasar.dev', icon: fasShoppingBasket, to: 'Products' },
+        { title: 'Marcas', caption: 'quasar.dev', icon: fasCertificate, to: 'Brands' },
+        { title: 'Categorias', caption: 'quasar.dev', icon: fasThLarge, to: 'Categories' },
+        { title: 'Características', caption: 'quasar.dev', icon: fasThList, to: 'Features' },
+        { title: 'Proveedores', caption: 'quasar.dev', icon: fasDolly, to: 'Suppliers' },
+        { title: 'Compras a proveedores', caption: 'quasar.dev', icon: fasHandshake, to: 'SupplyOrders' },
+        { title: 'Promociones', caption: 'quasar.dev', icon: fasBullhorn, to: 'Promotions' },
+        { title: 'Ventas', caption: 'quasar.dev', icon: fasTags, to: 'Sales' },
+        { title: 'Métodos de pago', caption: 'quasar.dev', icon: fasCreditCard, to: 'Payments' }
       ],
       profile: {
         nombre: 'Usuario',
