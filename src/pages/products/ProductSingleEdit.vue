@@ -562,13 +562,13 @@ export default Vue.extend({
     },
     deleteProduct(){
       Loading.show()
-        var subscription = ProductsService.deleteProduct(this.product.id).subscribe({
+      let subscription = ProductsService.deleteProduct(this.product.id).subscribe({
         next: () => {
           Loading.hide()
           setTimeout(() => this.backToProducts(), 500);
         },
-          complete: () => {},
-        })
+        complete: () => {},
+      })
     },
     pushDetail() {
       this.item = {

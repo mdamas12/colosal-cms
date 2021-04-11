@@ -135,19 +135,21 @@ export default Vue.extend({
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
       };
-      if ((this.$refs.username as Vue & { validate: () => boolean }).validate || (this.$refs.password as Vue & { validate: () => boolean }).validate){
+      /*if ((this.$refs.username as Vue & { validate: () => boolean }).validate || (this.$refs.password as Vue & { validate: () => boolean }).validate){
         this.showNotif("Existen campos por corregir", 'red-10');
         return;
-      }
+      }*/
       console.log("everything in order. Creating user...");
       this.loading = true;
       this.login();
     },
     login(){
       let subscription = AuthService.login({username: this.username, password: this.password}).subscribe( {
-        complete: () => {
+        next: () => {
           console.log('[login successful]');
+          this.showNotif("login successful", 'positive');
           this.loading = false;
+          this.$router.push('/Users')
         },
         error:() => {
           this.showNotif("Nombre de usuario o contraseña inválidos", 'red-10');

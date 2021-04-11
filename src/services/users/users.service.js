@@ -1,10 +1,24 @@
 import { Observable } from 'rxjs'
 import axios from 'axios'
 import UsersPagination from '../../models/users/UsersPagination'
-
+import apikeyHeader from '../api-header'
 const API_URL = 'http://localhost:8000/'
 
 class UsersService {
+
+  getUserMe (){
+    return Observable.create((observer) => {
+      axios.get(API_URL + `user/me/`, { headers : apikeyHeader()})
+        .then((response) => {
+          observer.next(response.data)
+          observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+  }
+
   getUsers (limit, offset){
     return Observable.create((observer) => {
       axios.get(API_URL + `users/?limit=${limit}&offset=${offset}`)

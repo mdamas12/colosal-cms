@@ -19,14 +19,13 @@
 
         <q-card-section class="q-pt-none text-center">
           <div class="text-subtitle1">
-            {{ profile.nombre }} {{ profile.apellidoPaterno }}
-            {{ profile.apellidoMaterno }}
+            {{ profile.first_name}}
           </div>
          <!-- <div class="text-black">
             {{ profile.cargo }}
           </div>-->
           <div class="text-subtitle1 text-primary q-mt-md">
-            <q-btn no-caps flat @click="$emit('logout')">Cerrar sesión</q-btn>
+            <q-btn no-caps flat @click="logout">Cerrar sesión</q-btn>
           </div>
         </q-card-section>
 
@@ -47,6 +46,7 @@
 </template>
 
 <script lang="ts">
+import router from 'src/router'
 import Vue from 'vue'
 export default Vue.extend({
   data () {
@@ -58,6 +58,12 @@ export default Vue.extend({
         apellidoMaterno: '',
         email: ''
       } */
+    }
+  },
+  methods:{
+    logout(){
+      localStorage.removeItem("token")
+      this.$router.push('/Login')
     }
   },
   props: ['profile']

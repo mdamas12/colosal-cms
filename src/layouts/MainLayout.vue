@@ -34,11 +34,10 @@ v-model="leftDrawerOpen"
 
               <q-item-section v-if="$q.screen.gt.xs">
                 <q-item-label
-                  >{{ profile.nombre }}
-                  {{ profile.apellidoPaterno }}</q-item-label
+                  >{{ profile.first_name }}</q-item-label
                 >
                 <q-item-label caption lines="1" class="text-black">{{
-                  profile.cargo
+                  profile.email
                 }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -106,6 +105,7 @@ v-model="leftDrawerOpen"
 import Vue from 'vue'
 import ProfileDetail from '../components/commons/ProfileDetail.vue'
 import { fasUserFriends, fasShoppingBasket, fasCertificate, fasThLarge, fasThList, fasDolly, fasHandshake, fasBullhorn, fasTags, fasCreditCard } from '@quasar/extras/fontawesome-v5'
+import UsersService from '../services/users/users.service'
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -125,15 +125,18 @@ export default Vue.extend({
         { title: 'Ventas', caption: 'quasar.dev', icon: fasTags, to: 'Sales' },
         { title: 'Métodos de pago', caption: 'quasar.dev', icon: fasCreditCard, to: 'Payments' }
       ],
-      profile: {
-        nombre: 'Usuario',
-        apellidoPaterno: ' Ejemplo',
-        foto: '',
-        apellidoMaterno: '',
-        email: '',
-        cargo: ''
-      }
+      profile: null
     }
+  },
+  created(){
+      let subscription = UsersService.getUserMe().subscribe({
+        next: (data: any) => {
+          console.log("entreeeeeeeeee")
+          console.log(data)
+          this.profile = data
+        },
+        complete: () => console.log('[complete]'),
+      })
   },
   methods: {
     logOut () {

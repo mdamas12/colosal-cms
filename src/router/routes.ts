@@ -7,6 +7,9 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/',
+    meta: {
+      Auth: true
+    },
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
