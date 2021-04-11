@@ -128,7 +128,6 @@ class ProductsService{
       }
 
       deleteProduct(id){
-        console.log("sss");
         return Observable.create((observer) => {
           axios.delete(API_URL + `products/search/${id}/`)
             .then((response) => {

@@ -16,7 +16,7 @@
         </div>
 
         <div class="q-pa-md">
-          <q-input outlined bottom-slots v-model="text" @keyup="searchUser" label="Buscar" counter>
+          <q-input outlined bottom-slots v-model="text" @keyup="searchUser" label="Buscar">
             <template v-slot:before>
               <q-icon name="account_circle" />
             </template>
@@ -25,16 +25,12 @@
               <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
               <q-icon name="search" />
             </template>
-
-            <!-- <template v-slot:hint>
-              Field hint
-            </template> -->
           </q-input>
           <q-table
             :loading="loading"
             :data="this.rows"
             :columns="columns"
-            row-key="name"
+            row-key="id"
             :pagination.sync="pagination"
             hide-pagination
             @row-click="onRowClick"
@@ -84,18 +80,17 @@ export default Vue.extend({
       currentPage: 1,
       numberOfPages: 0,
       columns: [
-        { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: false },
-        { name: 'username', align: 'left', label: 'Usuario', field: 'username', sortable: false },
+        { name: 'first_name', align: 'left', label: 'Nombre', field: 'first_name', sortable: false },
         { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false },
-        { name: 'date', align: 'left', label: 'Fecha creada', field: 'date', sortable: false },
-        { name: 'is_superuser', align: 'left', label: 'Super Usuario', field: 'is_superuser', format: val => val? 'Sí': 'No', sortable: false }
+        { name: 'date', align: 'left', label: 'Fecha registro', field: 'date', sortable: false },
+        { name: 'is_superuser', align: 'left', label: 'Administrador', field: 'is_superuser', format: val => val? 'Sí': 'No', sortable: false }
       ],
       rows: [{
         // last_login: "string",
         id: 0,
         is_superuser: false,
         username: "",
-        name: "",
+        first_name: "",
         email: "",
         // is_staff: true,
         // is_active: true,
@@ -125,7 +120,7 @@ export default Vue.extend({
               id: data.results[i].id,
               is_superuser: data.results[i].is_superuser,
               username: data.results[i].username,
-              name: String(data.results[i].first_name +' '+data.results[i].last_name),
+              first_name: data.results[i].first_name,
               email: data.results[i].email,
               // is_staff: true,
               // is_active: true,
