@@ -10,12 +10,10 @@ class AuthService {
       axios.post(API_URL + 'login/',{username: newLogin.username, password: newLogin.password})
         .then((response) => {
           console.log(response);
-          localStorage.setItem('token', response.data.key)
-          observer.next(response.data)
+          localStorage.setItem('token', data.response.token)
           observer.complete()
         })
         .catch((error) => {
-          console.log(error)
           observer.error(error)
         })
     })

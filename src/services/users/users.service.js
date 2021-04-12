@@ -1,24 +1,10 @@
 import { Observable } from 'rxjs'
 import axios from 'axios'
 import UsersPagination from '../../models/users/UsersPagination'
-import apikeyHeader from '../api-header'
+
 const API_URL = 'http://localhost:8000/'
 
 class UsersService {
-
-  getUserMe (){
-    return Observable.create((observer) => {
-      axios.get(API_URL + `user/me/`, { headers : apikeyHeader()})
-        .then((response) => {
-          observer.next(response.data)
-          observer.complete()
-        })
-        .catch((error) => {
-          observer.error(error)
-        })
-    })
-  }
-
   getUsers (limit, offset){
     return Observable.create((observer) => {
       axios.get(API_URL + `users/?limit=${limit}&offset=${offset}`)
@@ -32,22 +18,9 @@ class UsersService {
     })
   }
 
-  findUsers (query){
-    return Observable.create((observer) => {
-      axios.get(API_URL + `user/find/?query=${query}`)
-        .then((response) => {
-          observer.next(response.data)
-          observer.complete()
-        })
-        .catch((error) => {
-          observer.error(error)
-        })
-    })
-  }
-
   createUser(newUser){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'users/',{is_superuser: newUser.is_superuser, username: newUser.email, first_name: newUser.first_name, last_name: "", email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
+      axios.post(API_URL + 'users/',{is_superuser: newUser.is_superuser, username: newUser.username, first_name: newUser.first_name, last_name: newUser.last_name, email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -74,7 +47,7 @@ class UsersService {
 
   updateUser(newUser){
     return Observable.create((observer) => {
-      axios.put(API_URL + `users/${newUser.id}/`,{is_superuser: newUser.is_superuser, username: newUser.email, first_name: newUser.first_name, last_name: "", email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
+      axios.put(API_URL + `users/${newUser.id}/`,{username: newUser.username, first_name: newUser.first_name, last_name: newUser.last_name})
         .then((response) => {
           console.log();
           observer.complete()

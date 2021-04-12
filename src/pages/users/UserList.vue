@@ -16,7 +16,7 @@
         </div>
 
         <div class="q-pa-md">
-          <q-input outlined bottom-slots v-model="text" @keyup="searchUser" label="Buscar">
+          <q-input outlined bottom-slots v-model="text" label="Buscar" counter>
             <template v-slot:before>
               <q-icon name="account_circle" />
             </template>
@@ -25,12 +25,16 @@
               <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
               <q-icon name="search" />
             </template>
+
+            <!-- <template v-slot:hint>
+              Field hint
+            </template> -->
           </q-input>
           <q-table
             :loading="loading"
             :data="this.rows"
             :columns="columns"
-            row-key="id"
+            row-key="name"
             :pagination.sync="pagination"
             hide-pagination
             @row-click="onRowClick"
@@ -65,7 +69,6 @@ export default Vue.extend({
   data(){    
     return {
       loading: false,
-      text: '',
       pagination: {
         // sortBy: 'desc',
         // descending: false,
@@ -80,17 +83,18 @@ export default Vue.extend({
       currentPage: 1,
       numberOfPages: 0,
       columns: [
-        { name: 'first_name', align: 'left', label: 'Nombre', field: 'first_name', sortable: false },
+        { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: false },
+        { name: 'username', align: 'left', label: 'Usuario', field: 'username', sortable: false },
         { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false },
-        { name: 'date', align: 'left', label: 'Fecha registro', field: 'date', sortable: false },
-        { name: 'is_superuser', align: 'left', label: 'Administrador', field: 'is_superuser', format: val => val? 'Sí': 'No', sortable: false }
+        { name: 'date', align: 'left', label: 'Fecha creada', field: 'date', sortable: false },
+        { name: 'is_superuser', align: 'left', label: 'Super Usuario', field: 'is_superuser', format: val => val? 'Sí': 'No', sortable: false }
       ],
       rows: [{
         // last_login: "string",
         id: 0,
         is_superuser: false,
         username: "",
-        first_name: "",
+        name: "",
         email: "",
         // is_staff: true,
         // is_active: true,
@@ -105,7 +109,6 @@ export default Vue.extend({
   },
   methods: {
     onRequest(){
-      this.rows = []
       console.log("pagination.page == "+ this.pagination.page);
       this.pagination.currentPage = this.pagination.page;
       this.offset = this.limit * (this.pagination.page - 1);
@@ -114,37 +117,6 @@ export default Vue.extend({
       console.log(`UsersService.getUsers(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       this.loading = true;
       let subscription = UsersService.getUsers(this.limit, this.offset).subscribe({
-        next: data => {
-          for (let i = 0; i < data.results.length; i++) {
-            this.rows.push({
-              id: data.results[i].id,
-              is_superuser: data.results[i].is_superuser,
-              username: data.results[i].username,
-              first_name: data.results[i].first_name,
-              email: data.results[i].email,
-              // is_staff: true,
-              // is_active: true,
-              date: data.results[i].date_joined.substring(0,10)
-            })
-          }
-          console.log(this.rows)
-          this.count = data.count
-          this.numberOfPages = Math.ceil(this.count / this.limit);
-          this.loading = false;
-        },
-        complete: () => console.log('[complete]'),
-      })
-    },
-    searchUser(){
-      if(this.text.length < 3)
-        return
-      this.rows = []
-      console.log("pagination.page == "+ this.pagination.page);
-      this.pagination.currentPage = this.pagination.page;
-      this.offset = this.limit * (this.pagination.page - 1);
-      this.table.splice(0,1);
-      this.loading = true;
-      let subscription = UsersService.findUsers(this.text).subscribe({
         next: data => {
           for (let i = 0; i < data.results.length; i++) {
             this.rows.push({
@@ -165,7 +137,8 @@ export default Vue.extend({
         },
         complete: () => console.log('[complete]'),
       })
-    },     
+      
+    },   
     onRowClick (evt, row){
       //console.log(`/users/detail/${row.id}`);
       this.$router.push({path: `/users/detail/${row.id}`})

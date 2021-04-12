@@ -27,7 +27,7 @@
                   :rules="[val => !!val || 'Debe ingresar el nombre']"
                 />
               </div>
-              <!--<div class="col q-ml-md">
+              <div class="col q-ml-md">
                 <q-input  
                   outlined
                   v-model="user.last_name"
@@ -46,7 +46,7 @@
                   lazy-rules
                   :rules="[val => !!val || 'Debe ingresar el nombre de usuario']"
                 />
-              </div>-->
+              </div>
               <div class="col q-ml-md">
                 <q-input  
                   outlined
@@ -106,6 +106,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import UsersService from '../../services/users/users.service'
+import { Loading } from "quasar";
 
 export default Vue.extend({
   data () {
@@ -137,7 +138,7 @@ export default Vue.extend({
       })
     },
     checkUser(){
-      if (this.user.first_name === "" || this.user.email === "" || this.user.password === ""){
+      if (this.user.first_name === "" || this.user.last_name === "" || this.user.username === "" || this.user.email === "" || this.user.password === ""){
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
       };

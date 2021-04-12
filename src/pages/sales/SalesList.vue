@@ -317,6 +317,11 @@ export default Vue.extend({
         next: data => {
           console.log(data);
           for (let i = 0; i < data.length; i++){
+            if (data[i].bank == null){
+               data[i].bank = {
+                 'name' : "N/A"
+               }
+            }
             this.toValidate.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
           };
         },
@@ -390,6 +395,11 @@ export default Vue.extend({
           next: data => {
             console.log(data);
             for (let i = 0; i < data.length; i++){
+              if (data[i].bank == null){
+               data[i].bank = {
+                 'name' : "N/A"
+               }
+            }
               this.toDeliver.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
             }
           },
@@ -405,6 +415,11 @@ export default Vue.extend({
           next: data => {
             console.log(data);
             for (let i = 0; i < data.length; i++){
+              if (data[i].bank == null){
+               data[i].bank = {
+                 'name' : "N/A"
+               }
+            }
               this.processed.push({id: data[i].id, customer: data[i].customer, created: data[i].created.substring(0,10),payment_type: data[i].payment_type, bank: data[i].bank, coin: data[i].coin, amount: data[i].amount, status: data[i].status});
               // console.log("toValidate: "+this.toValidate+"\ntoDeliver: "+this.toDeliver+"\nprocessed: "+this.processed);
             };

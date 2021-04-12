@@ -147,7 +147,7 @@ export default Vue.extend({
     return {
       loading: false,
       paymentValue: [false],
-      paymentOptions: ['ZELLE', 'TRANSFERENCIA', 'PAGO MOVIL'],
+      paymentOptions: ['ZELLE', 'TRANSFERENCIA $', 'TRANSFERENCIA BS', 'PAGO MOVIL'],
       currencyOptions: ['USD', 'BS'],
       bank: {
         name: '',
