@@ -16,6 +16,15 @@
           </div>
         </div>
 
+        <div>
+          <q-input outlined bottom-slots v-model="text" label="Buscar">
+            <template v-slot:append>
+              <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+
         <div class="col-md-12 col-xs-12 q-pt-lg">
             <q-table
               :loading="loading"
@@ -146,6 +155,7 @@ export default Vue.extend({
   },
   data(){    
     return {
+      text: '',
       products: [],
       product: {},
       page: 1,
