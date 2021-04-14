@@ -126,7 +126,7 @@ export default Vue.extend({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },
@@ -139,17 +139,18 @@ export default Vue.extend({
         this.showNotif("Existen campos por corregir", 'red-10');
         return;
       }*/
-      console.log("everything in order. Creating user...");
+      console.log("everything in order.");
       this.loading = true;
       this.login();
     },
     login(){
+      
       let subscription = AuthService.login({username: this.username, password: this.password}).subscribe( {
-        next: () => {
-          console.log('[login successful]');
+         complete: () => {
+          console.log("todo ok");
           this.showNotif("login successful", 'positive');
           this.loading = false;
-          this.$router.push('/Users')
+          this.$router.push('/')
         },
         error:() => {
           this.showNotif("Nombre de usuario o contraseña inválidos", 'red-10');
