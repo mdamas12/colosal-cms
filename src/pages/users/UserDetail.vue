@@ -28,25 +28,26 @@
                   :rules="[val => !!val || 'Debe ingresar el nombre']"
                 />
               </div>
-              <div class="col q-ml-md">
-                <q-input  
-                  outlined
-                  v-model="user.last_name"
-                  label="Apellido"
-                  lazy-rules
-                  :rules="[val => !!val || 'Debe ingresar el apellido']"
-                />
-              </div>
             </div>
             <div class="row q-ma-md">
-              <div class="col">
-                <q-input  
+              <div class="col-6">
+                <q-input 
+                  v-model="password" 
                   outlined
-                  v-model="user.username"
-                  label="Usuario"
+                  ref="password"
+                  :type="isPwd ? 'password' : 'text'" 
+                  label="Contraseña" 
                   lazy-rules
-                  :rules="[val => !!val || 'Debe ingresar el nombre de usuario']"
-                />
+                  :rules="[val => !!val || 'Debe ingresar una contraseña', isValidPassword]"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
               </div>
               <div class="col q-ml-md">
                 <q-input  
@@ -55,7 +56,6 @@
                   type="email"
                   v-model="user.email"
                   label="Correo"
-                  disable
                   lazy-rules
                   :rules="[val => !!val || 'Debe ingresar el correo', isValidEmail]"
                 />
@@ -69,7 +69,6 @@
                   color="red-10"
                   label="Super Usuario"
                   left-label
-                  disable
                 />
               </div>
             </div>  
@@ -88,6 +87,7 @@ import UsersService from '../../services/users/users.service'
 export default Vue.extend({
   data () {
     return {
+      password: "",
       user : {
         // last_login: "string",
         id: this.$router.currentRoute.params.id,
@@ -135,15 +135,22 @@ export default Vue.extend({
       if (this.loading1 || this.loading2){
         return
       }
-      if (this.user.first_name === "" || this.user.last_name === "" || this.user.username === ""){
+      if (this.user.first_name === "" || this.user.email === ""){
         this.showNotif("Faltan campos por completar", 'red-10');
         return;
       };
+
+      if(this.password.length < 8){
+        this.showNotif("Contraseña debe ser mayor a 8 caracteres", 'red-10');
+        return;
+      }
+      
       console.log("everything in order. Creating user...");
       this.updateUser();
     },
     updateUser(){
       this.loading1 = true;
+      this.user.password = this.password
       let subscription = UsersService.updateUser(this.user).subscribe( {
         complete: () => {
           console.log('[user updated]');

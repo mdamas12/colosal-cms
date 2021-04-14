@@ -9,11 +9,13 @@ class AuthService {
     return Observable.create((observer) => {
       axios.post(API_URL + 'login/',{username: newLogin.username, password: newLogin.password})
         .then((response) => {
-      
-          localStorage.setItem('token', response.data["key"])
+          console.log(response);
+          localStorage.setItem('token', response.data.key)
+          observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
+          console.log(error)
           observer.error(error)
         })
     })
