@@ -2,7 +2,9 @@ import { Observable } from 'rxjs'
 import axios from 'axios'
 import UsersPagination from '../../models/users/UsersPagination'
 import apikeyHeader from '../api-header'
-const API_URL = 'http://localhost:8000/'
+//const API_URL = 'http://localhost:8000/'
+
+const API_URL = process.env.API_URL;
 
 class UsersService {
 

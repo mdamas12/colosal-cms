@@ -2,8 +2,10 @@ import { Observable } from 'rxjs'
 import axios from 'axios'
 import SuppliersPagination from '../../models/suppliers/SuppliersPagination'
 
-const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
+//const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
+
+const API_URL = process.env.API_URL + "panel/";
 
 class SuppliersService {
   getSuppliers (limit, offset){
