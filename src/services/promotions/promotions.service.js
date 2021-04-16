@@ -21,25 +21,47 @@ class PromotionsService {
     })
   }
 
-  createPromotion(promotion, detail){
+  createPromotion(promotion, products){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'promotions/',{promotion: promotion, Detail: detail})
-        .then((response) => {
-          console.log(response);
-          observer.next(response.data)
-          observer.complete()
-        })
-        .catch((error) => {
+      axios({
+        method: 'post', //you can set what request you want to be
+        url: API_URL + 'promotions/',
+        data: promotion,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+        }).then((response) => {
+          let promotion_id  = response.data.id
+          if (Object.keys(products).length === 0){
+            observer.next(response.data)
+            observer.complete()
+          }
+          else{
+            axios({
+              method: 'post', //you can set what request you want to be
+              url: API_URL + 'promotions/products/',
+              data: {products_detail : products, promotion: promotion_id}
+              }).then((response) => {  
+                  console.log(response);
+                  observer.next(response.data)
+                  observer.complete()
+              }).catch((error) => {
+                   observer.error(error)
+              })    
+          }
+        }).catch((error) => {
           observer.error(error)
         })
     })
+
   }
 
   getPromotion (id){
     return Observable.create((observer) => {
-      console.log("id: "+id);
+      //console.log("id: "+id);
       axios.get(API_URL + `promotions/search/${id}/`)
         .then((response) => {
+          console.log(response.data)
           observer.next(response.data)
           observer.complete()
         })
@@ -51,11 +73,31 @@ class PromotionsService {
 
   updatePromotion(promotion, detail, newDetail, id){
     return Observable.create((observer) => {
-      axios.put(API_URL + `promotions/search/${id}/`,{promotion: promotion, Detail: detail, newDetail: newDetail})
-        .then((response) => {
-          console.log();
-          observer.next(response.data)
-          observer.complete()
+      axios({
+        method: 'put', //you can set what request you want to be
+        url: API_URL + `promotions/modification/${id}/`,
+        data: promotion,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((response) => {
+          if ((Object.keys(detail).length === 0) && (Object.keys(newDetail).length === 0)){
+            observer.next(response.data)
+            observer.complete()
+          }
+          else{
+            axios({
+              method: 'put', //you can set what request you want to be
+              url: API_URL +  `promotions/products-modification/${id}/`,
+              data: {products_detail : detail, products_news: newDetail}
+              }).then((response) => {  
+                  console.log(response);
+                  observer.next(response.data)
+                  //observer.complete()
+              }).catch((error) => {
+                  observer.error(error)
+              })    
+          }
         })
         .catch((error) => {
           observer.error(error)
@@ -65,17 +107,37 @@ class PromotionsService {
 
   deletePromotion (id){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `promotions/search/${id}/`)
+      axios.delete(API_URL +  `promotions/modification/${id}/`)
         .then((response) => {
           console.log();
-          observer.next(response.data)
-          observer.complete()
+          observer.next(response)
+          //observer.complete()
         })
         .catch((error) => {
           observer.error(error)
         })
     })
   }
+
+  deleteProductPromotion(product_id){
+    return Observable.create((observer) => {
+      axios.delete(API_URL + `promotions/delete-detail/${product_id}/`)
+        .then((response) => {
+          console.log(response.data);
+          observer.next(response.data)
+         // observer.complete()
+        })
+        .catch((error) => {
+          observer.error(error)
+        })
+    })
+
+  }
+
+
+
 }
+
+
 
 export default new PromotionsService()

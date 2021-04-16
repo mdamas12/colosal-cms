@@ -43,23 +43,45 @@
                       </div>
                     </div>
                   </div>
-                  <!-- <div class="col q-ml-md">
-                    <q-file
-                      v-model="promotion.image"
-                      label="Imagen de Portada"
-                      color="indigo-10"
-                      outlined
-                      lazy-rules
-                      :rules="[
-                        val => val !== null && val !== '' || 'Debe seleccionar una imagen'
-                      ]"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="attach_file" />
-                      </template>
-                    </q-file>
-                  </div> -->
+       
                 </div>
+                      <div class="row">
+                  <div class="col-8">
+                    <div class="row q-mb-md ">
+                        <div class="col">
+                            <q-file 
+                              outlined 
+                              clearable 
+                              counter 
+                              label="Imagen Principal"
+                              v-model="promotion.image"        
+                              @rejected="onRejected"
+                              @input="getImage"
+                           >
+                              <template v-slot:prepend>
+                               <q-icon name="attach_file" />
+                              </template>
+                           </q-file>
+
+                        </div>
+                      
+                      </div> 
+                  </div>
+                  <div class="col-4">
+                      <div class="row q-mb-md ">
+                        <div class="col">
+                          <div  v-if="promotion.image !== null" >
+                            <q-img :src="preview"  class="img-prev" alt="imagen previa" />
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+
+
+
+
+
                 <div class="row q-mb-md">
                   <div class="col">
                     <q-input  
@@ -166,7 +188,7 @@
                           </div>
                           <div class="col-1 self-center">
                             <div class="row">
-                              <q-btn flat round color="indigo-10" icon="delete" @click="removeProduct(index)"/>
+                              <q-btn flat round color="indigo-10" icon="delete" @click="removeSavedProduct(index)"/>
                             </div>
                           </div>
                         </div>
@@ -196,6 +218,7 @@
                             label="Producto"
                             :options="options2"
                             @filter="filterFn2"
+                            @input="getProductInfo(productNameModel[index], index)"
                           >
                             <template v-slot:no-option>
                               <q-item>
@@ -229,6 +252,8 @@
             </div>  
         </div>
 
+
+
       </div>
   </q-page>
 </template>
@@ -245,6 +270,9 @@ import { Loading } from 'quasar'
 export default Vue.extend({
   data () {
     return {
+    
+      image: "",
+       preview : '',
       promotionId: this.$router.currentRoute.params.id,
       promotion: {
         name: "",
@@ -286,6 +314,8 @@ export default Vue.extend({
         }
       ],
       productNameModel: [],
+     
+
     }
   },
   mounted(){
@@ -309,25 +339,38 @@ export default Vue.extend({
       })
       PromotionsService.getPromotion(this.promotionId).subscribe({
         next: data =>{
-          console.log(data)
+
+          var imageUrl = encodeURI(data.image);                                     
+             fetch(imageUrl)                                                           
+            .then(res => res.blob())
+            .then(blob => {
+
+              const n = data.image.indexOf("promotions/") + 11;                       
+              const imageName = data.image.substring(n);                              
+              const extension = imageName.substring(imageName.indexOf(".") + 1);      
+              const file = new File([blob], imageName, {type: `image/${extension}`}); 
+              this.promotion.image = file;                                                    
+              this.getImage(file)                                               
+            });
           this.promotion.name = data.name;
           this.promotion.description = data.description;
-          this.promotion.image = data.image;
+          
           this.promotion.price = data.price;
           this.promotion.coin = data.coin;
           this.promotion.quantity = data.quantity;
           this.promotion.category = data.category.id;
           this.categoryNameModel = data.category.name
           this.savedProductDetail.splice(0,1)
-          console.log(this.savedProductDetail)
-          for (let i = 0; i < data.promotion_detail.length; i++) {
+          //console.log(this.savedProductDetail)
+         
+         for (let i = 0; i < data.promotion_detail.length; i++) {
             this.savedProductDetail.push({
               id: data.promotion_detail[i].id,
               product: data.promotion_detail[i].product.id,
               quantity: data.promotion_detail[i].quantity
             });
             this.savedproductNameModel.push(data.promotion_detail[i].product.name)
-            console.log(this.savedProductDetail)
+            //console.log(this.savedProductDetail)
           }
         },
         complete: () => {
@@ -342,26 +385,52 @@ export default Vue.extend({
         product: 0,
       });
       this.productNameModel.push('');
-      console.log('this.productNameModel.length: '+this.productNameModel.length);
+      //console.log('this.productNameModel.length: '+this.productNameModel.length);
     },
     getProductInfo(item, index){
-      console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
+      //console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
       if (this.productOptions.indexOf(item) >= 0){
         this.detail[index].product = this.productIndex[this.productOptions.indexOf(item)]
       }
       console.log(this.detail)
     },
     removeSavedProduct(index){
-      this.savedProductDetail.splice(index,1);
-      this.savedproductNameModel.splice(index,1)
+      //alert(this.savedProductDetail[index].id)
+      
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de querer eliminar este Producto?',
+        cancel: true,
+        persistent: true,
+        color: 'red-10'
+      }).onOk(() => {
+          this.loading2 = true;
+          PromotionsService.deleteProductPromotion(this.savedProductDetail[index].id).subscribe({
+            next: (resp) => {
+              this.loading2 = false;
+              this.showNotif(resp, 'indigo-10');
+              this.savedProductDetail.splice(index,1);
+              this.savedproductNameModel.splice(index,1)
+              //setTimeout(() => this.$router.push({path: '/Promotions'}), 1000);
+            }
+          })
+        
+        
+      }).onCancel(() => {
+         console.log('>>>> cancelled')
+      })    
     },
     removeProduct(index){
+      //console.log(this.savedproductNameModel[index])
+      
       if (this.detail.length > 1){
         this.detail.splice(index,1);
         this.productNameModel.splice(index,1)
       }
     },
     updatePromotion(){
+     
+   
       if (this.promotion.name === ''){
         this.showNotif("Proveer nombre de promoción", 'red-10')
         return
@@ -391,11 +460,22 @@ export default Vue.extend({
         }
       }
       this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
-      this.loading = true
-      PromotionsService.updatePromotion(this.promotion, this.savedProductDetail, this.detail, this.promotionId).subscribe({
-        complete: () => {
+      
+      const DataPromotion = new FormData();
+      DataPromotion.append('name', this.promotion.name);
+      DataPromotion.append('description', this.promotion.description);
+      DataPromotion.append('image', this.promotion.image);
+      DataPromotion.append('coin', this.promotion.coin);
+      DataPromotion.append('price', this.promotion.price);
+      DataPromotion.append('category', this.promotion.category);
+      DataPromotion.append('quantity', this.promotion.quantity);
+     
+     
+     this.loading = true
+      PromotionsService.updatePromotion(DataPromotion, this.savedProductDetail, this.detail, this.promotionId).subscribe({
+        next: (resp) => {
           this.loading = false
-          this.showNotif("Promoción creada exitosamente", 'indigo-10')
+          this.showNotif(resp, 'indigo-10')
           setTimeout(this.$router.back(),1000)
         }
       })
@@ -420,11 +500,17 @@ export default Vue.extend({
     deletePromotion(){
       this.loading2 = true;
       PromotionsService.deletePromotion(this.promotionId).subscribe({
-        next: () => {
+        next: (resp) => {
           this.loading2 = false;
-          console.log('[user Deleted]')
-          this.showNotif("Promoción Eliminada exitosamente", 'indigo-10');
-          setTimeout(() => this.$router.push({path: '/Promotions'}), 1000);
+          if (resp.status == 200){
+            this.showNotif(resp.data, 'indigo-10');
+            setTimeout(() => this.$router.push({path: '/Promotions'}), 1000);
+          }
+          else{
+              this.showNotif(resp.data, 'red-10');
+
+          }
+        
         }
       })
     },
@@ -436,7 +522,7 @@ export default Vue.extend({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },
@@ -491,10 +577,51 @@ export default Vue.extend({
     },
     backToPromotions(){
       this.$router.push({path:"promotions/"});
+    },
+
+   getImage(e){  
+             
+      let reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = e => {
+        this.preview = e.target.result;
+      }
+    },
+    onRejected (rejectedEntries) {
+      // Notify plugin needs to be installed
+      // https://quasar.dev/quasar-plugins/notify#Installation
+      this.$q.notify({
+        type: 'negative',
+        message: `El archivo seleccionado no es de tipo imagen`
+      })
+    },
+    showNotif (message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
     }
   },
   created: function() {
     this.debouncedGetProducts = _.debounce(this.getProducts, 500)
-  }
+  },
+
+
 })
 </script>
+<style>
+
+.subtitle-error{
+  font-size: 14px;
+  font-weight: bolder;
+  color: red;
+}
+
+.content-cente{
+  margin: 0 auto;
+}
+
+</style>
