@@ -9,7 +9,7 @@ const API_URL = process.env.API_URL + "panel/";
 class ProductsService{
     getProducts (limit, offset){
         return Observable.create((observer) => {
-          axios.get(API_URL + `products/?limit=${limit}&offset=${offset}`)
+          axios.get(`products/?limit=${limit}&offset=${offset}`)
             .then((response) => {
               observer.next(response.data)
               observer.complete()
