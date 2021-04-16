@@ -9,6 +9,7 @@ const API_URL = process.env.API_URL + "panel/";
 
 class BrandsService {
   getBrands (limit, offset){
+    console.log("WHATTTTTTT",API_URL)
     return Observable.create((observer) => {
       axios.get(API_URL + `brands/?limit=${limit}&offset=${offset}`)
         .then((response) => {
