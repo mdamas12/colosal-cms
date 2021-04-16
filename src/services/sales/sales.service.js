@@ -1,16 +1,16 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
+import { api } from 'boot/axios'
 // import SalesPagination from '../../models/sales/SalesPagination'
 
 //const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-const API_URL = process.env.API_URL + "panel/";
+const API_URL = "panel/";
 
 class SalesService {
   getSales (){
     return Observable.create((observer) => {
-      axios.get(API_URL + `sales/`)
+      api.get(API_URL + `sales/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -23,7 +23,7 @@ class SalesService {
 
   getSalesByStatus (id){
     return Observable.create((observer) => {
-      axios.get(API_URL + `sales/list-status/${id}/`)
+      api.get(API_URL + `sales/list-status/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -36,7 +36,7 @@ class SalesService {
 
   createSale(newSale){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'sales/sale-panel/',{sale: newSale.sale, sale_detail: newSale.sale_detail})
+      api.post(API_URL + 'sales/sale-panel/',{sale: newSale.sale, sale_detail: newSale.sale_detail})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -49,7 +49,7 @@ class SalesService {
 
   searchUsers(email){
     return Observable.create((observer) => {
-      axios.get(API_URL + `sales/customer/${email}/`)
+      api.get(API_URL + `sales/customer/${email}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -63,7 +63,7 @@ class SalesService {
   getSale (id){
     return Observable.create((observer) => {
       console.log("id: "+id);
-      axios.get(API_URL + `sales/detail/${id}/`)
+      api.get(API_URL + `sales/detail/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -76,7 +76,7 @@ class SalesService {
 
   updateSale(newSale){
     return Observable.create((observer) => {
-      axios.put(API_URL + `sales/detail/${newSale.id}/`,{sale: newSale.sale, sale_detail: newSale.sale_detail})
+      api.put(API_URL + `sales/detail/${newSale.id}/`,{sale: newSale.sale, sale_detail: newSale.sale_detail})
         .then((response) => {
           console.log();
           observer.complete()
@@ -89,7 +89,7 @@ class SalesService {
 
   updateSaleStatus(id, value){
     return Observable.create((observer) => {
-      axios.put(API_URL + `sales/detail/${id}/`,{sale: {status: value}})
+      api.put(API_URL + `sales/detail/${id}/`,{sale: {status: value}})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -102,7 +102,7 @@ class SalesService {
 
   deleteSale (id){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `sales/detail/${id}/`)
+      api.delete(API_URL + `sales/detail/${id}/`)
         .then((response) => {
           console.log();
           observer.complete()

@@ -1,15 +1,14 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
-
+import { api } from 'boot/axios'
 //const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-const API_URL = process.env.API_URL + "panel/";
+const API_URL = "panel/";
 
 class ProductsService{
     getProducts (limit, offset){
         return Observable.create((observer) => {
-          axios.get(`products/?limit=${limit}&offset=${offset}`)
+          api.get(API_URL + `products/?limit=${limit}&offset=${offset}`)
             .then((response) => {
               observer.next(response.data)
               observer.complete()
@@ -22,7 +21,7 @@ class ProductsService{
 
     getAllProducts(){
       return Observable.create((observer) => {
-        axios.get(API_URL + `products/`)
+        api.get(API_URL + `products/`)
         .then((response) => {
           console.log(response.data);
           observer.next(response.data)
@@ -36,7 +35,7 @@ class ProductsService{
 
     searchProducts (query){
       return Observable.create((observer) => {
-        axios.get(API_URL + `products/coincidence/${query}/`)
+        api.get(API_URL + `products/coincidence/${query}/`)
           .then((response) => {
             observer.next(response.data)
             observer.complete()
@@ -49,7 +48,7 @@ class ProductsService{
 
     createProduct(product, features,gallery){
         return Observable.create((observer) => {
-          axios({
+          api({
             method: 'post', //you can set what request you want to be
             url: API_URL + 'products/',
             data: product,
@@ -63,7 +62,7 @@ class ProductsService{
                 observer.next(response.data)
                 observer.complete()
               }
-              axios({
+              api({
                 method: 'post', 
                 url: API_URL + 'products/features/',
                 data:{features : features, product: response.data.id}
@@ -74,7 +73,7 @@ class ProductsService{
                     //console.log(response.data);
                   }
                   gallery.append('product', product_id )
-                  axios({
+                  api({
                     method: 'post', 
                     url: API_URL + 'products/gallery/',
                     data: gallery,
@@ -104,7 +103,7 @@ class ProductsService{
       getProduct (id){
         return Observable.create((observer) => {
           console.log("id: "+id);
-          axios.get(API_URL + `products/search/${id}/`)
+          api.get(API_URL + `products/search/${id}/`)
             .then((response) => {
               observer.next(response.data)
               observer.complete()
@@ -117,7 +116,7 @@ class ProductsService{
 
       updateProduct(newProduct, id){
         return Observable.create((observer) => {
-          axios.put(API_URL + `products/search/${id}/`,newProduct)
+          api.put(API_URL + `products/search/${id}/`,newProduct)
             .then((response) => {
               console.log();
               observer.next(response.data)
@@ -131,7 +130,7 @@ class ProductsService{
 
       deleteProduct(id){
         return Observable.create((observer) => {
-          axios.delete(API_URL + `products/search/${id}/`)
+          api.delete(API_URL + `products/search/${id}/`)
             .then((response) => {
               console.log("Siiiiii");
               observer.next(response.data)
@@ -146,7 +145,7 @@ class ProductsService{
 
       getDetailProduct(id){
         return Observable.create((observer) =>{
-          axios.get(API_URL + `products/product-detail/${id}/`)
+          api.get(API_URL + `products/product-detail/${id}/`)
           .then((response) =>{
             console.log();
             observer.next(response.data)
@@ -160,7 +159,7 @@ class ProductsService{
       
       deleteDetailProduct(id){
         return Observable.create((observer) =>{
-          axios.delete(API_URL + `products/product-detail/${id}/`)
+          api.delete(API_URL + `products/product-detail/${id}/`)
           .then((response) =>{
             console.log();
             observer.next(response.data)
