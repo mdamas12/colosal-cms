@@ -185,7 +185,7 @@
                       color="grey-10"/>
                     </q-card-section>
                     <q-card-actions align="right">
-                      <q-btn flat color="red-10" @click="addCategorie()">Agregar</q-btn>
+                      <q-btn flat color="red-10">Agregar</q-btn> <!-- @click="addCategorie()" -->
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -212,7 +212,7 @@
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
-                    <q-btn flat color=red-10 @click="addBrand()">Agregar</q-btn>
+                    <q-btn flat color=red-10>Agregar</q-btn> <!-- @click="addBrand()" -->
                   </q-card-actions>
                 </q-card>
                 </q-dialog>
@@ -316,7 +316,7 @@
               </div>
               <q-btn color="red-10" label="Guardar Cambios" class="q-pa-xs q-mt-md q-mr-md float-right" @click="updateProduct()"/>
               <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushDetail()"/>
-              <q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushImagenes()"/>
+              <q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" /> <!-- @click="pushImagenes()" -->
             </form>
         </div>
         <br><br>
@@ -339,14 +339,16 @@ export default Vue.extend({
     var productFeature : any = null
     var productBrand : any = null
     var productCategory : any = null
+    var image : any = null
+    var preview : any = null
     return {
-      preview: null,
+      preview : preview,
       url_test : "http://localhost:8000/media/products/closet_4tzq9jh.jpg",
       product : {
         id: this.$router.currentRoute.params.id,
         name: null,
         description: null,
-        image: null,
+        image: image,
         price: null,
         coin: null,
         quantity: null,
@@ -479,24 +481,25 @@ export default Vue.extend({
       }
     },
     onSubmit () {
-      this.$refs.product.name.validate()
-      this.$refs.product.category.validate()
-      this.$refs.product.brand.validate()
-      this.$refs.product.description.validate()
-      this.$refs.product.image.validate()
-      this.$refs.product.price.validate()
-      this.$refs.product.coin.validate()
-      this.$refs.product.quantity.validate()
+      
+      (this.$refs.product as any).name.validate()
+      (this.$refs.product as any).category.validate()
+      (this.$refs.product as any).brand.validate()
+      (this.$refs.product as any).description.validate()
+      (this.$refs.product as any).image.validate()
+      (this.$refs.product as any).price.validate()
+      (this.$refs.product as any).coin.validate()
+      (this.$refs.product as any).quantity.validate()
 
-      if (this.$refs.product.name.hasError || 
-          this.$refs.product.category.hasError ||
-          this.$refs.product.brand.hasError ||
-          this.$refs.product.description.hasError ||
-          this.$refs.product.image.hasError ||
-          this.$refs.product.price.hasError ||
-          this.$refs.product.coin.hasError ||
-          this.$refs.product.quantity.hasError) {
-        this.formHasError = true
+      if ((this.$refs.product as any).name.hasError || 
+          (this.$refs.product as any).category.hasError ||
+          (this.$refs.product as any).brand.hasError ||
+          (this.$refs.product as any).description.hasError ||
+          (this.$refs.product as any).image.hasError ||
+          (this.$refs.product as any).price.hasError ||
+          (this.$refs.product as any).coin.hasError ||
+          (this.$refs.product as any).quantity.hasError) {
+        //this.formHasError = true
       }else {
         this.updateProduct()
       }
@@ -579,18 +582,17 @@ export default Vue.extend({
       this.items.push(this.item);
      
     },
-    removeCharacteristic(position){
+    removeCharacteristic(position : number){
         this.items.splice(position,1)
     },
-    getImage(e){                                                                        // usado para convertir la imagen en base64 para mostrar por pantalla
+    getImage(e: any){                                                                        // usado para convertir la imagen en base64 para mostrar por pantalla
       let reader = new FileReader();
       reader.readAsDataURL(e);
       reader.onload = e => {
-
-        this.preview = e.target.result;
+        this.preview = (e.target as any).result;
       }
     },
-    onRejected (rejectedEntries) {
+    onRejected (rejectedEntries:any) {
       // Notify plugin needs to be installed
       // https://quasar.dev/quasar-plugins/notify#Installation
       this.$q.notify({
