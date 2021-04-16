@@ -9,5 +9,7 @@ declare module 'vue/types/vue' {
 
 export default boot(({ Vue }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  Vue.prototype.$axios = axios
+  //Vue.prototype.$axios = axios
+  const api = axios.create({ baseURL: '' })
+  Vue.prototype.$api = api
 })
