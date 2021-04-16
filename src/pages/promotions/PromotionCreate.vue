@@ -43,50 +43,41 @@
                         />
                       </div>
                     </div>
-                  </div>
-                  <div class="row justify-between items-center">
-                    <div class="col-9 justify-evenly">
-                      <!-- :filter="checkFileType" -->
-                      <!-- <div class="row items-center q-my-sm">
+                  </div>     
+        
+                </div>
+
+                <div class="row">
+                  <div class="col-8">
+                    <div class="row q-mb-md ">
                         <div class="col">
-                        <q-file 
-                          outlined 
-                          clearable 
-                          counter 
-                          v-model="promotion.image"        
-                          @rejected="onRejected"
-                          @input="getImage"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="attach_file" />
-                          </template>
-                        </q-file>
+                            <q-file 
+                              outlined 
+                              clearable 
+                              counter 
+                              label="Imagen Principal"
+                              v-model="promotion.image"        
+                              @rejected="onRejected"
+                              @input="getImage"
+                           >
+                              <template v-slot:prepend>
+                               <q-icon name="attach_file" />
+                              </template>
+                           </q-file>
+
+                        </div>
+                      
+                      </div> 
+                  </div>
+                  <div class="col-4">
+                      <div class="row q-mb-md ">
+                        <div class="col">
+                          <div  v-if="promotion.image !== null" >
+                            <q-img :src="preview"  class="img-prev" alt="imagen previa" />
+                          </div>
                         </div>
                       </div>
-
-                    </div>
-                    <div class="col-2">
-                      <div v-if="image !== null">
-                        <q-img :src="preview" style="max-width: 150px" />
-                      </div> -->
-                    </div>
                   </div>
-                  <!-- <div class="col q-ml-md">
-                    <q-file
-                      v-model="promotion.image"
-                      label="Imagen de Portada"
-                      color="indigo-10"
-                      outlined
-                      lazy-rules
-                      :rules="[
-                        val => val !== null && val !== '' || 'Debe seleccionar una imagen'
-                      ]"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="attach_file" />
-                      </template>
-                    </q-file>
-                  </div> -->
                 </div>
                  
                 <div class="row q-mb-md">
@@ -194,7 +185,7 @@
                   </div>
                 </div>
               </div>
-              <q-btn flat round color="indigo-10" icon="add" @click="addProduct()"/>
+              <q-btn flat label="Agregar Producto"  color="indigo-10" icon="add" @click="addProduct()"/>
             </div>  
         </div>
 
@@ -214,10 +205,11 @@ import { Loading } from 'quasar'
 export default Vue.extend({
   data () {
     return {
+      image: null,
       promotion: {
         name: '',
         description: '',
-        // image: null,
+        image: null,
         price: 0,
         coin: '',
         quantity: 0,
@@ -252,6 +244,12 @@ export default Vue.extend({
     let vm = this
     vm.onRequest()
   },
+  watch:{
+		    image(newOpcion){
+			   this.getImage(newOpcion)
+		
+		}
+	},
   methods: {
     onRequest(){
       this.productOptions.pop()
@@ -286,6 +284,12 @@ export default Vue.extend({
       }
     },
     createPromotion(){
+
+      console.log(this.promotion.name) 
+      console.log( this.detail)
+     
+
+
       if (this.promotion.name === ''){
         this.showNotif("Proveer nombre de promoción", 'red-10')
         return
@@ -316,24 +320,37 @@ export default Vue.extend({
           return
         }
       }
-      // if (this.promotion.image === null){        // begin
-        this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
-        this.loading = true
-        PromotionsService.createPromotion(this.promotion, this.detail).subscribe( {
+      this.promotion.category = this.categoryIndex[this.categoryOptions.indexOf(this.categoryNameModel)]
+        
+      /* Preparando formdata y products*/
+        const DataPromotion = new FormData();
+        DataPromotion.append('name', this.promotion.name);
+        DataPromotion.append('description', this.promotion.description);
+        DataPromotion.append('image', this.promotion.image);
+        DataPromotion.append('coin', this.promotion.coin);
+        DataPromotion.append('price', this.promotion.price);
+        DataPromotion.append('category', this.promotion.category);
+        DataPromotion.append('quantity', this.promotion.quantity);
+  
+       this.loading = true
+        PromotionsService.createPromotion(DataPromotion, this.detail).subscribe( {
+          next : (resp) =>{
+             this.loading = false
+             this.showNotif(resp, 'indigo-10')
+          },
           complete: () => {
-            this.loading = false
-            this.showNotif("Promoción creada exitosamente", 'indigo-10')
+           // 
+            //this.showNotif("Sin ningun proble", 'indigo-10')
             setTimeout(this.$router.back(),1000)
           }
         })
-      // }                                          // end
     },
     showNotif (message, color) {
       this.$q.notify({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },
@@ -382,22 +399,25 @@ export default Vue.extend({
     // checkFileType (files) {
     //   return files.filter(file => file.type === 'image/png')
     // },
-    // getImage(e){
-    //   console.log(e)
-    //   let reader = new FileReader()
-    //   reader.readAsDataURL(e)
-    //   reader.onload = e => {
-    //     this.preview = e.target.result
-    //   }
-    // },
-    // onRejected (rejectedEntries) {
-    //   // Notify plugin needs to be installed
-    //   // https://quasar.dev/quasar-plugins/notify#Installation
-    //   this.$q.notify({
-    //     type: 'negative',
-    //     message: `El archivo seleccionado no es de tipo .png`
-    //   })
-    // },
+
+
+    getImage(e){
+      console.log(e);
+      let reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = e => {
+        this.preview = e.target.result;
+      }
+    },
+
+    onRejected (rejectedEntries) {
+      // Notify plugin needs to be installed
+      // https://quasar.dev/quasar-plugins/notify#Installation
+      this.$q.notify({
+        type: 'negative',
+        message: `El archivo seleccionado no es de tipo .png`
+      })
+    },
     isGreaterThanZero (val) {
       return val > 0 ? !!val: 'Ingresar cantidad comprada'
     },
@@ -410,3 +430,13 @@ export default Vue.extend({
   }
 })
 </script>
+<style >
+  .img-prev{
+    
+    margin: 0 10px;
+    border: 1px solid #666;
+    border-radius: 3px;
+    max-width: 150px
+  }
+
+</style>
