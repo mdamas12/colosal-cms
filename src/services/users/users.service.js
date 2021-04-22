@@ -1,16 +1,16 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
+import { api } from 'boot/axios'
 import UsersPagination from '../../models/users/UsersPagination'
 import apikeyHeader from '../api-header'
 //const API_URL = 'http://localhost:8000/'
 
-const API_URL = process.env.API_URL;
+const API_URL = '';
 
 class UsersService {
 
   getUserMe (){
     return Observable.create((observer) => {
-      axios.get(API_URL + `users/me/`, { headers : apikeyHeader()})
+      api.get(API_URL + `users/me/`, { headers : apikeyHeader()})
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -23,7 +23,7 @@ class UsersService {
 
   getUsers (limit, offset){
     return Observable.create((observer) => {
-      axios.get(API_URL + `users/?limit=${limit}&offset=${offset}`)
+      api.get(API_URL + `users/?limit=${limit}&offset=${offset}`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -36,7 +36,7 @@ class UsersService {
 
   findUsers (query){
     return Observable.create((observer) => {
-      axios.get(API_URL + `users/find/?query=${query}`)
+      api.get(API_URL + `users/find/?query=${query}`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -49,7 +49,7 @@ class UsersService {
 
   createUser(newUser){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'users/',{is_superuser: newUser.is_superuser, username: newUser.email, first_name: newUser.first_name, last_name: "", email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
+      api.post(API_URL + 'users/',{is_superuser: newUser.is_superuser, username: newUser.email, first_name: newUser.first_name, last_name: "", email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
         .then((response) => {
           console.log(response);
           observer.complete()
@@ -63,7 +63,7 @@ class UsersService {
   getUser (id){
     return Observable.create((observer) => {
       console.log("id: "+id);
-      axios.get(API_URL + `users/${id}/`)
+      api.get(API_URL + `users/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -76,7 +76,7 @@ class UsersService {
 
   updateUser(newUser){
     return Observable.create((observer) => {
-      axios.put(API_URL + `users/${newUser.id}/`,{is_superuser: newUser.is_superuser, username: newUser.email, first_name: newUser.first_name, last_name: "", email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
+      api.put(API_URL + `users/${newUser.id}/`,{is_superuser: newUser.is_superuser, username: newUser.email, first_name: newUser.first_name, last_name: "", email: newUser.email, password: newUser.password, is_staff: true, is_active: true})
         .then((response) => {
           console.log();
           observer.complete()
@@ -89,7 +89,7 @@ class UsersService {
 
   deleteUser (id){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `users/${id}/`)
+      api.delete(API_URL + `users/${id}/`)
         .then((response) => {
           console.log(response);
           observer.complete()

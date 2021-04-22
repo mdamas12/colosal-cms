@@ -1,14 +1,14 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
+import { api } from 'boot/axios'
 
 //const API_URL = 'http://localhost:8000/auth/'
-const API_URL = process.env.API_URL + "auth/";
+const API_URL = "auth/";
 
 class AuthService {
 
   login(newLogin){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'login/',{username: newLogin.username, password: newLogin.password})
+      api.post(API_URL + 'login/',{username: newLogin.username, password: newLogin.password})
         .then((response) => {
           console.log(response);
           localStorage.setItem('token', response.data.key)
@@ -24,7 +24,7 @@ class AuthService {
 
   logout(){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'logout/')
+      api.post(API_URL + 'logout/')
         .then((response) => {
           console.log(response);
           observer.complete()

@@ -1,15 +1,15 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
+import { api } from 'boot/axios'
 
 //const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-const API_URL = process.env.API_URL + "panel/";
+const API_URL = "panel/";
 
 class FeaturesService {
   getFeatures(limit, offset){
     return Observable.create((observer) => {
-      axios.get(API_URL + `features/?limit=${limit}&offset=${offset}`)
+      api.get(API_URL + `features/?limit=${limit}&offset=${offset}`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -22,7 +22,7 @@ class FeaturesService {
 
   createFeature(newFeature){
     return Observable.create((observer) => {
-      axios.post(API_URL + 'features/',{name: newFeature.name})
+      api.post(API_URL + 'features/',{name: newFeature.name})
         .then((response) => {
           console.log(response);
           observer.next(response.data)
@@ -37,7 +37,7 @@ class FeaturesService {
   getFeature(id){
     return Observable.create((observer) => {
       console.log("id: "+id);
-      axios.get(API_URL + `features/${id}/`)
+      api.get(API_URL + `features/${id}/`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -50,7 +50,7 @@ class FeaturesService {
 
   updateFeature(newFeature){
     return Observable.create((observer) => {
-      axios.put(API_URL + `features/${newFeature.id}/`,{name: newFeature.name})
+      api.put(API_URL + `features/${newFeature.id}/`,{name: newFeature.name})
         .then((response) => {
           console.log(response);
           observer.next(response.data)
@@ -64,7 +64,7 @@ class FeaturesService {
 
   deleteFeature (id){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `features/${id}/`)
+      api.delete(API_URL + `features/${id}/`)
         .then((response) => {
           console.log(response);
           observer.next(response.data)

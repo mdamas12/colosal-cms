@@ -1,16 +1,16 @@
 import { Observable } from 'rxjs'
-import axios from 'axios'
+import { api } from 'boot/axios'
 import PromotionsPagination from '../../models/promotions/PromotionsPagination'
 
 //const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-const API_URL = process.env.API_URL + "panel/";
+const API_URL = "panel/";
 
 class PromotionsService {
   getPromotions (limit, offset){
     return Observable.create((observer) => {
-      axios.get(API_URL + `promotions/list?limit=${limit}&offset=${offset}`)
+      api.get(API_URL + `promotions/list?limit=${limit}&offset=${offset}`)
         .then((response) => {
           observer.next(response.data)
           observer.complete()
@@ -23,7 +23,7 @@ class PromotionsService {
 
   createPromotion(promotion, products){
     return Observable.create((observer) => {
-      axios({
+      api({
         method: 'post', //you can set what request you want to be
         url: API_URL + 'promotions/',
         data: promotion,
@@ -37,7 +37,7 @@ class PromotionsService {
             observer.complete()
           }
           else{
-            axios({
+            api({
               method: 'post', //you can set what request you want to be
               url: API_URL + 'promotions/products/',
               data: {products_detail : products, promotion: promotion_id}
@@ -59,7 +59,7 @@ class PromotionsService {
   getPromotion (id){
     return Observable.create((observer) => {
       //console.log("id: "+id);
-      axios.get(API_URL + `promotions/search/${id}/`)
+      api.get(API_URL + `promotions/search/${id}/`)
         .then((response) => {
           console.log(response.data)
           observer.next(response.data)
@@ -73,7 +73,7 @@ class PromotionsService {
 
   updatePromotion(promotion, detail, newDetail, id){
     return Observable.create((observer) => {
-      axios({
+      api({
         method: 'put', //you can set what request you want to be
         url: API_URL + `promotions/modification/${id}/`,
         data: promotion,
@@ -86,7 +86,7 @@ class PromotionsService {
             observer.complete()
           }
           else{
-            axios({
+            api({
               method: 'put', //you can set what request you want to be
               url: API_URL +  `promotions/products-modification/${id}/`,
               data: {products_detail : detail, products_news: newDetail}
@@ -107,7 +107,7 @@ class PromotionsService {
 
   deletePromotion (id){
     return Observable.create((observer) => {
-      axios.delete(API_URL +  `promotions/modification/${id}/`)
+      api.delete(API_URL +  `promotions/modification/${id}/`)
         .then((response) => {
           console.log();
           observer.next(response)
@@ -121,7 +121,7 @@ class PromotionsService {
 
   deleteProductPromotion(product_id){
     return Observable.create((observer) => {
-      axios.delete(API_URL + `promotions/delete-detail/${product_id}/`)
+      api.delete(API_URL + `promotions/delete-detail/${product_id}/`)
         .then((response) => {
           console.log(response.data);
           observer.next(response.data)
