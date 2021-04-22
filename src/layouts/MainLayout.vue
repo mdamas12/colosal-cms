@@ -131,7 +131,7 @@ export default Vue.extend({
   created(){
       let subscription = UsersService.getUserMe().subscribe({
         next: (data: any) => {
-          console.log("entreeeeeeeeee")
+        
           console.log(data)
           this.profile = data
         },
