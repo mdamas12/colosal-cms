@@ -5,7 +5,7 @@ import PromotionsPagination from '../../models/promotions/PromotionsPagination'
 //const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-const API_URL = process.env.API_URL + "panel/";
+const API_URL = "panel/";
 
 class PromotionsService {
   getPromotions (limit, offset){
