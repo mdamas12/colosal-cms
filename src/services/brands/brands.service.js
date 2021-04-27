@@ -30,7 +30,7 @@ class BrandsService {
           observer.complete()
         })
         .catch((error) => {
-          observer.error(error)
+          observer.error(error.response.data)
         })
     })
   }

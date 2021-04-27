@@ -17,6 +17,7 @@
                     ref="productName"
                     v-model= "productName"
                     label="Nombre"
+                    maxlength="20"
                     color="red-10"
                     outlined
                     lazy-rules
@@ -74,6 +75,7 @@
                       ref="productDescription"
                       v-model= "productDescription"
                       label="Descripción"
+                      maxlength="30"
                       outlined
                       color="red-10"
                       lazy-rules
@@ -131,6 +133,7 @@
                                 ref="productQuantity"
                                 v-model= "productQuantity"
                                 type="number"
+                                min="0"
                                 label="Cantidad"
                                 outlined
                                 color="red-10"
@@ -391,29 +394,70 @@ export default Vue.extend({
         },
       })
     },
+    getBrands(){
+        let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
+        next: (data) => {
+          // console.log(data)
+          this.optionsBrands = data.results
+        },
+      })
+    },
+    getCategories(){
+      let subscription2 = CategoriesService.getCategories(this.limit, this.offset).subscribe({
+        next: (data) => {
+          // console.log(data)
+          this.optionsCategories = data.results
+        },
+      })
+
+    },
+    getFeatures(){
+          let subscription = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
+        next: (data) => {
+          // console.log(data)
+          this.optionsFeatures = data.results
+        },
+      })
+    },
     addBrand(){
       let subscription = BrandsService.createBrand(this.newBrandName).subscribe({
-        next: () => {
-          setTimeout(() => this.backToProducts(), 500);
+        next: () => { 
+          this.getBrands()
+          this.showAddBrand = false
+          this.newBrandName = ''
+          //setTimeout(() => this.backToProducts(), 500);
         },
-        complete: () => console.log('completado'),
+        complete: () => {
+          this.showNotif("Marca Agregada", "blue-8")
+        }
       })
     },
     addCategorie(){
-      let subscription = CategoriesService.createCategory(this.newCategoryName).subscribe({
+        const category_new = new FormData();
+        category_new.append('name', this.newCategoryName.name);
+        category_new.append('image', null);
+      let subscription = CategoriesService.createCategory(category_new).subscribe({
         next: () => {
-          setTimeout(() => this.backToProducts(), 500);
+          //setTimeout(() => this.backToProducts(), 500);
+          this.getCategories()
+          this.showAddCategory = false
+          this.newCategoryName = ''
         },
-        complete: () => console.log('completado'),
+        complete: () => {
+          this.showNotif("Categoria Agregada", "blue-8")
+        }
       })
     },
     addFeature(){
       let subscription = FeaturesService.createFeature(this.newFeatureName).subscribe({
         next: () => {
-          
-          setTimeout(() => this.backToProducts(), 500);
+           this.getFeatures();
+           this.showAddFeature = false
+           this.newFeatureName = '' 
         },
-        complete: () => console.log('[complete]'),
+        complete: () => {
+          this.showNotif("Caracteristica Agregada", "blue-8")
+        }
       })
     },
     onSubmit () {
@@ -512,9 +556,19 @@ export default Vue.extend({
         this.items.splice(position,1)
     },
 
-     removeImege(position){
+    removeImege(position){
         this.images.splice(position,1)
-    }
+    },
+
+    showNotif(message, color) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
   }
 })
 </script>

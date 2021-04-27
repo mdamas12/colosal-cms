@@ -5,7 +5,7 @@
         <div class="row col-xs-12 q-pb-xl">
           <div class="col">
             <h4 class="text-indigo-10 text-weight-bolder q-ma-none">
-              Productos
+              Productos 
             </h4>
             <small v-if="count > 0" class="text-subtitle2 text-blue-grey-7 q-mb-none" >Existen {{this.count}} productos almacenados</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->

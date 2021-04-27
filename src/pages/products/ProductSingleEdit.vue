@@ -8,13 +8,13 @@
           </div>
           <div v-if="product.name != null">
             <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm" style="margin-top:-3px">
-                #{{this.$router.currentRoute.params.id}}: {{product.name}}
+                #{{this.$router.currentRoute.params.id}}: {{product.name}} 
             </h5>
           </div>
 
           <div class="col">
               <!--<q-btn color="indigo-10" label="Editar producto" class="float-right" @click="$router.push({ name : 'ProductsEdit'/* , params : {contact : contact }  */})"/>-->
-              <q-btn color="red-10" label="Eliminar producto" class="float-right" @click="deleteProduct"/>
+              <q-btn color="red-10" label="Eliminar producto" class="float-right" @click="confirmDelete"/>
           </div>
         </div>
         <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md  q-mx-lg">
@@ -24,6 +24,7 @@
                     ref="product.name"  
                     v-model= "product.name"
                     label="Nombre"
+                     maxlength="20"
                     color="red-10"
                     outlined
                     lazy-rules
@@ -81,6 +82,7 @@
                     <q-input
                       ref="product.description"
                       v-model= "product.description"
+                       maxlength="30"
                       label="Descripción"
                       outlined
                       color="red-10"
@@ -90,22 +92,17 @@
                   <br>
 
          <!-- image -->
-                <div class="row items-center q-my-sm">
+              <div class="row items-center q-my-sm">
+                <div class="col-10">
                   <q-file 
-                    ref="product.image"
                     outlined 
                     clearable 
                     counter 
                     v-model="product.image"        
-                    @rejected="onRejected"
-                    @input="getImage"
+                    @input="getImage(product.image)"
                   >
                     <template v-slot:prepend>
                       <q-icon name="attach_file" />
-                    </template>
-                    
-                    <template v-slot:hint>
-                      image portada
                     </template>
                   </q-file>
                 </div>
@@ -114,8 +111,7 @@
                   <q-img :src="preview" style="max-width: 150px" />
                 </div>
                </div>
-
-
+               </div>
                   <br>
                       <div class="row">
                         <div class="col">
@@ -152,6 +148,7 @@
                                 ref="product.quantity"
                                 v-model= "product.quantity"
                                 type="number"
+                                min="0"
                                 label="Cantidad"
                                 outlined
                                 color="red-10"
@@ -181,11 +178,11 @@
                     <q-card-section>
                       <q-input
                       label="Ingrese nueva categoría"
-                      v-model= "newCategoryName"
+                      v-model= "newCategoryName.name"
                       color="grey-10"/>
                     </q-card-section>
                     <q-card-actions align="right">
-                      <q-btn flat color="red-10">Agregar</q-btn> <!-- @click="addCategorie()" -->
+                      <q-btn flat color="red-10" @click="addCategorie()">Agregar </q-btn>  
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -208,11 +205,11 @@
                   <q-card-section>
                     <q-input
                     label="Ingrese nueva marca"
-                    v-model= "newBrandName"
+                    v-model= "newBrandName.name"
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
-                    <q-btn flat color=red-10>Agregar</q-btn> <!-- @click="addBrand()" -->
+                    <q-btn flat color=red-10 @click="addBrand()">Agregar</q-btn> 
                   </q-card-actions>
                 </q-card>
                 </q-dialog>
@@ -234,7 +231,7 @@
                   <q-card-section>
                     <q-input
                     label= "Ingrese nueva característica"
-                    v-model= "newFeatureName"
+                    v-model= "newFeatureName.name"
                     color="grey-10"/>
                   </q-card-section>
                   <q-card-actions align="right">
@@ -242,11 +239,16 @@
                   </q-card-actions>
                 </q-card>
                 </q-dialog>
-                <div class="row q-mt-md" v-for="detailp in product.detail_product" :key="detailp.id">
+                
+               
+                <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-md">
+                    Caracteristicas del producto
+                </h6>
+                <div class="row q-mt-md" v-for="(detailp, index) in product.detail_product" :key="detailp.id">
                     <div class="col">
                         <q-select
                             class="col q-mx-md"
-                                v-model= "detailp.characteristic['id']"
+                                v-model= "detailp.characteristic"
                                 :options= "optionsFeatures"
                                 label="Caracteristica"
                                 outlined
@@ -268,10 +270,13 @@
                             label="valor">
                         </q-input>
                     </div>
+                    <div class="col">
+                      <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeCharacteristic(detailp.id, index)" /> 
+                   </div>   
+
                 </div>
                 <br>
-                
-                <div class="row q-mt-md" v-for="(item,index) in items" :key="item.id">
+                <div class="row q-mt-md" v-for="(item,index) in featuresNews" :key="item.id">
                   <div class="col">
                     <q-select
                       v-model= "item.characteristic"
@@ -296,27 +301,71 @@
                     </q-input>
                   </div>     
                   <div class="col">
-                      <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeCharacteristic(index)" /> 
+                      <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeCharacteristicNew(index)" /> 
                   </div>    
                 </div>
+                <br>
+                <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushDetail()"/>
+              
+              <!-- Galeria de imagenes -->
+                  <div class="col-12">
+                         <h6 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-md">
+                            Galeria de imagenes
+                        </h6>
+                    </div>
 
-                <div class="row" v-for="itemI in images" :key="itemI.id">
-                  <div class="col-md-6 col-xs-12">
+                  <div class="row items-center q-my-sm" v-for="(image,index ) in gallery" :key="image.id">
+             
+                    <div class="col-6">
+                      <q-file 
+                        outlined 
+                        clearable 
+                        counter 
+                        v-model="image.file"        
+                        @input="getImageGallery(image.file, index)"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                      </q-file>
+                    </div>
+                    <div class="col-4">
+                    <div v-if="image.image !== null">
+                      <q-img :src="gallery[index].image" style="max-width: 150px" />
+                    </div>
+                  </div>
+                   <div class="col-2">
+                      <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeGallery(image.id,index)" /> 
+                  </div> 
+                  </div>          
+            
+                <br>
+              
+                <div class="row" v-for="(itemI,index) in galleryNew" :key="itemI.id"> 
+                  <div class="col-6">
+                          
                           <q-file
-                              v-model= "productImages"
                               label="Imagen Galeria"
                               color="indigo-10"
-                              outlined>
+                              outlined
+                               v-model="itemI.image"        
+                               @rejected="onRejected"
+                               @input="getPreview(itemI.image,index)">
                           <template v-slot:prepend>
                             <q-icon name="attach_file" />
                           </template>
                         </q-file>
                   </div>
+                   <div class="col-4" v-if="itemI.image !== null">
+                      <q-img :src="galleryNew[index].preview" style="max-width: 150px" />
+                   </div>
+                    <div class="col-2">
+                      <q-btn class="q-ml-md q-mt-sm" round color="primary" icon="close" @click="removeGalleryNew(index)" /> 
+                  </div> 
                 </div>
               </div>
               <q-btn color="red-10" label="Guardar Cambios" class="q-pa-xs q-mt-md q-mr-md float-right" @click="updateProduct()"/>
-              <q-btn color="secondary" label="Agregar Características" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushDetail()"/>
-              <q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" /> <!-- @click="pushImagenes()" -->
+             <q-btn color="red-10" label="Agregar Imágenes" class="q-pa-xs q-mt-md q-mr-md float-right" @click="pushImagenes()"  />  
             </form>
         </div>
         <br><br>
@@ -340,22 +389,24 @@ export default Vue.extend({
     var productBrand : any = null
     var productCategory : any = null
     var image : any = null
-    var preview : any = null
+    var preview : any = ''
     return {
-      preview : preview,
-      url_test : "http://localhost:8000/media/products/closet_4tzq9jh.jpg",
+      preview : '',
       product : {
         id: this.$router.currentRoute.params.id,
         name: null,
         description: null,
-        image: image,
+        image:image,
         price: null,
         coin: null,
         quantity: null,
         category: null,
         brand: null,
-        detail_product: new Array()
+        detail_product: new Array(),
+        picture: new Array()
+
       },
+      picture_view : new Array(),
       productName: '',
       productBrand,
       productCategory,
@@ -371,18 +422,23 @@ export default Vue.extend({
        optionsMoneda: [
         'USD', 'BS'
       ],
-      items:new Array(),
-      item:{
-      //  characteristic: null,
-      //  description: ''
-      },
-      images: new Array(),
+      gallery:new Array(),
+      itemGalleryNew : {},
+      galleryNew:new Array(),
+      item:{},
+      featuresNews:new Array(),
       selectedFile: null,
-      newCategoryName: '',
-      newBrandName: '',
+      newCategoryName:{
+        name: '',
+      },
+      newBrandName:{
+        name: '',
+      },
+      newFeatureName:{
+        name: ''
+      },
       detailProduct: new Array(),
       productDetail: '',
-      newFeatureName: '',
       optionsFeatures: [],
       valueFeatures: '',
       limit: 25,
@@ -407,9 +463,10 @@ export default Vue.extend({
 
   methods: {
     onInit(id: any){
+       
         let subscription = ProductsService.getProduct(id).subscribe( {
             next: (data:any) => {
-              console.log(data)
+              //console.log(data)
               this.product = data
               var imageUrl = encodeURI(data.image);                                     // data.image es un string, convertir a URL
               // console.log(imageUrl);
@@ -426,6 +483,26 @@ export default Vue.extend({
                   this.getImage(file);
 
               });
+              for (let i = 0; i <  this.product.picture.length; i++) {            
+                 var imageUrl = encodeURI(this.product.picture[i].image);                                          
+                 fetch(imageUrl)                                                           
+                    .then(res => res.blob())
+                    .then(blob => {   
+                      const n = this.product.picture[i].image.indexOf("products/") + 9;                       
+                      const imageName = this.product.picture[i].image.substring(n);                             
+                      const extension = imageName.substring(imageName.indexOf(".") + 1);     
+                    
+                       const file = new File([blob], imageName, {type: `image/${extension}`}); 
+                        
+                        this.gallery.push({
+                          "id": this.product.picture[i].id,
+                          "file" : file,
+                          "image" : this.product.picture[i].image
+                        })  
+                                                                         
+                  });           
+              }
+                console.log(this.gallery)
             },
             complete: () => console.log('[complete]'),
         })
@@ -447,39 +524,7 @@ export default Vue.extend({
         },
       })
     },
-    addFeature(){
-      let subscription2 = FeaturesService.createFeature(this.newFeatureName).subscribe({
-        next: () => {
-          setTimeout(() => this.backToProducts(), 500);
-        },
-        complete: () => console.log('completado'),
-      })
-    },
-
-    prueba(){
-      var prueba = {
-        product: this.$router.currentRoute.params.id,
-        characteristic: this.productFeature.id,
-        description: this.productDetail
-      }
-      this.detailProduct.push(prueba)
-       console.log(this.detailProduct)
-
-      this.productFeature = "",
-      this.productDetail = ""
-    },
-   
-    productos(){
-      {
-        axios.get('http://localhost:8000/panel/products/product-detail/1/')
-        .then((response: { data: any })=>{
-          console.log(response.data)
-        })
-        .catch((error: any)=>{
-          console.log(error)
-        })
-      }
-    },
+ 
     onSubmit () {
       
       (this.$refs.product as any).name.validate()
@@ -501,73 +546,145 @@ export default Vue.extend({
           (this.$refs.product as any).quantity.hasError) {
         //this.formHasError = true
       }else {
-        this.updateProduct()
+       // this.updateProduct()
       }
     },
+      getBrands(){
+        let subscription = BrandsService.getBrands(this.limit, this.offset).subscribe({
+        next: (data : any) => {
+          // console.log(data)
+          this.optionsBrands = data.results
+        },
+      })
+    },
+    getCategories(){
+      let subscription2 = CategoriesService.getCategories(this.limit, this.offset).subscribe({
+        next: (data : any) => {
+          // console.log(data)
+          this.optionsCategories = data.results
+        },
+      })
+
+    },
+    getFeatures(){
+          let subscription = FeaturesService.getFeatures(this.limit, this.offset).subscribe({
+        next: (data : any) => {
+          // console.log(data)
+          this.optionsFeatures = data.results
+        },
+      })
+    },
+    addBrand(){
+      // this.showAddBrand = false
+       //alert(this.newBrandName)
+       //return
+      let subscription = BrandsService.createBrand(this.newBrandName).subscribe({
+        next: () => { 
+          this.getBrands()
+          this.showAddBrand = false
+          this.newBrandName.name = ''
+          //setTimeout(() => this.backToProducts(), 500);
+        },
+        complete: () => {
+          this.showNotif("Marca Agregada", "blue-8")
+        }
+      })
+    },
+    addCategorie(){
+        const category_new = new FormData();
+        category_new.append('name', this.newCategoryName.name);
+        category_new.append('image', null);
+      let subscription = CategoriesService.createCategory(category_new).subscribe({
+        next: () => {
+          //setTimeout(() => this.backToProducts(), 500);
+          this.getCategories()
+          this.showAddCategory = false
+          this.newCategoryName.name = ''
+        },
+        complete: () => {
+          this.showNotif("Categoria Agregada", "blue-8")
+        }
+      })
+    },
+
+    addFeature(){
+      let subscription = FeaturesService.createFeature(this.newFeatureName).subscribe({
+        next: () => {
+           this.getFeatures();
+           this.showAddFeature = false
+           this.newFeatureName.name = '' 
+        },
+        complete: () => {
+          this.showNotif("Caracteristica Agregada", "blue-8")
+        }
+      })
+    },
+
     updateProduct(){
-     let vm = this
-    //   var reader = new FileReader()
-    //   reader.readAsDataURL(vm.productImage)
-    //   reader.onload = () => {
-    //     let iconBase64 = reader.result
-        let product = {
-          id: vm.product.id,
-          name: vm.product.name,
-          description : vm.product.description,
-        //   image : iconBase64,
-          price : vm.product.price,
-          coin : vm.product.coin,
-          brand : vm.product.brand,
-          category : vm.product.category,
-          quantity : vm.product.quantity,
-          detail : vm.product.detail_product,
-        }
-                var features = []
-                var new_features = []
 
-        for(let item of vm.product.detail_product){
-          features.push({
-            "id" : item.id,  
-            "feature" : (item.characteristic['id'].id !=null)?item.characteristic['id'].id:item.characteristic['id'],
-            "description" : item.description
-          })
-        }
+    
+      const data_product = new FormData();
+        
+        data_product.append('name', this.product.name);
+        data_product.append('description', this.product.description);
+        data_product.append('image', this.product.image);
+        data_product.append('price', this.product.price);
+        data_product.append('coin', this.product.coin);
+        data_product.append('brand', this.product.brand.id);
+        data_product.append('category', this.product.category.id);
+        data_product.append('quantity', this.product.quantity);
+        
+        let data_features = this.product.detail_product
+        let data_features_news = this.featuresNews
 
-        for(let item of vm.items){
-          new_features.push({
-            "feature" : item.characteristic.id,
-            "description" : item.description
-          })
+      const gallery = new FormData();
+        let i=0;
+        for(let item of this.gallery){
+          gallery.append('image['+i+']', item.file);
+          gallery.append('id['+i+']', item.id);
+          i++;
         }
-
-        let dataPost = {
-          "product" : product,
-          "features" : features,
-          "new_features" : new_features
+       
+      const gallery_news = new FormData();
+        i=0;
+        for(let item of this.galleryNew){
+          gallery_news.append('image['+i+']', item.image);
+          i++;
         }
 
         Loading.show()
-        console.log(dataPost)
-        var subscription = ProductsService.updateProduct(dataPost, this.product.id).subscribe({
+        var subscription = ProductsService.updateProduct(data_product, this.product.id,data_features,data_features_news,gallery,gallery_news ).subscribe({
         next: () => {
           Loading.hide()
+          this.showNotif("Producto Actualizado", "blue-8")
           setTimeout(() => this.backToProducts(), 500);
         },
           complete: () => {},
         })
-    //   }
-    //    reader.onerror = function (error) {
-    //     this.$q.notify({
-    //       color: 'negative',
-    //       message: error
-    //     })
-    //   }
+ 
+    },
+     confirmDelete() {
+    
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de querer eliminar este Producto?',
+        cancel: true,
+        persistent: true,
+        color: 'red-10'
+      }).onOk(() => {
+        this.deleteProduct();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      })
     },
     deleteProduct(){
       Loading.show()
+   
       let subscription = ProductsService.deleteProduct(this.product.id).subscribe({
         next: () => {
+
           Loading.hide()
+          this.showNotif("Producto Eliminado Satisfactoriamente", "blue-8")
           setTimeout(() => this.backToProducts(), 500);
         },
         complete: () => {},
@@ -579,22 +696,86 @@ export default Vue.extend({
         description: ''
       };
 
-      this.items.push(this.item);
+      this.featuresNews.push(this.item);
      
     },
-    removeCharacteristic(position : number){
-        this.items.splice(position,1)
+    pushImagenes() {
+      this.itemGalleryNew = {
+        image : null,
+        preview: ''
+      };
+
+      this.galleryNew.push(this.itemGalleryNew);
+     
     },
-    getImage(e: any){                                                                        // usado para convertir la imagen en base64 para mostrar por pantalla
+
+    removeCharacteristic(feature_id : number, index : number){
+        Loading.show()
+        let subscription = ProductsService.deleteDetailProduct(feature_id).subscribe({
+          next: (resp: any) => {
+            Loading.hide()
+            this.showNotif("Detalle Eliminado para este producto", "blue-8")
+            this.product.detail_product.splice(index,1)
+          },
+          complete: () => {},
+        })      
+        
+    },
+    removeCharacteristicNew(index : number){
+      this.featuresNews.splice(index,1)
+    }, 
+
+    removeGallery(gallery_id : number, index : number){
+        Loading.show()
+        let subscription = ProductsService.deleteGalleryProduct(gallery_id).subscribe({
+          next: (resp: any) => {
+            Loading.hide()
+            this.showNotif("Foto Eliminada para este producto", "blue-8")
+            this.gallery.splice(index,1)
+          },
+          complete: () => {},
+        })      
+        
+    },
+    removeGalleryNew(index : number){
+      this.galleryNew.splice(index,1)
+    },
+
+    getImage(e: any){  
+      //console.log(e)                                                    
       let reader = new FileReader();
       reader.readAsDataURL(e);
       reader.onload = e => {
         this.preview = (e.target as any).result;
+        //console.log(this.preview)
+      }
+    
+      
+    },
+    getPreview(e: any, index : any){  
+      //console.log(e)                                                               // usado para convertir la imagen en base64 para mostrar por pantalla
+      let reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = e => {
+        this.galleryNew[index].preview = (e.target as any).result;
+        //console.log((e.target as any).result)
       }
     },
+
+    getImageGallery(e: any, index : any){
+                                                          
+      let reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = e => {
+        this.gallery[index].image = (e.target as any).result;
+        //console.log((e.target as any).result)
+      }
+
+    },
+      
+     
+  
     onRejected (rejectedEntries:any) {
-      // Notify plugin needs to be installed
-      // https://quasar.dev/quasar-plugins/notify#Installation
       this.$q.notify({
         type: 'negative',
         message: `El archivo seleccionado no es de tipo .png`
@@ -602,7 +783,16 @@ export default Vue.extend({
     },
     backToProducts(){
       this.$router.back();
-    }
+    },
+    showNotif(message : any, color : any) {
+      this.$q.notify({
+        message: message,
+        color: color,
+        actions: [
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
   }
 })
 </script>

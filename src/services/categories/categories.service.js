@@ -35,7 +35,7 @@ class CategoriesService {
 
   createCategory(newCategory){
     return Observable.create((observer) => {
-      console.log(newCategory)
+      //console.log(newCategory)
       api.post(API_URL + 'categories/save/',newCategory,
       {
         headers: {
@@ -43,15 +43,17 @@ class CategoriesService {
         }
       })
         .then((response) => {
-          console.log(response);
+          console.log(response.data);
           observer.next(response.data)
           observer.complete()
         })
         .catch((error) => {
+          console.log(error.response.data)
           observer.error(error)
         })
     })
   }
+
 
   getCategory (id){
     return Observable.create((observer) => {
