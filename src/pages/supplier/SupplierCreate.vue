@@ -96,7 +96,7 @@ export default Vue.extend({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },
@@ -109,7 +109,6 @@ export default Vue.extend({
       //   this.showNotif("Existen campos por corregir", 'red-10');
       //   return;
       // }
-      console.log("everything in order. Creating user...");
       this.loading = true;
       this.createSupplier();
     },
@@ -118,7 +117,7 @@ export default Vue.extend({
       let subscription = SuppliersService.createSupplier(this.supplier).subscribe( {
         next: () => {
           this.loading = false;
-          this.showNotif("Usuario creado exitosamente", 'indigo-10');
+          this.showNotif("Proveedor creado exitosamente", 'indigo-10');
           setTimeout(() => this.backToSuppliers(), 1000);
         },
         complete: () => console.log('[complete]'),

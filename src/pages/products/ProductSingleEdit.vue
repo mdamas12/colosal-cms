@@ -20,6 +20,34 @@
         <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md  q-mx-lg">
               <div class="form-section">
                 <q-form ref="myForm">
+             <!-- prueba --> 
+
+   
+                  
+            <!-- image -->
+                 <q-btn color="blue-5" label="cargar foto" class="" type="file"/>
+         
+                  <div class="row items-center q-my-sm  portada">
+                    <div class="col-md-3">
+                      <q-file 
+                       label="imagen"
+                        outlined 
+                        counter 
+                        v-model="product.image"        
+                        @input="getImage(product.image)"
+                      >
+                        <template v-slot:prepend>
+                          
+                          <q-img :src="preview"  />
+                        </template>
+                      </q-file>
+                    </div>
+                    <div class="col-md-8 img-port">
+                    <div v-if="product.image !== null">
+                      <q-img :src="preview"  />
+                    </div>
+                  </div>
+                  </div>
                   <q-input
                     ref="product.name"  
                     v-model= "product.name"
@@ -31,6 +59,7 @@
                     :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']"
                   />
                   <br>
+
                   <div class="row">
                     <div class="col">
                       <div class="row">
@@ -91,28 +120,7 @@
                     />
                   <br>
 
-         <!-- image -->
-              <div class="row items-center q-my-sm">
-                <div class="col-10">
-                  <q-file 
-                    outlined 
-                    clearable 
-                    counter 
-                    v-model="product.image"        
-                    @input="getImage(product.image)"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="attach_file" />
-                    </template>
-                  </q-file>
-                </div>
-                <div class="col-2">
-                <div v-if="product.image !== null">
-                  <q-img :src="preview" style="max-width: 150px" />
-                </div>
-               </div>
-               </div>
-                  <br>
+                 
                       <div class="row">
                         <div class="col">
                           <div class="row">
@@ -796,3 +804,14 @@ export default Vue.extend({
   }
 })
 </script>
+<style>
+ .portada{
+   border-bottom: 1px solid #666;
+ }
+
+ .portada .img-port{
+   width: 150px;
+   height: 150px;
+ }
+
+</style>

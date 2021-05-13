@@ -54,30 +54,22 @@
                   />
                 </div>
                 <div class="col">
-                  <q-select
-                    outlined
-                    v-model="supplierNameModel"
-                    use-input
-                    hide-selected
-                    fill-input
-                    color="dark"
-                    input-debounce="0"
-                    label="Proveedor"
-                    :loading="searchingSupplier"
-                    :hint="supplierHint"
-                    :options="options"
-                    @filter="filterFn"
-                    @input="setSupplier()"
-                    :rules="[val => !!val || 'Debe ingresar algún proveedor']"
-                  >
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          No results
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
+                   <q-select
+                      ref="supplierNameModel"
+                      v-model= "order.purchase.provider"
+                      :options= "supplierOptions"
+                      outlined
+                      color="red-10"
+                      label="Proveedor"
+                      option-value="id"
+                      option-label="name"
+                      map-options
+                      lazy-rules
+                      :rules="[
+                        val => val !== null && val !== '' || 'Debe seleccionar un Proveedor'
+                      ]"> 
+                    </q-select>
+                  
                 </div>
               </div>
               <div class="row">
@@ -94,7 +86,6 @@
                   fill-mask="0"
                   :prefix="order.purchase.coin"
                   reverse-fill-mask
-                  hint="Mask: #.##"
                   input-class="text-right"
                   :rules="[val => !!val || 'Debe ingresar el monto total', isGreaterThanZero]"
                 />
@@ -105,24 +96,19 @@
               <h5 class="vertical-top col2 text-indigo-10 text-weight-bolder q-pa-sm q-mt-md" style="margin-top:-3px">
                   Detalle de Productos
               </h5>
+
               <div class="q-gutter-md">
-                <div v-for="(item, index) in this.order.detail">
+                <div v-for="(item, index) in order.detail" :key="item.product.id">
                   <div class="row justify-evenly items-center">
-                    <div class="col-10">
-                      <div class="row q-mb-md">
-                        <div class="col">
+                        <div class="col-md-4">
                           <q-select
                             outlined
                             color="dark"
-                            v-model="productNameModel[index]"
-                            use-input
-                            hide-selected
-                            fill-input
-                            input-debounce="0"
+                            v-model="item.product"
+                            option-value="id"
+                            option-label="name"
                             label="Producto"
-                            :options="options2"
-                            @filter="filterFn2"
-                            @input="getProductInfo(productNameModel[index], index)"
+                            :options="productOptions"
                             :rules="[val => !!val || 'Debe seleccionar algún producto']"
                           >
                             <template v-slot:no-option>
@@ -131,12 +117,12 @@
                                   No results
                                 </q-item-section>
                               </q-item>
-                            </template>
-                          </q-select>
-                        </div>
-                        <div class="col q-mx-sm">
+                              </template>
+                            </q-select>
+                          </div>
+                          <div class="col-md-3 q-mx-sm">
                           <q-input
-                            v-model.number="order.detail[index].purchase_price"
+                            v-model.number="item.purchase_price"
                             label="Precio"
                             mask="#.##"
                             color="dark"
@@ -147,49 +133,55 @@
                             :rules="[val => !!val || 'Ingresar el costo del producto', isGreaterThanZero]"
                           />
                         </div>
-                        <div class="col">
+                        <div class="col-md-3">
                           <q-input
-                            v-model.number="order.detail[index].purchase_quantity"
+                            v-model.number="item.purchase_quantity"
                             color="dark"
                             type="number"
-                            label="Cantidad"
+                            label="Ctd. Comprada"
                             outlined
                             :rules="[val => !!val || 'Ingresar la cantidad comprada', isGreaterThanZero]"
                           />
                         </div>
-                      </div>
-                      <div class="row">
-                        <div class="col q-mr-md">
+                       </div>
+                        <div class="row justify-evenly items-center">
+                        <div class="col-md-4">
                           <q-input
-                            v-model.number="order.detail[index].purchase_Received"
+                            v-model.number="item.purchase_Received"
                             color="dark"
                             type="number"
-                            label="Unidades Recibidas"
+                            label="Ctd. Recibida"
                             outlined
+                            :rules="[val => !!val || 'Ingresar la cantidad Recibida', isGreaterThanZero]"
+                         
                           />
                         </div>
-                        <div class="col">
-                          <q-select outlined v-model="order.detail[index].status" color="dark" :options="statusOptions" label="Estatus" :rules="[val => !!val || 'Ingresar el costo del producto']"/>
+                        <div class="col-md-3">
+                          <q-select outlined v-model="item.status" color="dark" :options="statusOptions" label="Estatus" :rules="[val => !!val || 'Ingresar el costo del producto']"/>
                         </div>
-                      </div>
-                    </div>
-                    <div class="col-1 self-center">
-                      <div class="column items-center">
-                        <q-btn flat round color="red-10" icon="delete" @click="removeProduct(index)"/>
-                      </div>
-                    </div>
+                  
+                    <div class="col-3">   
+                        <q-btn flat  color="red-10" label="Eliminar Producto" icon="delete" @click="removeProduct(index)"/>
+                    </div> 
                   </div>
-                  <div class="row q-my-lg">
-                    <q-separator inset />
-                  </div>
-                </div>
-              </div>
-              <br/>
-              <q-btn flat round color="indigo-10" icon="add" @click="addProduct()"/>
-            </div>  
-        </div>
 
-      </div>
+                  <div class="row q-my-lg">
+                    <div class="col-md-12">
+                      <q-separator inset />
+                    </div>
+                    
+                  
+                
+                  </div>
+                  <br/>
+                 
+              </div>  
+              <q-btn push color="blue-8"  icon="add" label="Agregar Producto" @click="addProduct()" />
+              
+             </div>
+        </div>
+       </div>
+     </div>
   </q-page>
 </template>
 
@@ -213,16 +205,9 @@ export default Vue.extend({
           amount: "",
           provider: 0,
         },
-        detail : [
-          {
-            product: 0,
-            purchase_price: 0,
-            purchase_quantity: 0,
-            purchase_Received: 0,
-            status: ""
-          }
-        ]
+        detail : []
       },
+      supplier : null,
       supplierHint:'',
       supplierQuery:'',
       searchingSupplier: false,
@@ -237,10 +222,41 @@ export default Vue.extend({
       currencyOptions: ["USD", "BS"],
       statusOptions: ["COMPLETE"],
       supplierNameModel: "",
-      productNameModel: []
+      productNameModel: [],
+      limit: 25,
+      offset: 0
     }
   },
+  mounted (){
+    const vm = this;
+    vm.onRequest();
+  },
   methods: {
+
+  onRequest(){
+      let subscription = SuppliersService.getSuppliers(this.limit, this.offset).subscribe({
+          next: (data) => {
+             //console.log(data)
+            this.supplierOptions = data.results
+          },
+      })
+
+      let subscription2 = ProductsService.getAllProducts(this.limit, this.offset).subscribe({
+        next: (data) => {
+          // console.log(data)
+          this.productOptions = data.results
+        },
+      })
+  },
+    getSuppliers(){
+
+        let subscription = SuppliersService.getSuppliers(this.limit, this.offset).subscribe({
+          next: (data) => {
+            // console.log(data)
+            this.supplierOptions = data.results
+          },
+      })
+    },
     addProduct(){
       this.order.detail.push({
         product: 0,
@@ -249,11 +265,10 @@ export default Vue.extend({
         purchase_Received: 0,
         status: ""
       });
-      this.productNameModel.push("");
+      //this.productNameModel.push("");
     },
     //  settear todo para que el producto se escriba en el modelo de sale_detail
     getProductInfo(item, index){
-      console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
       if (this.productOptions.indexOf(item) >= 0){
         this.order.detail[index].product = this.productIndex[this.productOptions.indexOf(item)]
         this.order.detail[index].purchase_price = parseFloat(this.productPrices[this.productOptions.indexOf(item)])
@@ -267,18 +282,18 @@ export default Vue.extend({
       }
     },
     checkSupplyOrder(){
-      if (this.supplierNameModel === ''){
-        this.showNotif("Ingresar nombre de proveedor", 'red-10');
-        return;
-      };
-      if (this.order.purchase.date === ''){
+     
+     
+      if (this.order.purchase.date === ''){  
         this.showNotif("Ingresar fecha de compra", 'red-10');
         return;
       };
-      if (this.order.purchase.invoice == ''){
-        this.showNotif("Ingresar número de factura", 'red-10');
+      if (this.order.purchase.provider == 0 ){  
+        this.showNotif("Ingresar proveedor", 'red-10');
         return;
       };
+  
+
       if (this.order.purchase.coin === ''){
         this.showNotif("Seleccionar tipo de moneda", 'red-10');
         return;
@@ -287,30 +302,42 @@ export default Vue.extend({
         this.showNotif("Proveer monto total", 'red-10');
         return;
       };
+      if (this.order.detail.length == 0){
+         this.showNotif(`Debe ingresar productos a la orden`, 'red-10');
+          return;
+      }
       for (var i=0; i < this.order.detail.length; i++) {
-        if (this.productNameModel[i] === ''){
-          this.showNotif(`Falta información del producto ${i}`, 'red-10');
+
+           if (!this.order.detail[i].product){
+          this.showNotif(`Especificar un producto`, 'red-10');
           return;
         }
+    
         if (!this.order.detail[i].purchase_price > 0){
-          this.showNotif(`Especificar el costo de ${this.productNameModel[i]}s`, 'red-10');
+          this.showNotif(`Especificar el costo`, 'red-10');
           return;
         }
         if (!this.order.detail[i].purchase_quantity > 0){
-          this.showNotif(`Especificar cantidad de ${this.productNameModel[i]}s`, 'red-10');
+          this.showNotif(`Especificar cantidad`, 'red-10');
+          return;
+        }
+        if (!this.order.detail[i].purchase_quantity < 0){
+          this.showNotif(`Especificar cantidad Recibida`, 'red-10');
           return;
         }
       }
+  
       this.createSupplyOrder()
     },
     createSupplyOrder(){
-      console.log("JSON.stringify(this.order): \n"+JSON.stringify(this.order))
-      this.loading = true
+      
+      //console.log("JSON.stringify(this.order): \n"+JSON.stringify(this.order))
+      //this.loading = true
       SupplyOrdersService.createSupplyOrder(this.order).subscribe({
         complete: () => {
-          this.loading = false;
+         // this.loading = false;
           this.showNotif("Compra creada exitosamente", 'indigo-10');
-          setTimeout(this.$router.back(),1000);
+          //setTimeout(this.$router.back(),1000);
         }
       })
     },
@@ -325,7 +352,7 @@ export default Vue.extend({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },

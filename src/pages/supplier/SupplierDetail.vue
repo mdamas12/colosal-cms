@@ -125,7 +125,7 @@ export default Vue.extend({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },

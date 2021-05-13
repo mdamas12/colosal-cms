@@ -82,6 +82,8 @@
                       :rules="[ val => val && val.length > 0 || 'No debe dejar el campo vacio']"
                       />
                     <br>
+                     <div class="row">
+                       <div class="col-md-6">
                         <q-file
                           ref="productImage"
                           v-model= "productImage"
@@ -89,6 +91,7 @@
                           color="indigo-10"
                           outlined
                           lazy-rules
+                          @input="getImage(product.image)"
                           :rules="[
                             val => val !== null && val !== '' || 'Debe seleccionar una imagen'
                           ]"
@@ -98,6 +101,13 @@
                           </template>
                         </q-file>
                         <br>
+                        </div>
+                      <div class="col-10">
+                        <div v-if="product.image !== null">
+                          <q-img :src="preview" style="max-width: 150px" />
+                        </div>
+                      </div>
+                      </div>
                       <div class="row">
                         <div class="col">
                           <div class="row">
@@ -530,6 +540,15 @@ export default Vue.extend({
     showHide(){
       this.showInput = !this.showInput
     },
+   getImage(e){  
+      //console.log(e)                                                    
+      let reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = e => {
+        this.preview = (e.target).result;
+        //console.log(this.preview)
+      }
+   },
     pushDetail() {
       this.item = {
         characteristic: null,

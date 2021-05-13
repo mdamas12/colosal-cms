@@ -23,7 +23,7 @@ class ProductsService{
       return Observable.create((observer) => {
         api.get(API_URL + `products/`)
         .then((response) => {
-          console.log(response.data);
+          //console.log(response.data);
           observer.next(response.data)
           observer.complete()
         })

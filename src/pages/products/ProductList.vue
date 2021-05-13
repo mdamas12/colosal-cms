@@ -3,14 +3,14 @@
     <div class="row q-pa-sm q-pl-lg q-pr-lg">
       <div class="col-md-12 col-xs-12 q-pt-lg">
         <div class="row col-xs-12 q-pb-xl">
-          <div class="col">
+          <div class="col-md-8 col-sm-12">
             <h4 class="text-indigo-10 text-weight-bolder q-ma-none">
-              Productos 
+              Productos  
             </h4>
             <small v-if="count > 0" class="text-subtitle2 text-blue-grey-7 q-mb-none" >Existen {{this.count}} productos almacenados</small>
             <!--<q-skeleton v-else type="text" width="50%" animation="fade" />-->
           </div>
-          <div class="col">
+          <div class="col-md-4 col-sm-12">
               <!--<q-btn color="indigo-10" label="Editar producto" class="float-right" @click="$router.push({ name : 'ProductsEdit'/* , params : {contact : contact }  */})"/>-->
               <q-btn color="red-10" label="Crear producto" class="float-right" @click="$router.push({ name : 'ProductsCreate'/* , params : {contact : contact }  */})"/>
           </div>
@@ -183,18 +183,16 @@ export default Vue.extend({
           field: row => row.id,
           format: val => `${val}`,
           sortable: false,
-          //headerClasses: 'bg-red-10 text-white',
-          //classes: 'bg-red-1 text-dark ellipsis',
+       
         },
-        { name: 'nombre', align: 'center', label: 'Nombre', field: 'name', sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/},
-        { name: 'descripcion', align: 'center', label: 'Descripción', field: 'description', sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        //{ name: 'image', align: 'center', label: 'Imagen', field: 'image', sortable: false,  /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'price', align: 'center', label: 'Precio', field: 'price', sortable: false, /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'coin', align: 'center', label: 'Moneda', field: 'coin', sortable: false, /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'quantity', align: 'center', label: 'Cantidad', field: 'quantity', sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'category', align: 'center', label: 'Categoria', field: row => row.category.name, sortable: false /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-        { name: 'brand', align: 'center', label: 'Marca', sortable: false, field: row => row.brand.name /*, headerClasses: 'bg-red-10 text-white', classes: 'bg-red-1 text-dark ellipsis'*/ },
-      ],
+        { name: 'nombre', align: 'center', label: 'Nombre', field: 'name', sortable: true },
+        { name: 'descripcion', align: 'center', label: 'Descripción', field: 'description', sortable: false },
+        { name: 'price', align: 'center', label: 'Precio', field: 'price', sortable: false, },
+        { name: 'coin', align: 'center', label: 'Moneda', field: 'coin', sortable: false },
+        { name: 'quantity', align: 'center', label: 'Cantidad', field: 'quantity', sortable: false  },
+        { name: 'category', align: 'center', label: 'Categoria', field: row => row.category.name, sortable: false  },
+        { name: 'brand', align: 'center', label: 'Marca', sortable: false, field: row => row.brand.name },
+      ], 
       rows: []
     }
   },
@@ -216,7 +214,7 @@ export default Vue.extend({
      // console.log(`ProductsService.getProducts(limit: ${this.limit}, this.pagination.offset: ${this.offset})`);
       let subscription = ProductsService.getProducts(this.limit, this.offset).subscribe({
         next: data => {
-          //console.log(data)
+          console.log(data)
           this.rows.splice(0, this.rows.length, ...data.results);
           //console.log(this.rows)
           this.count = data.count

@@ -57,31 +57,31 @@
                   />
                 </div>
                 <div class="col">
-                  <q-select
-                    outlined
-                    v-model="supplierNameModel"
-                    use-input
-                    hide-selected
-                    fill-input
-                    color="dark"
-                    input-debounce="0"
-                    label="Proveedor"
-                    :loading="searchingSupplier"
-                    :hint="supplierHint"
-                    :options="options"
-                    @filter="filterFn"
-                    @input="setSupplier()"
-                    :rules="[val => !!val || 'Debe ingresar algún proveedor']"
-                  >
-                    <template v-slot:no-option>
+                   <q-select
+                      ref="order.purchase.provider"
+                      v-model= "order.purchase.provider"
+                      :options= "supplierOptions"
+                      outlined
+                      color="red-10"
+                      label="Proveedor"
+                      option-value="id"
+                      option-label="name"
+                      map-options
+                      lazy-rules
+                      :rules="[
+                         val => val !== null && val !== '' || 'Debe seleccionar un Proveedor'
+                      ]"> 
+                      <template v-slot:no-option>
                       <q-item>
                         <q-item-section class="text-grey">
                           No results
                         </q-item-section>
                       </q-item>
                     </template>
-                  </q-select>
+                            </q-select>
+                  
                 </div>
+           
               </div>
               <div class="row">
                 <div class="col q-mr-md">
@@ -109,23 +109,19 @@
                   Detalle de Productos
               </h5>
               <div class="q-gutter-md">
-                <div v-for="(item, index) in this.order.products">
+                <div v-for="(item, index) in this.order.products" :key="item.product.id">
                   <div class="row justify-evenly items-center">
                     <div class="col-10">
                       <div class="row q-mb-md">
-                        <div class="col">
+                      <div class="col q-mx-sm">
                           <q-select
                             outlined
                             color="dark"
-                            v-model="productNameModel[index]"
-                            use-input
-                            hide-selected
-                            fill-input
-                            input-debounce="0"
+                            v-model="item.product"
+                            option-value="id"
+                            option-label="name"
                             label="Producto"
-                            :options="options2"
-                            @filter="filterFn2"
-                            @input="getProductInfo(productNameModel[index], index)"
+                            :options="productOptions"
                             :rules="[val => !!val || 'Debe seleccionar algún producto']"
                           >
                             <template v-slot:no-option>
@@ -134,9 +130,9 @@
                                   No results
                                 </q-item-section>
                               </q-item>
-                            </template>
-                          </q-select>
-                        </div>
+                              </template>
+                            </q-select>
+                          </div>
                         <div class="col q-mx-sm">
                           <q-input
                             v-model.number="order.products[index].purchase_price"
@@ -218,7 +214,7 @@ export default Vue.extend({
           invoice: "",
           coin: "",
           amount: "",
-          provider: 0,
+          provider: [],
         },
         products : [
           {
@@ -255,28 +251,38 @@ export default Vue.extend({
   methods: {
     onRequest(){
       Loading.show()
+      /* Cargar Proveedores */
+      let subscription = SuppliersService.getSuppliers(this.limit, this.offset).subscribe({
+          next: (data) => {
+             //console.log(data)
+            this.supplierOptions = data.results
+          },
+      })
+      /* Cargar select productos */
+        let subscription2 = ProductsService.getAllProducts(this.limit, this.offset).subscribe({
+            next: (data) => {
+              // console.log(data)
+              this.productOptions = data.results
+            },
+        })
+
       this.order.products.pop()
       SupplyOrdersService.getSupplyOrder(this.supplyOrderId).subscribe({
         next: data => {
-          console.log(data)
-          this.order.purchase.date = data.date;
-          this.order.purchase.description = data.description;
-          this.order.purchase.invoice = data.invoice;
-          this.order.purchase.coin = data.coin;
-          this.order.purchase.amount = data.amount;
-          this.order.purchase.provider = data.provider.id;
-          this.supplierNameModel = data.provider.name;
-          for (let i = 0; i < data.PurchaseDetail.length; i++) {
-            this.order.products.push({
-              product: data.PurchaseDetail[i].product.id,
-              purchase_price: data.PurchaseDetail[i].purchase_price,
-              purchase_quantity: data.PurchaseDetail[i].purchase_quantity,
-              purchase_Received: data.PurchaseDetail[i].purchase_Received,
-              status: data.PurchaseDetail[i].status
-            });
-            console.log("Producto: "+ this.productOptions[this.productIndex.indexOf(data.PurchaseDetail[i].product.id)]);
-            this.productNameModel.push(this.productOptions[this.productIndex.indexOf(data.PurchaseDetail[i].product.name)]);
-          }
+         
+          let Purchase_data = data
+          console.log(Purchase_data)
+          this.order.purchase.date = Purchase_data.date;
+          this.order.purchase.description = Purchase_data.description;
+          this.order.purchase.invoice = Purchase_data.invoice;
+          this.order.purchase.coin = Purchase_data.coin;
+          this.order.purchase.amount = Purchase_data.amount;
+          this.order.purchase.provider = Purchase_data.provider;
+          //this.supplierNameModel = Purchase_data.provider.name;
+          
+          this.order.products = Purchase_data.PurchaseDetail
+         
+
         },
         complete: () => {
           Loading.hide();
@@ -293,15 +299,7 @@ export default Vue.extend({
       });
       this.productNameModel.push("");
     },
-    //  settear todo para que el producto se escriba en el modelo de sale_products
-    getProductInfo(item, index){
-      console.log('user input: ' + item + '\nposition: ' + this.productOptions.indexOf(item))
-      if (this.productOptions.indexOf(item) >= 0){
-        this.order.products[index].product = this.productIndex[this.productOptions.indexOf(item)]
-        this.order.products[index].purchase_price = parseFloat(this.productPrices[this.productOptions.indexOf(item)])
-      }
-      console.log(this.order.products)
-    },
+
     removeProduct(index){
       if (this.order.products.length > 0){
         this.order.products.splice(index,1);
@@ -349,12 +347,12 @@ export default Vue.extend({
       if (this.loading1 || this.loading2){
         return
       }
-      console.log("JSON.stringify(this.order): \n"+JSON.stringify(this.order));
-      this.loading1 = true;
+      //console.log("JSON.stringify(this.order): \n"+JSON.stringify(this.order));
+      //this.loading1 = true;
       let subscription = SupplyOrdersService.updateSupplyOrder(this.order, this.supplyOrderId).subscribe( {
         complete: () => {
-          this.loading = false;
-          this.showNotif("Compra creada exitosamente", 'indigo-10');
+         // this.loading = false;
+          this.showNotif("Compra Actualizada exitosamente", 'indigo-10');
           setTimeout(this.$router.back(),1000);
         }
       })
@@ -393,7 +391,7 @@ export default Vue.extend({
         message: message,
         color: color,
         actions: [
-          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+          { label: 'Ok', color: 'white', handler: () => { /* ... */ } }
         ]
       })
     },

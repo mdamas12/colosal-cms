@@ -5,7 +5,8 @@ import SupplyOrdersPagination from '../../models/supplyOrders/SupplyOrdersPagina
 //const API_URL = 'http://localhost:8000/panel/' // process.env.API_URL+'/v1/';
 // const API_URL_SIGN = process.env.API_SASS+'/dsign/';
 
-const API_URL = process.env.API_URL + "panel/";
+//const API_URL = process.env.API_URL + "panel/";
+const API_URL = "panel/";
 
 class SupplyOrdersService {
   getSupplyOrders (limit, offset){
@@ -16,20 +17,22 @@ class SupplyOrdersService {
           observer.complete()
         })
         .catch((error) => {
+          console.log(error.response.data)
           observer.error(error)
         })
     })
   }
 
   createSupplyOrder(newSupplyOrder){
-    return Observable.create((observer) => {
+    return Observable.create((observer) => { 
       api.post(API_URL + 'purchases/',{purchase: newSupplyOrder.purchase, products: newSupplyOrder.detail})
         .then((response) => {
-          console.log(response);
+          console.log(response.data);
           observer.complete()
         })
         .catch((error) => {
-          observer.error(error)
+          console.log(error.response.data)
+          //observer.error(error)
         })
     })
   }
@@ -52,11 +55,13 @@ class SupplyOrdersService {
     return Observable.create((observer) => {
       api.put(API_URL + `purchases/detail/${id}/`,{purchase: newSupplyOrder.purchase, products: newSupplyOrder.products})
         .then((response) => {
-          console.log();
-          observer.complete()
+
+          console.log(response.data);
+          //observer.complete()
         })
         .catch((error) => {
-          observer.error(error)
+          console.log(error.response.data);
+         // observer.error(error)
         })
     })
   }
