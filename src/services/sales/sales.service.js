@@ -102,6 +102,7 @@ class SalesService {
 
   deleteSale (id){
     return Observable.create((observer) => {
+      
       api.delete(API_URL + `sales/detail/${id}/`)
         .then((response) => {
           console.log();

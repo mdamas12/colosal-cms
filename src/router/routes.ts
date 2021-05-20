@@ -138,6 +138,16 @@ const routes: RouteConfig[] = [
           // { name: 'PaymentDetail', path: 'detail/:id', component: () => import('pages/sales/PaymentDetail.vue') },  // Falta servicio
           { name: 'PaymentCreate', path: 'create', component: () => import('pages/payments/PaymentCreate.vue') }
         ]
+      },
+      {
+        name: 'Header',
+        path: 'Header',
+        component: () => import('pages/Header.vue'),
+        children: [
+          { name: 'HeaderList', path: '', component: () => import('pages/header/HeaderList.vue') },
+          { name: 'HeaderDetail', path: 'detail/:id', component: () => import('pages/header/HeaderDetail.vue') },
+          { name: 'HeaderCreate', path: 'create', component: () => import('pages/header/HeaderCreate.vue') }
+        ]
       }
     ]
   },

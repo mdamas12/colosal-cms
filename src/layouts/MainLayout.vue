@@ -104,7 +104,7 @@ v-model="leftDrawerOpen"
 
 import Vue from 'vue'
 import ProfileDetail from '../components/commons/ProfileDetail.vue'
-import { fasUserFriends, fasShoppingBasket, fasCertificate, fasThLarge, fasThList, fasDolly, fasHandshake, fasBullhorn, fasTags, fasCreditCard } from '@quasar/extras/fontawesome-v5'
+import { fasUserFriends, fasShoppingBasket, fasCertificate, fasThLarge, fasThList, fasDolly, fasHandshake, fasBullhorn, fasTags, fasCreditCard, fasAngry, fasArchive, fasImages } from '@quasar/extras/fontawesome-v5'
 import UsersService from '../services/users/users.service'
 
 export default Vue.extend({
@@ -123,7 +123,8 @@ export default Vue.extend({
         { title: 'Compras a proveedores', caption: 'quasar.dev', icon: fasHandshake, to: 'SupplyOrders' },
         { title: 'Promociones', caption: 'quasar.dev', icon: fasBullhorn, to: 'Promotions' },
         { title: 'Ventas', caption: 'quasar.dev', icon: fasTags, to: 'Sales' },
-        { title: 'Métodos de pago', caption: 'quasar.dev', icon: fasCreditCard, to: 'Payments' }
+        { title: 'Métodos de pago', caption: 'quasar.dev', icon: fasCreditCard, to: 'Payments' },
+        { title: 'Header', caption: 'quasar.dev', icon: fasImages, to: 'Header' }
       ],
       profile: null
     }
